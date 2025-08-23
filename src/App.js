@@ -1,13 +1,13 @@
 //import logo from './logo.svg';
-//import './App.css';
-
+//import './App.css';s
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPages from "./pages/loginPage/LoginPage";
+import LoginPages from "./pages/LoginPage/LoginPage";
 import ForgotPage from "./pages/ForgotPage/ForgotPage";
 import Registerpage from "./RegisterPage/Registerpage";
 //import para HOOKS
-import HooksGral from "./pages/playground/HooksGral";
-import UseStateHook from "./pages/playground/UseState/UseState";
+import HooksGral from "./pages/Playground/HooksGral";
+import UseStateHook from "./pages/Playground/UseStatePlay";
 
 function App() {
   return (
