@@ -1,99 +1,75 @@
-# Proyecto React - Curso de Enseñanza
+# Getting Started with Create React App
 
-Este es un proyecto base en **React** creado con **CRA => Create React App**, que incluye:
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-- [Bootstrap](https://getbootstrap.com/) para estilos rápidos y responsive.
-- [SweetAlert2](https://sweetalert2.github.io/) para alertas y confirmaciones atractivas.
+## Available Scripts
 
----
+In the project directory, you can run:
 
-## 🚀 Instalación y ejecución
+### `npm start`
 
-1. **Crear el proyecto con Create React App**
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-   ```bash
-   npx create-react-app nombre-del-proyecto
-   ```
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-2. **Ingresar a la carpeta del proyecto**
+### `npm test`
 
-   ```bash
-   cd nombre-del-proyecto
-   ```
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-3. **Ejecutar el proyecto en modo desarrollo**
+### `npm run build`
 
-   ```bash
-   npm start
-   ```
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
----
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-## 📦 Dependencias instaladas
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-**Bootstrap**
+### `npm run eject`
 
-```bash
-npm install bootstrap
-```
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-**SweetAlert2**
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-```bash
-npm install SweetAlert2
-```
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
----
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## 🛠️ Tecnologías Utilizadas
+## Learn More
 
-| Tecnología           | Logo                                                                                                                                     | Descripción                                                                               |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **HTML5**            | ![HTML5](https://img.icons8.com/color/48/html-5--v1.png)                                                                                 | Lenguaje de marcado usado para estructurar las páginas web.                               |
-| **CSS3**             | ![CSS3](https://img.icons8.com/color/48/css3.png)                                                                                        | Hojas de estilo para personalizar la apariencia de la web.                                |
-| **Bootstrap 5**      | ![Bootstrap](https://img.icons8.com/color/48/bootstrap.png)                                                                              | Framework CSS para facilitar el diseño responsive y atractivo.                            |
-| **JavaScript**       | ![JS](https://img.icons8.com/color/48/javascript--v1.png)                                                                                | Lenguaje de programación para la lógica y la interactividad en la web.                    |
-| **React**            | ![React](https://img.icons8.com/color/48/react-native.png)                                                                               | Biblioteca de JavaScript para construir interfaces de usuario basadas en componentes.     |
-| **Create React App** | ![CRA](https://img.icons8.com/?size=48&id=t9R7H4l3cOyb&format=png)                                                                       | Herramienta oficial para crear proyectos React con configuración inicial lista para usar. |
-| **SweetAlert2**      | ![SweetAlert2](https://img.icons8.com/external-flat-icons-inmotus-design/48/external-alert-user-interface-flat-icons-inmotus-design.png) | Librería JS para mostrar alertas modernas, elegantes y personalizadas.                    |
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
----
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-## 📁 Estructura del Proyecto
+### Code Splitting
 
-```plaintext
-/
-├── public/
-│   ├── index.html            # Plantilla HTML principal de la app
-│   └── favicon.ico           # Ícono de la aplicación
-├── src/
-│   ├── index.js              # Punto de entrada principal
-│   ├── App.js                # Componente raíz
-│   ├── App.css               # Estilos globales de la app
-│   ├── pages/                # Páginas completas (vistas o interfaces completas)
-│   │   ├── Home.jsx          # Ejemplo de página de inicio
-│   │   └── About.jsx         # Ejemplo de página "Acerca de"
-│   ├── components/           # Componentes reutilizables
-│   │   ├── Navbar.jsx        # Barra de navegación
-│   │   └── Footer.jsx        # Pie de página
-│   ├── playground/           # Espacio para pruebas rápidas
-│   ├── assets/               # Recursos estáticos (imágenes, íconos, etc.)
-│   └── styles/               # Archivos de estilos personalizados
-├── package.json              # Configuración y dependencias del proyecto
-├── package-lock.json         # Bloqueo de versiones de dependencias
-└── README.md                 # Documentación del proyecto
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-```
+### Analyzing the Bundle Size
 
----
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-## 📅 Avance del Proyecto
+### Making a Progressive Web App
 
-| Nº  | Fecha      | Descripción / Entregable                               |
-| --- | ---------- | ------------------------------------------------------ |
-| 1   | 2025-08-15 | Creación del proyecto con CRA                          |
-| 2   | 2025-08-15 | Instalación y configuración de Bootstrap y SweetAlert2 |
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-> **Nota:** Ir actualizando la tabla con cada cambio o entregable.
+### Advanced Configuration
 
----
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+ajsutar el registerpage para que incluya los metodos de logueo
+ajustar el botón deinicisoi de seison con google apra que valide el usuario en firestore primero
+

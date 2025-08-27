@@ -5,7 +5,9 @@ import { auth } from '../../firebase';
 import { db } from '../../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import './RegisterPage.css';
-import logo from '../../assets/brilla.png';
+import logo from '../../assets/mas.jpg';
+
+
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -79,7 +81,7 @@ function RegisterPage() {
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-gradient">
       <div className="form-card">
-        <img src={logo} alt="Logo Brilla" className="logo mb-3 d-block mx-auto" style={{ width: '120px' }} />
+        <img src={logo} alt="logo mas" className="logo mb-3 d-block mx-auto" style={{ width: '120px' }} />
         <h3 className="mb-4 text-center">Registro de Usuario</h3>
         <form onSubmit={handleSubmit}>
 

@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCSoB5RsBrzriSfeRFqaVUfhKumJHLIMBA",
-    authDomain: "brillatlm.firebaseapp.com",
-    projectId: "brillatlm",
-    storageBucket: "brillatlm.firebasestorage.app",
-    messagingSenderId: "970081452395",
-    appId: "1:970081452395:web:5b44b77ca66fe4bf7f0c2e"
+  apiKey: "AIzaSyDEuFnJASm2whg6CIxvrOgCtLkEQuqC4Eo",
+  authDomain: "fuegos-pirotecnicos.firebaseapp.com",
+  projectId: "fuegos-pirotecnicos",
+  storageBucket: "fuegos-pirotecnicos.firebasestorage.app",
+  messagingSenderId: "1084392002469",
+  appId: "1:1084392002469:web:9581d2b105feefd91a4e4c"
 };
 
 // Inicializar Firebase

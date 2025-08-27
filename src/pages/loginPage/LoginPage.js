@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import './LoginPage.css';
 import logo from '../../assets/mas.jpg';
 
+
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -112,7 +113,7 @@ function LoginPage() {
       <div className="form-card">
         <img
           src={logo}
-          alt=" mas Logo"
+          alt=" logo mas"
           className="logo mb-3 d-block mx-auto"
           style={{ width: '150px', borderRadius: '50%', border: '2px solid #D4AF37', padding: '5px', }}
         />

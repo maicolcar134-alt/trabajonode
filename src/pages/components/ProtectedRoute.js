@@ -5,6 +5,7 @@ import Spinner from './Spinner';
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
+
 function ProtectedRoute({ children }) {
   const [user, loading] = useAuthState(auth);
   const [fakeLoading, setFakeLoading] = useState(true);

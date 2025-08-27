@@ -10,6 +10,7 @@ import userDefault from '../../assets/user.png';
 import './DashboardPage.css';
 import Swal from 'sweetalert2';
 
+
 function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
@@ -66,7 +67,7 @@ function DashboardPage() {
           <Navbar.Brand onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer' }}>
             <img
               src={logo}
-              alt="Brilla Logo"
+              alt="logo mas"
               height="40"
               className="d-inline-block align-top"
             />
@@ -104,10 +105,10 @@ function DashboardPage() {
       {/* CONTENIDO PRINCIPAL */}
       <main className="main-content">
         <div>
-          <img src={logo} alt="Brilla Logo" className="main-logo" />
-          <h1 className="welcome-title">Welcome to Brilla System</h1>
+          <img src={logo} alt="logo mas" className="main-logo" />
+          <h1 className="welcome-title">Bienvenido fuegos pirotecnicos </h1>
           <p className="welcome-text">
-            Manage your clients, services, and more efficiently!
+          "Fuegos artificiales que despiertan los sentidos. ¡Descubre un universo de luz y color!"
           </p>
 
           <p className="welcome-text">
@@ -128,7 +129,7 @@ function DashboardPage() {
       {/* FOOTER */}
       <footer className="footer mt-auto">
         <div className="container">
-          <small>© 2025 Brilla. All rights reserved.</small>
+          <small>© 2025 fuegos pirotecnicos. All rights reserved.</small>
         </div>
       </footer>
     </>
