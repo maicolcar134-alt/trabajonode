@@ -1,15 +1,14 @@
 // imports...
-import { useNavigate } from 'react-router-dom';
-import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
-import { FaSignOutAlt } from 'react-icons/fa';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import logo from '../../assets/mas.jpg';
-import userDefault from '../../assets/user.png'; 
-import './DashboardPage.css';
-import Swal from 'sweetalert2';
-
+import { useNavigate } from "react-router-dom";
+import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import { FaSignOutAlt } from "react-icons/fa";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase";
+import { useAuthState } from "react-firebase-hooks/auth";
+import logo from "../../assets/mas.jpg";
+import userDefault from "../../assets/user.png";
+import "./DashboardPage.css";
+import Swal from "sweetalert2";
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -27,33 +26,33 @@ function DashboardPage() {
 
   const handleLogout = async () => {
     const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: 'Vas a cerrar sesión.',
-      icon: 'warning',
+      title: "¿Estás seguro?",
+      text: "Vas a cerrar sesión.",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Sí, cerrar sesión',
-      cancelButtonText: 'No, quedarme',
+      confirmButtonText: "Sí, cerrar sesión",
+      cancelButtonText: "No, quedarme",
     });
 
     if (result.isConfirmed) {
       try {
         await signOut(auth);
-        sessionStorage.setItem("logout", "true"); 
+        sessionStorage.setItem("logout", "true");
         Swal.fire({
-          icon: 'success',
-          title: 'Sesión cerrada',
-          text: '¡Has cerrado sesión exitosamente!',
+          icon: "success",
+          title: "Sesión cerrada",
+          text: "¡Has cerrado sesión exitosamente!",
           timer: 2000,
           showConfirmButton: false,
         }).then(() => {
-          navigate('/');
+          navigate("/");
         });
       } catch (error) {
         console.error("Error al cerrar sesión:", error);
         Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un problema al cerrar sesión.',
+          icon: "error",
+          title: "Error",
+          text: "Hubo un problema al cerrar sesión.",
         });
       }
     }
@@ -64,7 +63,10 @@ function DashboardPage() {
       {/* NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
-          <Navbar.Brand onClick={() => navigate('/dashboard')} style={{ cursor: 'pointer' }}>
+          <Navbar.Brand
+            onClick={() => navigate("/dashboard")}
+            style={{ cursor: "pointer" }}
+          >
             <img
               src={logo}
               alt="logo mas"
@@ -76,17 +78,28 @@ function DashboardPage() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               <NavDropdown title="Personas" id="basic-nav-dropdown">
-                <NavDropdown.Item onClick={() => navigate('/clientes')}>
+                <NavDropdown.Item onClick={() => navigate("/clientes")}>
                   Clientes
                 </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate('/auxiliares')}>
+                <NavDropdown.Item onClick={() => navigate("/auxiliares")}>
                   Auxiliares
                 </NavDropdown.Item>
               </NavDropdown>
-              <Nav.Link onClick={() => navigate('/servicios')}>Servicios</Nav.Link>
-              <Nav.Link onClick={() => navigate('/cronograma')}>Cronograma</Nav.Link>
-              <Nav.Link onClick={() => navigate('/opcion1')}>Opción 1</Nav.Link>
-              <Nav.Link onClick={() => navigate('/opcion2')}>Opción 2</Nav.Link>
+              {/* <Nav.Link onClick={() => navigate('/servicios')}>Servicios</Nav.Link> */}
+              <Nav>
+                {user?.rol === "admin" ? (
+                  <Nav.Link onClick={() => navigate("/servicios")}>
+                    Servicios
+                  </Nav.Link>
+                ) : null}
+              </Nav>
+              
+              
+              <Nav.Link onClick={() => navigate("/cronograma")}>
+                Cronograma
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/opcion1")}>Opción 1</Nav.Link>
+              <Nav.Link onClick={() => navigate("/opcion2")}>Opción 2</Nav.Link>
               <Nav.Item className="logout-container" onClick={handleLogout}>
                 <Nav.Link className="logout-link d-flex align-items-center gap-2">
                   <FaSignOutAlt /> Cerrar Sesión
@@ -108,7 +121,8 @@ function DashboardPage() {
           <img src={logo} alt="logo mas" className="main-logo" />
           <h1 className="welcome-title">Bienvenido fuegos pirotecnicos </h1>
           <p className="welcome-text">
-          "Fuegos artificiales que despiertan los sentidos. ¡Descubre un universo de luz y color!"
+            "Fuegos artificiales que despiertan los sentidos. ¡Descubre un
+            universo de luz y color!"
           </p>
 
           <p className="welcome-text">
@@ -121,7 +135,7 @@ function DashboardPage() {
             src={userPhoto}
             alt="Foto de usuario"
             className="main-logo"
-            style={{ maxWidth: '100px', borderRadius: '50%' }}
+            style={{ maxWidth: "100px", borderRadius: "50%" }}
           />
         </div>
       </main>

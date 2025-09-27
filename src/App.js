@@ -27,6 +27,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Rutas públicas */}
+
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
@@ -38,6 +39,8 @@ function App() {
 
         {/* Ruta genérica para páginas no encontradas */}
         <Route path="*" element={<NotFoundPage />} />
+        
+        
 
         {/* Rutas para prácticas de hooks */}
         <Route path="/usestate" element={<UseStatePlay />} />

@@ -53,7 +53,7 @@ function ResetPasswordPage() {
             <div className="form-card">
                 <img
                     src={logo}
-                    alt="Logo Brilla"
+                    alt="Logo mas"
                     className="logo mb-3 mx-auto d-block"
                     style={{ width: "250px" }}
                 />

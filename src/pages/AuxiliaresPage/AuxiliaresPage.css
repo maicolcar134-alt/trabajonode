@@ -1,29 +1,35 @@
-.main-content {
-    background-color: #ffffff;
+.content {
+    background-color: #f3ecec;
     min-height: 80vh;
     padding: 20px;
 }
 
 .page-title {
     background: #f1f1f1;
-    color: #333;
+    color: #514242;
     padding: 10px;
     border-radius: 6px;
     font-weight: bold;
+    text-align: center;
 }
 
 .table-container {
-    max-width: 100%;
-    overflow-x: auto;
+    width: 100%;           /* ahora ocupa el 100% del espacio */
+    margin-top: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .tabla-auxiliares {
+    width: 100%;           /* la tabla ocupa todo el ancho */
     background-color: #ffffff;
-    font-size: 0.9rem;
+    font-size: 1rem;       /* puedes ajustar el tamaño del texto */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-collapse: collapse;
 }
 
 .footer {
-    background-color: #222;
+    background-color: #0d0c0c;
     color: #fff;
-    padding: 10px 0;
+    padding: 40px;
 }

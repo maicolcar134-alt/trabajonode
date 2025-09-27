@@ -1,16 +1,20 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
- 
+
 import { auth, googleProvider, db } from '../../firebase';
-import { signInWithEmailAndPassword, fetchSignInMethodsForEmail, linkWithCredential, EmailAuthProvider, signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import './LoginPage.css';
 import logo from '../../assets/mas.jpg';
 
-
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Forzar selección de cuenta siempre
+  googleProvider.setCustomParameters({
+    prompt: "select_account"
+  });
 
   // LOGIN CON EMAIL/PASSWORD
   const handleSubmit = async (e) => {
@@ -25,7 +29,6 @@ function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Opcional: verificar si existe documento en Firestore
       const userDocRef = doc(db, 'usuarios', user.uid);
       const userSnap = await getDoc(userDocRef);
 
@@ -35,6 +38,9 @@ function LoginPage() {
           Swal.fire("Acceso denegado", "Tu cuenta está inactiva. Contacta al administrador.", "error");
           return;
         }
+      } else {
+        Swal.fire("Acceso denegado", "Tu cuenta no está registrada.", "error");
+        return;
       }
 
       Swal.fire({
@@ -59,53 +65,47 @@ function LoginPage() {
       const googleResult = await signInWithPopup(auth, googleProvider);
       const user = googleResult.user;
 
-      // Verificar si ya existía ese correo con otro método
-      const signInMethods = await fetchSignInMethodsForEmail(auth, user.email);
+      const userDocRef = doc(db, "usuarios", user.uid);
+      const userSnap = await getDoc(userDocRef);
 
-      if (signInMethods.includes('password')) {
-        // Si existe por password hay que vincularlo
-        const password = await solicitarPassword();
-        if (!password) {
-          Swal.fire("Cancelado", "Operación cancelada.", "info");
+      if (userSnap.exists()) {
+        const data = userSnap.data();
+
+        if (data.estado === "Inactivo") {
+          Swal.fire("Acceso denegado", "Tu cuenta está inactiva. Contacta al administrador.", "error");
           return;
         }
 
-        // Crear credential de email/password
-        const credential = EmailAuthProvider.credential(user.email, password);
-        await linkWithCredential(user, credential);
+        Swal.fire({
+          title: "¡Bienvenido!",
+          text: `Sesión iniciada con Google: ${user.email}`,
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = "/dashboard";
+        });
+
+      } else {
+        Swal.fire({
+          title: "Usuario no registrado",
+          text: "Completa tu registro para poder acceder.",
+          icon: "warning",
+          confirmButtonText: "Ir a registro"
+        }).then(() => {
+          window.location.href = "/registro";
+        });
       }
 
-      Swal.fire({
-        title: "¡Bienvenido!",
-        text: `Sesión iniciada con Google: ${user.email}`,
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false
-      }).then(() => {
-        window.location.href = "/dashboard";
-      });
-
     } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "No se pudo iniciar sesión con Google.", "error");
+      console.error("Error en login con Google:", error);
+      Swal.fire({
+        title: "Error",
+        text: "Hubo un problema al iniciar sesión con Google.",
+        icon: "error",
+        confirmButtonText: "Aceptar"
+      });
     }
-  };
-
-  const solicitarPassword = async () => {
-    const result = await Swal.fire({
-      title: "Contraseña requerida",
-      input: "password",
-      inputLabel: "Introduce tu contraseña para vincular cuentas",
-      inputPlaceholder: "Tu contraseña",
-      showCancelButton: true,
-      confirmButtonText: "Vincular",
-      cancelButtonText: "Cancelar"
-    });
-
-    if (result.isConfirmed && result.value) {
-      return result.value;
-    }
-    return null;
   };
 
   return (
@@ -115,7 +115,7 @@ function LoginPage() {
           src={logo}
           alt=" logo mas"
           className="logo mb-3 d-block mx-auto"
-          style={{ width: '150px', borderRadius: '50%', border: '2px solid #D4AF37', padding: '5px', }}
+          style={{ width: '160px', borderRadius: '50%', border: '2px solid #D4AF37', padding: '5px' }}
         />
         <h3 className="mb-4 text-center">Iniciar Sesión</h3>
 
