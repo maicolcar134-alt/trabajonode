@@ -20,6 +20,7 @@ import DashboardPage from './pages/DashboardPage/DashboardPage';
 import AuxiliaresPage from './pages/AuxiliaresPage/AuxiliaresPage';
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
 
+
        
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         {/* Rutas protegidas con Firebase Auth */}
         <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute> } />
         <Route path="/auxiliares" element={<ProtectedRoute> <AuxiliaresPage /> </ProtectedRoute> } />
+        
 
         {/* Ruta genérica para páginas no encontradas */}
         <Route path="*" element={<NotFoundPage />} />

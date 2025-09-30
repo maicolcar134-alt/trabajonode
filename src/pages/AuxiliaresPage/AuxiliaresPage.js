@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection,getDocs,deleteDoc,doc,updateDoc,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { Navbar, Nav, NavDropdown, Table, Button, Modal, Form, Container, Image } from "react-bootstrap";
+import {Navbar,Nav, NavDropdown,Table, Button,Modal,Form,Container,Image,
+} from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { auth, db } from "../../firebase";
@@ -27,16 +29,19 @@ function AuxiliaresPage() {
   const validateForm = () => {
     const errors = {};
     if (!selectedAux.nombres || !nombreRegex.test(selectedAux.nombres)) {
-      errors.nombres = "Nombres inválidos. Solo letras y espacios, entre 2 y 50 caracteres.";
+      errors.nombres =
+        "Nombres inválidos. Solo letras y espacios, entre 2 y 50 caracteres.";
     }
     if (!selectedAux.apellidos || !nombreRegex.test(selectedAux.apellidos)) {
-      errors.apellidos = "Apellidos inválidos. Solo letras y espacios, entre 2 y 50 caracteres.";
+      errors.apellidos =
+        "Apellidos inválidos. Solo letras y espacios, entre 2 y 50 caracteres.";
     }
     if (!selectedAux.cedula || !cedulaRegex.test(selectedAux.cedula)) {
       errors.cedula = "Cédula inválida. Solo números, entre 5 y 10 dígitos.";
     }
     if (!selectedAux.telefono || !telefonoRegex.test(selectedAux.telefono)) {
-      errors.telefono = "Teléfono inválido. Solo números, entre 7 y 10 dígitos.";
+      errors.telefono =
+        "Teléfono inválido. Solo números, entre 7 y 10 dígitos.";
     }
     if (!selectedAux.email || !emailRegex.test(selectedAux.email)) {
       errors.email = "Email inválido.";
@@ -146,7 +151,10 @@ function AuxiliaresPage() {
       setAuxiliares(
         auxiliares.map((a) =>
           a.id === selectedAux.id
-            ? { ...selectedAux, edad: calcularEdad(selectedAux.fechaNacimiento) }
+            ? {
+                ...selectedAux,
+                edad: calcularEdad(selectedAux.fechaNacimiento),
+              }
             : a
         )
       );
@@ -178,21 +186,37 @@ function AuxiliaresPage() {
       {/* NAVBAR */}
       <Navbar expand="lg" bg="dark" variant="dark" className="dashboard-navbar">
         <Container>
-          <Navbar.Brand onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
+          <Navbar.Brand
+            onClick={() => navigate("/dashboard")}
+            style={{ cursor: "pointer" }}
+          >
             <img src={logo} alt="mas Logo" height="40" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link onClick={() => navigate("/clientes")}>Clientes</Nav.Link>
-              <Nav.Link onClick={() => navigate("/auxiliares")}>Auxiliares</Nav.Link>
-              <Nav.Link onClick={() => navigate("/servicios")}>Servicios</Nav.Link>
-              <Nav.Link onClick={() => navigate("/cronograma")}>Cronograma</Nav.Link>
+              <Nav.Link onClick={() => navigate("/clientes")}>
+                Clientes
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/auxiliares")}>
+                Auxiliares
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/servicios")}>
+                Servicios
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/cronograma")}>
+                Cronograma
+              </Nav.Link>
 
               <NavDropdown
                 title={
                   user?.photoURL ? (
-                    <Image src={user.photoURL} roundedCircle width="40" height="40" />
+                    <Image
+                      src={user.photoURL}
+                      roundedCircle
+                      width="40"
+                      height="40"
+                    />
                   ) : (
                     <FaUserCircle size={24} color="#f1edeaff" />
                   )
@@ -200,9 +224,13 @@ function AuxiliaresPage() {
                 id="user-nav-dropdown"
                 align="end"
               >
-                <NavDropdown.Item disabled>{user?.email || "Usuario"}</NavDropdown.Item>
+                <NavDropdown.Item disabled>
+                  {user?.email || "Usuario"}
+                </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>Cerrar Sesión</NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogout}>
+                  Cerrar Sesión
+                </NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>
@@ -215,14 +243,23 @@ function AuxiliaresPage() {
           <h2 className="page-title text-center mb-4">
             AUXILIARES DE SERVICIOS REGISTRADOS FUEGO PIROTECNICOS
           </h2>
-
+          <div className="text-center mb-4">  
+      
+       
+     
+    </div>
+  
           {currentUserRole !== "Admin" ? (
-            <div className="text-center">
-          
-            </div>
+            <div className="text-center"></div>
           ) : (
             <div className="table-container">
-              <Table striped bordered hover responsive className="tabla-auxiliares">
+              <Table
+                striped
+                bordered
+                hover
+                responsive
+                className="tabla-auxiliares"
+              >
                 <thead>
                   <tr>
                     <th>Nombres</th>
@@ -265,7 +302,9 @@ function AuxiliaresPage() {
                       <td>
                         <span
                           className={`badge ${
-                            aux.Rol === "Admin" ? "bg-primary" : "bg-info text-dark"
+                            aux.Rol === "Admin"
+                              ? "bg-primary"
+                              : "bg-info text-dark"
                           }`}
                         >
                           {aux.Rol || "Auxiliar"}

@@ -68,7 +68,8 @@
 
 /* MAIN CONTENT */
 .main-content {
-    background: #0b0b0b;
+    background: #efe9e9;
+
 
     min-height: calc(100vh - 130px);
     display: flex;
@@ -124,4 +125,35 @@
     text-align: center;
     padding: 15px;
     width: 100%;
+}
+/* Fondo para toda la página del dashboard */
+body {
+  margin: 10px;
+  padding: 0;
+  background: url("") no-repeat center center fixed;
+  
+background-size:cover;/* La imagen se ajusta completa */
+  background-color: #000;
+     /* Fondo de respaldo si la imagen no llena todo */
+
+
+
+  font-family: Arial, sans-serif;
+}
+
+/* Ajuste del contenido principal para que se vea bien encima del fondo */
+.main-content {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  color: #0c0c0c; /* Texto blanco para que contraste */
+  background-color: rgba(0, 0, 0, 0.4); /* Oscurecer un poco para mejorar legibilidad */
+  border-radius: 12px;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 800px;
 }

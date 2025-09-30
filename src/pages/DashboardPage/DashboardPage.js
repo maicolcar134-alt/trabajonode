@@ -10,6 +10,8 @@ import userDefault from "../../assets/user.png";
 import "./DashboardPage.css";
 import Swal from "sweetalert2";
 
+
+
 function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
@@ -93,8 +95,10 @@ function DashboardPage() {
                   </Nav.Link>
                 ) : null}
               </Nav>
-              
-              
+              <Nav.Link onClick={() => navigate("/productos")}> 
+                Productos
+              </Nav.Link>
+    
               <Nav.Link onClick={() => navigate("/cronograma")}>
                 Cronograma
               </Nav.Link>
