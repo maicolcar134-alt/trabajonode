@@ -130,9 +130,9 @@
 body {
   margin: 10px;
   padding: 0;
-  background: url("") no-repeat center center fixed;
+  background: url("/src/assets/fuegos-artificiales-rojos-azules-sobre-fondo-negro_69379-78.jpg") no-repeat center center fixed;
   
-background-size:cover;/* La imagen se ajusta completa */
+background-size: contain;/* La imagen se ajusta completa */
   background-color: #000;
      /* Fondo de respaldo si la imagen no llena todo */
 
