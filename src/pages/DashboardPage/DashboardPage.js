@@ -8,7 +8,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import logo from "../../assets/mas.jpg";
 import userDefault from "../../assets/user.png";
 import "./DashboardPage.css";
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"
 
 
 
@@ -99,11 +99,11 @@ function DashboardPage() {
                 Productos
               </Nav.Link>
     
-              <Nav.Link onClick={() => navigate("/cronograma")}>
-                Cronograma
+              <Nav.Link onClick={() => navigate("/catalogo")}>
+                catalogo
               </Nav.Link>
-              <Nav.Link onClick={() => navigate("/opcion1")}>Opción 1</Nav.Link>
-              <Nav.Link onClick={() => navigate("/opcion2")}>Opción 2</Nav.Link>
+              <Nav.Link onClick={() => navigate("/ventas")}>Ventas</Nav.Link>
+              <Nav.Link onClick={() => navigate("/reportes")}>Reportes</Nav.Link>
               <Nav.Item className="logout-container" onClick={handleLogout}>
                 <Nav.Link className="logout-link d-flex align-items-center gap-2">
                   <FaSignOutAlt /> Cerrar Sesión
