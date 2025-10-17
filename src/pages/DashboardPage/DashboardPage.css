@@ -1,159 +1,97 @@
-/* NAVBAR */
+/* Navbar general */
 .dashboard-navbar {
-    background-color: #343a40;
-    padding: 0.5rem 2rem;
+  background-color: #1a1d23 !important;
+  padding: 10px 20px;
+  border-bottom: 2px solid #ff5722;
 }
 
-.navbar-dark .navbar-nav .nav-link {
-    color: #fff;
-    transition: background-color 0.3s, color 0.3s;
-    border-radius: 5px;
-    padding: 8px 12px;
+.dashboard-navbar .brand-logo img {
+  border-radius: 5px;
 }
 
-.navbar-dark .navbar-nav .nav-link:hover {
-    background-color: #d4af37;
-    color: #000;
-    text-decoration: none;
+.dashboard-navbar .nav-link {
+  color: #e0e0e0 !important;
+  font-weight: 500;
+  margin: 0 10px;
+  transition: all 0.3s ease;
 }
 
-/* Cerrar sesión + foto */
-.logout-container .logout-link {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #0d0c0c;
-    transition: all 0.3s ease;
-    padding: 8px 12px;
-    border-radius: 5px;
-    cursor: pointer;
+.dashboard-navbar .nav-link:hover {
+  color: #ff5722 !important;
 }
 
-.logout-container .logout-link:hover {
-    background-color: #d4af37;
-    color: #000;
+.active-link {
+  background-color: #ff5722;
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 6px 12px !important;
 }
 
-.logout-container .logout-link:hover .user-photo-nav {
-    border: 2px solid #000;
-    transform: scale(1.1);
+.cart-icon {
+  font-size: 1.2rem;
 }
 
-/* Foto en navbar */
+/* Foto de usuario */
 .user-photo-nav {
-    width: 30px !important;
-    height: 30px !important;
-    border-radius: 50%;
-    border: 1px solid transparent;
-    transition: all 0.3s ease;
-    object-fit: cover;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid #ff5722;
 }
 
-/* DROPDOWN */
-.navbar-dark .dropdown-menu {
-    background-color: #343a40;
-    border: none;
-}
-
-.navbar-dark .dropdown-menu .dropdown-item {
-    color: #0c0b0b;
-    background-color: transparent;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.navbar-dark .dropdown-menu .dropdown-item:hover {
-    background-color: #d4af37;
-    color: #000;
-}
-
-/* MAIN CONTENT */
+/* Fondo principal */
 .main-content {
-    background: #efe9e9;
-
-
-    min-height: calc(100vh - 130px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    text-align: center;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
 }
 
-.main-content>div {
-    max-width: 600px;
-    width: 100%;
-}
-
-.main-logo {
-    max-width: 300px;
-    height: auto;
-    margin-bottom: 20px;
+.overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 40px;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 95%;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
 }
 
 .welcome-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #343a40;
-    text-align: center;
+  color: #ffb74d;
+  margin: 10px 0;
+  font-weight: bold;
 }
 
 .welcome-text {
-    font-size: 1.2rem;
-    color: #666;
-    text-align: center;
+  color: #ccc;
+  margin-bottom: 20px;
 }
 
-.user-info {
-    color: #000;
-    font-weight: bold;
-    font-size: 1.2rem;
-    margin-top: 10px;
+.user-details {
+  text-align: left;
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .user-photo {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-top: 15px;
-    border: 2px solid #000;
+  width: 100px;
+  border-radius: 50%;
+  margin-top: 15px;
+  border: 3px solid #fff;
 }
 
-/* FOOTER */
+/* Footer */
 .footer {
-    background: #343a40;
-    color: #fff;
-    text-align: center;
-    padding: 15px;
-    width: 100%;
-}
-/* Fondo para toda la página del dashboard */
-body {
-  margin: 10px;
-  padding: 0;
-  background: url("/src/assets/fuegos-artificiales-rojos-azules-sobre-fondo-negro_69379-78.jpg") no-repeat center center fixed;
-  
-background-size: contain;/* La imagen se ajusta completa */
-  background-color: #000;
-     /* Fondo de respaldo si la imagen no llena todo */
-
-
-
-  font-family: Arial, sans-serif;
-}
-
-/* Ajuste del contenido principal para que se vea bien encima del fondo */
-.main-content {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-
-  color: #0c0c0c; /* Texto blanco para que contraste */
-  background-color: rgba(0, 0, 0, 0.4); /* Oscurecer un poco para mejorar legibilidad */
-  border-radius: 12px;
-  padding: 2rem;
-  margin: 2rem auto;
-  max-width: 800px;
+  background-color: #111;
+  color: #aaa;
+  padding: 12px;
+  font-size: 0.9rem;
+  border-top: 2px solid #ff5722;
 }

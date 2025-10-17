@@ -1,0 +1,14 @@
+/* src/pages/Admin.css */
+
+/* Asegura que la fuente Inter funcione y algunos ajustes pequeños */
+.font-inter { font-family: 'Inter', sans-serif; }
+
+/* Ajustes tabla/responsive (opcional) */
+table th, table td {
+  vertical-align: middle;
+}
+
+/* Pequeño ajuste al icono del sidebar */
+aside i {
+  width: 22px;
+}

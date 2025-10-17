@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
-
-import { auth, googleProvider, db } from '../../firebase';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { auth, db } from '../../firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import './LoginPage.css';
 import logo from '../../assets/mas.jpg';
@@ -10,11 +9,6 @@ import logo from '../../assets/mas.jpg';
 function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // Forzar selección de cuenta siempre
-  googleProvider.setCustomParameters({
-    prompt: "select_account"
-  });
 
   // LOGIN CON EMAIL/PASSWORD
   const handleSubmit = async (e) => {
@@ -59,61 +53,12 @@ function LoginPage() {
     }
   };
 
-  // LOGIN CON GOOGLE
-  const handleGoogleLogin = async () => {
-    try {
-      const googleResult = await signInWithPopup(auth, googleProvider);
-      const user = googleResult.user;
-
-      const userDocRef = doc(db, "usuarios", user.uid);
-      const userSnap = await getDoc(userDocRef);
-
-      if (userSnap.exists()) {
-        const data = userSnap.data();
-
-        if (data.estado === "Inactivo") {
-          Swal.fire("Acceso denegado", "Tu cuenta está inactiva. Contacta al administrador.", "error");
-          return;
-        }
-
-        Swal.fire({
-          title: "¡Bienvenido!",
-          text: `Sesión iniciada con Google: ${user.email}`,
-          icon: "success",
-          timer: 2000,
-          showConfirmButton: false
-        }).then(() => {
-          window.location.href = "/dashboard";
-        });
-
-      } else {
-        Swal.fire({
-          title: "Usuario no registrado",
-          text: "Completa tu registro para poder acceder.",
-          icon: "warning",
-          confirmButtonText: "Ir a registro"
-        }).then(() => {
-          window.location.href = "/registro";
-        });
-      }
-
-    } catch (error) {
-      console.error("Error en login con Google:", error);
-      Swal.fire({
-        title: "Error",
-        text: "Hubo un problema al iniciar sesión con Google.",
-        icon: "error",
-        confirmButtonText: "Aceptar"
-      });
-    }
-  };
-
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-gradient">
       <div className="form-card">
         <img
           src={logo}
-          alt=" logo mas"
+          alt="logo mas"
           className="logo mb-3 d-block mx-auto"
           style={{ width: '160px', borderRadius: '50%', border: '2px solid #D4AF37', padding: '5px' }}
         />
@@ -132,6 +77,7 @@ function LoginPage() {
               required
             />
           </div>
+
           <div className="mb-3">
             <label htmlFor="password" className="form-label">Contraseña</label>
             <input
@@ -144,24 +90,13 @@ function LoginPage() {
               required
             />
           </div>
+
           <div className="d-grid">
             <button type="submit" className="btn btn-primary">Entrar</button>
           </div>
         </form>
 
         <div className="text-center mt-3">
-          <button
-            type="button"
-            onClick={handleGoogleLogin}
-            className="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2 mb-2"
-          >
-            <img
-              src="https://img.icons8.com/color/48/google-logo.png"
-              alt="Google logo"
-              style={{ width: '20px', height: '20px' }}
-            />
-            Iniciar sesión con Google
-          </button>
           <a href="/register">¿No tienes cuenta? Regístrate</a><br />
           <a href="/forgot">¿Olvidaste tu contraseña?</a>
         </div>
@@ -171,3 +106,4 @@ function LoginPage() {
 }
 
 export default LoginPage;
+

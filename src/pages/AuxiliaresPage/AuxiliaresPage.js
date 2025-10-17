@@ -1,8 +1,22 @@
 import { useEffect, useState } from "react";
-import { collection,getDocs,deleteDoc,doc,updateDoc,
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import {Navbar,Nav, NavDropdown,Table, Button,Modal,Form,Container,Image,
+import {
+  Navbar,
+  Nav,
+  NavDropdown,
+  Table,
+  Button,
+  Modal,
+  Form,
+  Container,
+  Image,
 } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 import Swal from "sweetalert2";
@@ -17,9 +31,8 @@ function AuxiliaresPage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedAux, setSelectedAux] = useState(null);
   const [formErrors, setFormErrors] = useState({});
-  const [currentUserRole, setCurrentUserRole] = useState(null);
 
-  // Expresiones regulares para validación
+  // Expresiones regulares
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const telefonoRegex = /^\d{7,10}$/;
   const cedulaRegex = /^\d{5,10}$/;
@@ -29,19 +42,16 @@ function AuxiliaresPage() {
   const validateForm = () => {
     const errors = {};
     if (!selectedAux.nombres || !nombreRegex.test(selectedAux.nombres)) {
-      errors.nombres =
-        "Nombres inválidos. Solo letras y espacios, entre 2 y 50 caracteres.";
+      errors.nombres = "Nombres inválidos.";
     }
     if (!selectedAux.apellidos || !nombreRegex.test(selectedAux.apellidos)) {
-      errors.apellidos =
-        "Apellidos inválidos. Solo letras y espacios, entre 2 y 50 caracteres.";
+      errors.apellidos = "Apellidos inválidos.";
     }
     if (!selectedAux.cedula || !cedulaRegex.test(selectedAux.cedula)) {
-      errors.cedula = "Cédula inválida. Solo números, entre 5 y 10 dígitos.";
+      errors.cedula = "Cédula inválida.";
     }
     if (!selectedAux.telefono || !telefonoRegex.test(selectedAux.telefono)) {
-      errors.telefono =
-        "Teléfono inválido. Solo números, entre 7 y 10 dígitos.";
+      errors.telefono = "Teléfono inválido.";
     }
     if (!selectedAux.email || !emailRegex.test(selectedAux.email)) {
       errors.email = "Email inválido.";
@@ -50,20 +60,18 @@ function AuxiliaresPage() {
     return Object.keys(errors).length === 0;
   };
 
-  // Función para calcular edad
+  // Calcular edad
   const calcularEdad = (fechaNacimiento) => {
     if (!fechaNacimiento) return null;
     const hoy = new Date();
     const nacimiento = new Date(fechaNacimiento);
     let edad = hoy.getFullYear() - nacimiento.getFullYear();
     const mes = hoy.getMonth() - nacimiento.getMonth();
-    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
-      edad--;
-    }
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) edad--;
     return edad;
   };
 
-  // Cargar auxiliares y verificar rol
+  // Cargar auxiliares
   useEffect(() => {
     const fetchAuxiliares = async () => {
       try {
@@ -72,25 +80,12 @@ function AuxiliaresPage() {
           id: doc.id,
           ...doc.data(),
         }));
-
-        // Obtener usuario actual
-        const userEmail = auth.currentUser?.email;
-        const currentUser = data.find((u) => u.email === userEmail);
-
-        if (currentUser) {
-          setCurrentUserRole(currentUser.Rol || "Usuario");
-        }
-
-        // Solo mostrar auxiliares si es admin
-        if (currentUser?.Rol === "Admin") {
-          setAuxiliares(data);
-        } else {
-          setAuxiliares([]); // Si no es admin, no muestra nada
-        }
+        setAuxiliares(data);
       } catch (error) {
         console.error("Error cargando auxiliares:", error);
       }
     };
+
     fetchAuxiliares();
   }, []);
 
@@ -123,7 +118,7 @@ function AuxiliaresPage() {
     }
   };
 
-  // Abrir modal edición
+  // Editar
   const handleEdit = (aux) => {
     setSelectedAux(aux);
     setShowModal(true);
@@ -144,17 +139,14 @@ function AuxiliaresPage() {
         fechaNacimiento: selectedAux.fechaNacimiento,
         edad: calcularEdad(selectedAux.fechaNacimiento),
         sexo: selectedAux.sexo,
-        Rol: selectedAux.Rol,
         estado: selectedAux.estado,
+        Rol: selectedAux.Rol, // 👈 Se agregó campo Rol
       });
 
       setAuxiliares(
         auxiliares.map((a) =>
           a.id === selectedAux.id
-            ? {
-                ...selectedAux,
-                edad: calcularEdad(selectedAux.fechaNacimiento),
-              }
+            ? { ...selectedAux, edad: calcularEdad(selectedAux.fechaNacimiento) }
             : a
         )
       );
@@ -167,7 +159,6 @@ function AuxiliaresPage() {
     }
   };
 
-  // Cambios en modal
   const handleModalChange = (e) => {
     const { name, value } = e.target;
     if (name === "fechaNacimiento") {
@@ -178,7 +169,6 @@ function AuxiliaresPage() {
     }
   };
 
-  // Usuario actual
   const user = auth.currentUser;
 
   return (
@@ -186,37 +176,21 @@ function AuxiliaresPage() {
       {/* NAVBAR */}
       <Navbar expand="lg" bg="dark" variant="dark" className="dashboard-navbar">
         <Container>
-          <Navbar.Brand
-            onClick={() => navigate("/dashboard")}
-            style={{ cursor: "pointer" }}
-          >
+          <Navbar.Brand onClick={() => navigate("/dashboard")} style={{ cursor: "pointer" }}>
             <img src={logo} alt="mas Logo" height="40" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link onClick={() => navigate("/clientes")}>
-                Clientes
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/auxiliares")}>
-                Auxiliares
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/servicios")}>
-                Servicios
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/cronograma")}>
-                Cronograma
-              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/clientes")}>Clientes</Nav.Link>
+              <Nav.Link onClick={() => navigate("/auxiliares")}>Auxiliares</Nav.Link>
+              <Nav.Link onClick={() => navigate("/servicios")}>Servicios</Nav.Link>
+              <Nav.Link onClick={() => navigate("/cronograma")}>Cronograma</Nav.Link>
 
               <NavDropdown
                 title={
                   user?.photoURL ? (
-                    <Image
-                      src={user.photoURL}
-                      roundedCircle
-                      width="40"
-                      height="40"
-                    />
+                    <Image src={user.photoURL} roundedCircle width="40" height="40" />
                   ) : (
                     <FaUserCircle size={24} color="#f1edeaff" />
                   )
@@ -224,126 +198,105 @@ function AuxiliaresPage() {
                 id="user-nav-dropdown"
                 align="end"
               >
-                <NavDropdown.Item disabled>
-                  {user?.email || "Usuario"}
-                </NavDropdown.Item>
+                <NavDropdown.Item disabled>{user?.email || "Usuario"}</NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>
-                  Cerrar Sesión
-                </NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogout}>Cerrar Sesión</NavDropdown.Item>
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <main className="content">
         <Container className="mt-4">
           <h2 className="page-title text-center mb-4">
-            AUXILIARES DE SERVICIOS REGISTRADOS FUEGO PIROTECNICOS
+            AUXILIARES DE SERVICIOS REGISTRADOS FUEGOS PIROTÉCNICOS
           </h2>
-          <div className="text-center mb-4">  
-      
-       
-     
-    </div>
-  
-          {currentUserRole !== "Admin" ? (
-            <div className="text-center"></div>
-          ) : (
-            <div className="table-container">
-              <Table
-                striped
-                bordered
-                hover
-                responsive
-                className="tabla-auxiliares"
-              >
-                <thead>
-                  <tr>
-                    <th>Nombres</th>
-                    <th>Apellidos</th>
-                    <th>Cédula</th>
-                    <th>Teléfono</th>
-                    <th>Email</th>
-                    <th>Edad</th>
-                    <th>Fecha Nacimiento</th>
-                    <th>Sexo</th>
-                    <th>Estado</th>
-                    <th>Rol</th>
-                    <th>Acciones</th>
+
+          <div className="table-container">
+            <Table striped bordered hover responsive className="tabla-auxiliares">
+              <thead>
+                <tr>
+                  <th>Nombres</th>
+                  <th>Apellidos</th>
+                  <th>Cédula</th>
+                  <th>Teléfono</th>
+                  <th>Email</th>
+                  <th>Edad</th>
+                  <th>Fecha Nacimiento</th>
+                  <th>Sexo</th>
+                  <th>Estado</th>
+                  <th>Rol</th> {/* 👈 Nueva columna */}
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {auxiliares.map((aux) => (
+                  <tr key={aux.id}>
+                    <td>{aux.nombres}</td>
+                    <td>{aux.apellidos}</td>
+                    <td>{aux.cedula}</td>
+                    <td>{aux.telefono}</td>
+                    <td>{aux.email}</td>
+                    <td>{calcularEdad(aux.fechaNacimiento) || "-"}</td>
+                    <td>{aux.fechaNacimiento || "-"}</td>
+                    <td>{aux.sexo || "-"}</td>
+                    <td>
+                      <span
+                        className={`badge ${
+                          aux.estado === "Activo"
+                            ? "bg-success"
+                            : aux.estado === "Pendiente"
+                            ? "bg-warning text-dark"
+                            : "bg-secondary"
+                        }`}
+                      >
+                        {aux.estado || "Pendiente"}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`badge ${
+                          aux.Rol === "Admin" ? "bg-primary" : "bg-info text-dark"
+                        }`}
+                      >
+                        {aux.Rol || "Usuario"}
+                      </span>
+                    </td>
+                    <td>
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => handleEdit(aux)}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleEliminar(aux.id)}
+                      >
+                        Eliminar
+                      </Button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {auxiliares.map((aux) => (
-                    <tr key={aux.id}>
-                      <td>{aux.nombres}</td>
-                      <td>{aux.apellidos}</td>
-                      <td>{aux.cedula}</td>
-                      <td>{aux.telefono}</td>
-                      <td>{aux.email}</td>
-                      <td>{calcularEdad(aux.fechaNacimiento) || "-"}</td>
-                      <td>{aux.fechaNacimiento || "-"}</td>
-                      <td>{aux.sexo || "-"}</td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            aux.estado === "Activo"
-                              ? "bg-success"
-                              : aux.estado === "Pendiente"
-                              ? "bg-warning text-dark"
-                              : "bg-secondary"
-                          }`}
-                        >
-                          {aux.estado || "Pendiente"}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`badge ${
-                            aux.Rol === "Admin"
-                              ? "bg-primary"
-                              : "bg-info text-dark"
-                          }`}
-                        >
-                          {aux.Rol || "Auxiliar"}
-                        </span>
-                      </td>
-                      <td>
-                        <Button
-                          variant="warning"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => handleEdit(aux)}
-                        >
-                          Editar
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleEliminar(aux.id)}
-                        >
-                          Eliminar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          )}
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </Container>
       </main>
 
       {/* FOOTER */}
       <footer className="footer mt-auto">
         <Container className="text-center">
-          <small>© 2025 Bienvenido fuegos pirotecnicos</small>
+          <small>© 2025 Fuegos Pirotécnicos. Todos los derechos reservados.</small>
         </Container>
       </footer>
 
-      {/* MODAL EDICIÓN */}
+      {/* MODAL */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Editar Auxiliar</Modal.Title>
@@ -389,7 +342,12 @@ function AuxiliaresPage() {
               </Form.Group>
               <Form.Group className="mb-2">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="email" value={selectedAux.email} disabled />
+                <Form.Control
+                  type="email"
+                  name="email"
+                  value={selectedAux.email}
+                  onChange={handleModalChange}
+                />
               </Form.Group>
               <Form.Group className="mb-2">
                 <Form.Label>Fecha de Nacimiento</Form.Label>
@@ -424,13 +382,16 @@ function AuxiliaresPage() {
                   <option>Inactivo</option>
                 </Form.Select>
               </Form.Group>
+
+              {/* 👇 Campo Rol agregado */}
               <Form.Group className="mb-2">
                 <Form.Label>Rol</Form.Label>
                 <Form.Select
                   name="Rol"
-                  value={selectedAux.Rol || "Auxiliar"}
+                  value={selectedAux.Rol || "Usuario"}
                   onChange={handleModalChange}
                 >
+                  <option>Usuario</option>
                   <option>Auxiliar</option>
                   <option>Admin</option>
                 </Form.Select>
@@ -452,3 +413,4 @@ function AuxiliaresPage() {
 }
 
 export default AuxiliaresPage;
+

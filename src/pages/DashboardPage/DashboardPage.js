@@ -1,6 +1,7 @@
 // imports...
 import { useNavigate } from "react-router-dom";
-import { Navbar, Nav, Container, NavDropdown } from "react-bootstrap";
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { FaUser, FaShoppingCart } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
@@ -8,24 +9,16 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import logo from "../../assets/mas.jpg";
 import userDefault from "../../assets/user.png";
 import "./DashboardPage.css";
-import Swal from "sweetalert2"
-
-
+import Swal from "sweetalert2";
 
 function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
-  // Determinar foto de usuario
+  // Determinar foto del usuario o usar por defecto
   const userPhoto = user?.photoURL || userDefault;
 
-  // Agregamos el console.log para verificar qué foto se está usando
-  console.log(
-    user?.photoURL
-      ? `Usuario tiene foto: ${user.photoURL}`
-      : `Usuario SIN foto, se usará: ${userDefault}`
-  );
-
+  // Cerrar sesión con confirmación
   const handleLogout = async () => {
     const result = await Swal.fire({
       title: "¿Estás seguro?",
@@ -62,92 +55,137 @@ function DashboardPage() {
 
   return (
     <>
-      {/* NAVBAR */}
+        {/* NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
-          <Navbar.Brand
-            onClick={() => navigate("/dashboard")}
-            style={{ cursor: "pointer" }}
-          >
-            <img
-              src={logo}
-              alt="logo mas"
-              height="40"
-              className="d-inline-block align-top"
-            />
+          <Navbar.Brand onClick={() => navigate("/dashboard")} className="brand-logo">
+            <img src={logo} alt="logo" height="40" />
+            <span className="ms-2 fw-bold text-warning">PyroShop</span>
           </Navbar.Brand>
+          
+
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              <NavDropdown title="Personas" id="basic-nav-dropdown">
-                <NavDropdown.Item onClick={() => navigate("/clientes")}>
-                  Clientes
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => navigate("/auxiliares")}>
-                  Auxiliares
-                </NavDropdown.Item>
-              </NavDropdown>
-              {/* <Nav.Link onClick={() => navigate('/servicios')}>Servicios</Nav.Link> */}
-              <Nav>
-                {user?.rol === "admin" ? (
-                  <Nav.Link onClick={() => navigate("/servicios")}>
-                    Servicios
+            <Nav className="ms-auto align-items-center">
+              <Nav.Link onClick={() => navigate("/inicio")} className="active-link">Inicio</Nav.Link>
+              <Nav.Link onClick={() => navigate("/categorias")}>Categorías</Nav.Link>
+              <Nav.Link onClick={() => navigate("/ofertas")}>Ofertas</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Auxiliares")}>Auxiliares</Nav.Link>
+              <Nav.Link onClick={() => navigate("/eventos")}>Eventos</Nav.Link>
+              <Nav.Link onClick={() => navigate("/ayuda")}>Ayuda</Nav.Link>
+
+              <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
+                <i className="bi bi-shield-lock"></i> Admin
+              </Nav.Link>
+           
+
+              {/* Botón de usuario o iniciar sesión */}
+              {user ? (
+                <Nav.Item className="logout-container" onClick={handleLogout}>
+                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
+                    <FaSignOutAlt /> Cerrar Sesión
+                    <img src={userPhoto} alt="Foto de usuario" className="user-photo-nav" />
                   </Nav.Link>
-                ) : null}
-              </Nav>
-              <Nav.Link onClick={() => navigate("/productos")}> 
-                Productos
-              </Nav.Link>
-    
-              <Nav.Link onClick={() => navigate("/catalogo")}>
-                catalogo
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/ventas")}>Ventas</Nav.Link>
-              <Nav.Link onClick={() => navigate("/reportes")}>Reportes</Nav.Link>
-              <Nav.Item className="logout-container" onClick={handleLogout}>
-                <Nav.Link className="logout-link d-flex align-items-center gap-2">
-                  <FaSignOutAlt /> Cerrar Sesión
-                  <img
-                    src={userPhoto}
-                    alt="Foto de usuario"
-                    className="user-photo-nav"
-                  />
+                </Nav.Item>
+              ) : (
+                <Nav.Link onClick={() => navigate("/login")} className="d-flex align-items-center gap-2 fw-bold text-light">
+                  <FaUser /> Acceder
                 </Nav.Link>
-              </Nav.Item>
+              )}
+
+              {/* Ícono carrito */}
+              <Nav.Link onClick={() => navigate("/carrito")} className="cart-icon">
+                <FaShoppingCart />
+              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
 
+
       {/* CONTENIDO PRINCIPAL */}
       <main className="main-content">
         <div>
           <img src={logo} alt="logo mas" className="main-logo" />
-          <h1 className="welcome-title">Bienvenido fuegos pirotecnicos </h1>
+          <h1 className="welcome-title">Bienvenido a Fuegos Pirotécnicos</h1>
           <p className="welcome-text">
-            "Fuegos artificiales que despiertan los sentidos. ¡Descubre un
-            universo de luz y color!"
+            "Fuegos artificiales que despiertan los sentidos. ¡Descubre un universo de luz y color!"
           </p>
 
-          <p className="welcome-text">
-            <strong>Nombre:</strong> {user?.displayName || "Sin nombre"}
-          </p>
-          <p className="welcome-text">
-            <strong>Email:</strong> {user?.email || "Sin correo"}
-          </p>
-          <img
-            src={userPhoto}
-            alt="Foto de usuario"
-            className="main-logo"
-            style={{ maxWidth: "100px", borderRadius: "50%" }}
-          />
+          <h3 className="welcome-title">Información completa del usuario:</h3>
+
+          {user ? (
+            <div className="user-details">
+              <p><strong>Nombre:</strong> {user.displayName || "Sin nombre"}</p>
+              <p><strong>Email:</strong> {user.email}</p>
+              <p><strong>UID:</strong> {user.uid}</p>
+              <p><strong>Correo verificado:</strong> {user.emailVerified ? "Sí" : "No"}</p>
+              <p><strong>Teléfono:</strong> {user.phoneNumber || "No registrado"}</p>
+
+              {/* Mostrar los proveedores vinculados */}
+              {user.providerData && user.providerData.length > 0 && (
+                <div>
+                  <h4>Proveedores vinculados:</h4>
+                  <ul>
+                    {user.providerData.map((provider, index) => (
+                      <li key={index}>
+                        <p><strong>Proveedor:</strong> {provider.providerId}</p>
+                        <p><strong>UID Proveedor:</strong> {provider.uid}</p>
+                        <p><strong>Email:</strong> {provider.email}</p>
+                        <p><strong>Nombre:</strong> {provider.displayName}</p>
+                        <p><strong>Foto:</strong> {provider.photoURL || "Sin foto"}</p>
+                        <hr />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Metadatos */}
+              {user.metadata && (
+                <div>
+                  <p><strong>Creado el:</strong> {new Date(user.metadata.creationTime).toLocaleString()}</p>
+                  <p><strong>Último inicio de sesión:</strong> {new Date(user.metadata.lastSignInTime).toLocaleString()}</p>
+                </div>
+              )}
+
+              {/* Mostrar JSON completo del objeto user */}
+              <h4>Datos completos del objeto Firebase User:</h4>
+              <pre
+                style={{
+                  background: "#111",
+                  color: "#0f0",
+                  padding: "10px",
+                  borderRadius: "8px",
+                  textAlign: "left",
+                  maxWidth: "90%",
+                  overflowX: "auto",
+                }}
+              >
+                {JSON.stringify(user, null, 2)}
+              </pre>
+
+              <img
+                src={userPhoto}
+                alt="Foto de usuario"
+                style={{
+                  maxWidth: "120px",
+                  borderRadius: "50%",
+                  marginTop: "15px",
+                  border: "2px solid #fff",
+                }}
+              />
+            </div>
+          ) : (
+            <p>No hay usuario autenticado.</p>
+          )}
         </div>
       </main>
 
       {/* FOOTER */}
       <footer className="footer mt-auto">
         <div className="container">
-          <small>© 2025 fuegos pirotecnicos. All rights reserved.</small>
+          <small>© 2025 Fuegos Pirotécnicos. Todos los derechos reservados.</small>
         </div>
       </footer>
     </>
@@ -155,3 +193,4 @@ function DashboardPage() {
 }
 
 export default DashboardPage;
+
