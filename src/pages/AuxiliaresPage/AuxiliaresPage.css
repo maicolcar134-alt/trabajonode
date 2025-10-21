@@ -1,35 +1,126 @@
-.content {
-    background-color: #f3ecec;
-    min-height: 80vh;
-    padding: 20px;
+body {
+  background-color: #0d1117 !important;
+  color: #fff !important;
+  font-family: 'Inter', sans-serif;
 }
 
 .page-title {
-    background: #f1f1f1;
-    color: #514242;
-    padding: 10px;
-    border-radius: 6px;
-    font-weight: bold;
-    text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
 }
 
-.table-container {
-    width: 100%;           /* ahora ocupa el 100% del espacio */
-    margin-top: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.page-subtitle {
+  color: #9ca3af;
 }
 
-.tabla-auxiliares {
-    width: 100%;           /* la tabla ocupa todo el ancho */
-    background-color: #ffffff;
-    font-size: 1rem;       /* puedes ajustar el tamaño del texto */
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-collapse: collapse;
+.summary-card {
+  background-color: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 12px;
+  text-align: center;
+  padding: 20px;
+  color: #fff;
 }
 
-.footer {
-    background-color: #0d0c0c;
-    color: #fff;
-    padding: 40px;
+.summary-card h4 {
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.summary-card p {
+  color: #9ca3af;
+  margin-top: 5px;
+}
+
+.summary-card.verified h4 {
+  color: #22c55e;
+}
+.summary-card.completed h4 {
+  color: #3b82f6;
+}
+.summary-card.pending h4 {
+  color: #f59e0b;
+}
+
+.table-card {
+  background-color: #161b22;
+  border-radius: 12px;
+  border: 1px solid #30363d;
+  overflow: hidden;
+}
+
+.table-header {
+  background-color: #161b22;
+  color: #fff;
+  font-weight: 600;
+  border-bottom: 1px solid #30363d;
+}
+
+.custom-table thead {
+  color: #9ca3af;
+  border-bottom: 1px solid #30363d;
+}
+
+.custom-table tbody tr {
+  border-bottom: 1px solid #30363d;
+}
+
+.custom-table tbody tr:hover {
+  background-color: #1f2937;
+}
+
+.email {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.role-badge {
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.role-badge.admin {
+  background-color: rgba(139, 92, 246, 0.2);
+  color: #a855f7;
+}
+
+.role-badge.cliente {
+  background-color: rgba(107, 114, 128, 0.2);
+  color: #d1d5db;
+}
+
+.kyc-badge.verificado {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+
+.kyc-badge.pendiente {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+
+.estado-badge.activo {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+
+.verificar-btn {
+  color: #f59e0b;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.accion-icon {
+  color: #9ca3af;
+  margin-right: 8px;
+  cursor: pointer;
 }

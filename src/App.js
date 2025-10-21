@@ -13,11 +13,13 @@ import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 
 
+
 // Rutas para hooks
 
 import UseEffectPlay from './pages/Playground/UseEffectPlay';
 import UseRefPlay from './pages/Playground/UseRefPlay';
 import UseStatePlay from './pages/Playground/UseStatePlay';
+import './App.css';
 
 
 // Protege rutas con autenticación Firebase
@@ -25,8 +27,13 @@ import ProtectedRoute from './pages/components/ProtectedRoute';
 import DashboardPage from './pages/DashboardPage/DashboardPage'; 
 import AuxiliaresPage from './pages/AuxiliaresPage/AuxiliaresPage';
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
+import DashboardaAdmin from './pages/DashboardaAdmin/DashboardaAdmin';
+import Inventario from './pages/Inventario/Inventario';
+import CategoriasAdmin from './pages/CategoriasAdmin/CategoriasAdmin';
+import SeguridadAdmin from './pages/Seguridad/Seguridad.Admin';
+import HelpCenter from './pages/HelpCenter/HelpCenter';
 
-
+import Admin from './pages/Admin/Admin';
 
 
        
@@ -48,9 +55,20 @@ function App() {
 
         {/* Rutas protegidas con Firebase Auth */}
         <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute> } />
-        <Route path="/auxiliares" element={<ProtectedRoute> <AuxiliaresPage /> </ProtectedRoute> } />
-        
-
+        <Route path="/usuarios" element={<ProtectedRoute> <AuxiliaresPage /> </ProtectedRoute> } />
+        <Route path="/dashboarda" element={<ProtectedRoute> <DashboardaAdmin /> </ProtectedRoute> } />
+      <Route path="/inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
+      <Route path="/Categorias" element={<ProtectedRoute> <CategoriasAdmin /> </ProtectedRoute> } />
+      <Route path="/Seguridad" element={<ProtectedRoute> <SeguridadAdmin /> </ProtectedRoute> } />
+       <Route path="/DashboardaAdmin" element={<ProtectedRoute> <DashboardaAdmin /> </ProtectedRoute> } /> 
+       <Route path="/inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
+        <Route path="/categorias" element={<ProtectedRoute> <CategoriasAdmin /> </ProtectedRoute> } />
+        <Route path="/seguridad" element={<ProtectedRoute> <SeguridadAdmin /> </ProtectedRoute> } />  
+        <Route path="/pedidos" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />
+        <Route path="/helpcenter" element={<ProtectedRoute> <HelpCenter /> </ProtectedRoute> } />
+    
+     
+        <Route path="/Admin" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />
         {/* Ruta genérica para páginas no encontradas */}
         <Route path="" element={<NotFoundPage />} />
         

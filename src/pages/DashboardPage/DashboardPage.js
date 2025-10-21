@@ -68,11 +68,12 @@ function DashboardPage() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
               <Nav.Link onClick={() => navigate("/inicio")} className="active-link">Inicio</Nav.Link>
-              <Nav.Link onClick={() => navigate("/categorias")}>Categorías</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Categorias")}>Categorias</Nav.Link>
+
               <Nav.Link onClick={() => navigate("/ofertas")}>Ofertas</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Auxiliares")}>Auxiliares</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Seguridad")}>seguridad</Nav.Link>
               <Nav.Link onClick={() => navigate("/eventos")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/ayuda")}>Ayuda</Nav.Link>
+              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
 
               <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
                 <i className="bi bi-shield-lock"></i> Admin
