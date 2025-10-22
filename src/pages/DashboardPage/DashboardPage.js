@@ -67,7 +67,7 @@ function DashboardPage() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
-              <Nav.Link onClick={() => navigate("/inicio")} className="active-link">Inicio</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Inicio")} className="active-link">Inicio</Nav.Link>
               <Nav.Link onClick={() => navigate("/Categorias")}>Categorias</Nav.Link>
 
               <Nav.Link onClick={() => navigate("/ofertas")}>Ofertas</Nav.Link>

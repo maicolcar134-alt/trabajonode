@@ -30,8 +30,9 @@ import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
 import DashboardaAdmin from './pages/DashboardaAdmin/DashboardaAdmin';
 import Inventario from './pages/Inventario/Inventario';
 import CategoriasAdmin from './pages/CategoriasAdmin/CategoriasAdmin';
-import SeguridadAdmin from './pages/Seguridad/Seguridad.Admin';
+import SeguridadAdmin from './pages/Seguridad/SeguridadAdmin';
 import HelpCenter from './pages/HelpCenter/HelpCenter';
+import OfertasPirotecnia from './pages/OfertasPirotecnia/OfertasPirotecnia';
 
 import Admin from './pages/Admin/Admin';
 
@@ -64,8 +65,12 @@ function App() {
        <Route path="/inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
         <Route path="/categorias" element={<ProtectedRoute> <CategoriasAdmin /> </ProtectedRoute> } />
         <Route path="/seguridad" element={<ProtectedRoute> <SeguridadAdmin /> </ProtectedRoute> } />  
+       
         <Route path="/pedidos" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />
         <Route path="/helpcenter" element={<ProtectedRoute> <HelpCenter /> </ProtectedRoute> } />
+        <Route path="/ofertas" element={<ProtectedRoute> <OfertasPirotecnia /> </ProtectedRoute> } /> 
+        
+        
     
      
         <Route path="/Admin" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />
