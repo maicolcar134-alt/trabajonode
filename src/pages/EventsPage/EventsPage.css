@@ -1,0 +1,228 @@
+:root {
+  --accent: #f97316; /* naranja cálido */
+  --accent-light: #fbbf24;
+  --dark: #0b0b0e;
+  --surface: #141416;
+  --surface-light: #1b1b1f;
+  --text-main: #ffffff;
+  --text-soft: #e2e2e2;
+}
+
+/* General */
+body {
+  margin: 0;
+  font-family: "Inter", Arial, sans-serif;
+  background-color: var(--dark);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.events-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* HERO */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  color: #fff;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  margin-bottom: 15px;
+  letter-spacing: -0.5px;
+}
+
+.hero p {
+  color: #fff;
+  opacity: 0.9;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* SECCIONES GENERALES */
+.section {
+  padding: 80px 40px;
+  width: 100%;
+  max-width: 1400px;
+  text-align: center;
+}
+
+.section h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: var(--accent-light);
+}
+
+.section p {
+  color: var(--text-soft);
+}
+
+/* === PAQUETES === */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 10px; /* 🔸 Más juntos */
+  margin-top: 40px;
+}
+
+.card {
+  background: var(--surface-light); /* 🔸 Fondo más oscuro */
+  padding: 25px;
+  border-radius: 0; /* 🔸 Sin bordes redondeados para unir visualmente */
+  text-align: left;
+  color: var(--text-main);
+  border: 1px solid #222;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  background: #1e1e24;
+  transform: translateY(-3px);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: var(--text-main);
+  font-size: 1.4rem;
+}
+
+.card p,
+.card li {
+  color: var(--text-soft);
+}
+
+.card ul {
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.price {
+  font-size: 1.5rem;
+  color: var(--accent);
+  margin: 15px 0 5px;
+}
+
+.category {
+  color: var(--accent-light);
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* === PROCESO === */
+.process .steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.step {
+  background: var(--surface);
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.step-number {
+  font-size: 2rem;
+  color: var(--accent-light);
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* === STATUS (Eventos) === */
+.status.ok {
+  color: #7fff7f;
+}
+
+.status.pending {
+  color: #ffcc66;
+}
+
+/* === CTA === */
+.cta {
+  background: var(--accent);
+  color: var(--light);
+  text-align: center;
+  padding: 80px 20px;
+  width: 100%;
+}
+
+.cta h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.cta p {
+  opacity: 0.95;
+  font-size: 1.1rem;
+  max-width: 700px;
+  margin: 0 auto 20px;
+}
+
+/* === BOTONES === */
+.btn-primary,
+.btn-secondary,
+.btn-light {
+  border: none;
+  padding: 12px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--accent-light);
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-light {
+  background: #fff;
+  color: var(--accent);
+}
+
+.btn-light:hover {
+  background: #f3f3f3;
+}
+
+.btn-primary.small {
+  font-size: 0.9rem;
+  margin-top: 12px;
+}
+
+.small-text {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-top: 10px;
+}

@@ -72,7 +72,7 @@ function DashboardPage() {
 
               <Nav.Link onClick={() => navigate("/ofertas")}>Ofertas</Nav.Link>
               <Nav.Link onClick={() => navigate("/Seguridad")}>seguridad</Nav.Link>
-              <Nav.Link onClick={() => navigate("/eventos")}>Eventos</Nav.Link>
+              <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
               <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
 
               <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">

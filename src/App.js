@@ -33,6 +33,7 @@ import CategoriasAdmin from './pages/CategoriasAdmin/CategoriasAdmin';
 import SeguridadAdmin from './pages/Seguridad/SeguridadAdmin';
 import HelpCenter from './pages/HelpCenter/HelpCenter';
 import OfertasPirotecnia from './pages/OfertasPirotecnia/OfertasPirotecnia';
+import EventsPage from './pages/EventsPage/EventsPage';
 
 import Admin from './pages/Admin/Admin';
 
@@ -65,10 +66,11 @@ function App() {
        <Route path="/inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
         <Route path="/categorias" element={<ProtectedRoute> <CategoriasAdmin /> </ProtectedRoute> } />
         <Route path="/seguridad" element={<ProtectedRoute> <SeguridadAdmin /> </ProtectedRoute> } />  
-       
+       <Route path="/events" element={<ProtectedRoute> <EventsPage /> </ProtectedRoute> } />
         <Route path="/pedidos" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />
         <Route path="/helpcenter" element={<ProtectedRoute> <HelpCenter /> </ProtectedRoute> } />
         <Route path="/ofertas" element={<ProtectedRoute> <OfertasPirotecnia /> </ProtectedRoute> } /> 
+        
         
         
     
