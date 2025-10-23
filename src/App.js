@@ -13,7 +13,6 @@ import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 
 
-
 // Rutas para hooks
 
 import UseEffectPlay from './pages/Playground/UseEffectPlay';
