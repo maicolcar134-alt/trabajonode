@@ -1,8 +1,8 @@
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import logo from "../../assets/mas.jpg";
-import userDefault from "../../assets/user.png";
+import logo from "../../assets/Explosión de color y energía.png";
+import userDefault from "../../assets/Explosión de color y energía.png";
 import "./DashboardPage.css";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import img1 from "../../assets/espectaculo-fuegos-artificiales.jpg";
 import img2 from "../../assets/fuegos-artificiales-rojos-azules-sobre-fondo-negro_69379-78.jpg";
 import img3 from "../../assets/imagen2.jpg";
 import img4 from "../../assets/images.jpg";
+import "react-bootstrap"
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -111,11 +112,11 @@ function DashboardPage() {
               <Nav.Link onClick={() => navigate("/Inicio")} className="active-link">Inicio</Nav.Link>
               <Nav.Link onClick={() => navigate("/Categorias")}>Categorias</Nav.Link>
 
-              <Nav.Link onClick={() => navigate("/ofertas")}>Ofertas</Nav.Link>
+              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>Ofertas</Nav.Link>
               <Nav.Link onClick={() => navigate("/Seguridad")}>seguridad</Nav.Link>
+              
               <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
-
+              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link> 
               <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
                 <i className="bi bi-shield-lock"></i> Admin
               </Nav.Link>
@@ -136,7 +137,7 @@ function DashboardPage() {
               )}
 
               {/* Ícono carrito */}
-              <Nav.Link onClick={() => navigate("/producto")} className="cart-icon">
+              <Nav.Link onClick={() => navigate("/productos")} className="cart-icon">
                 <FaShoppingCart />
               </Nav.Link>
             </Nav>
@@ -196,6 +197,7 @@ function DashboardPage() {
 {/* Botones */}
 <div className="button-group">
   <button className="btn btn-orange">Explorar catalogo</button>
+  
   <button className="btn btn-black">Guia de seguridad</button>
 </div>
 
@@ -390,7 +392,7 @@ function DashboardPage() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline">
+                <a href="" className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline">
                   Guía de Seguridad
                 </a>
               </li>
@@ -400,7 +402,7 @@ function DashboardPage() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline">
+                <a href="" className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline">
                   Envíos y Entregas
                 </a>
               </li>
@@ -411,14 +413,14 @@ function DashboardPage() {
             <h4 className="mb-4">Contacto</h4>
             <ul className="space-y-3 list-none p-0 m-0">
               <li className="flex items-start gap-2 text-sm text-white/80">
-                <span>+57 (1) 234 5678</span>
+                <span>+573213148729</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-white/80">
                 <span>info@pyroshop.co</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-white/80">
                 <span>
-                  Calle 123 # 45-67<br />
+                  Calle 12 # 45-67<br />
                   Ocaña, Norte de Santander
                 </span>
               </li>

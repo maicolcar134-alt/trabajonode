@@ -8,12 +8,10 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "autoprefixer": "^10.4.21",
     "bootstrap": "^5.3.7",
     "chart.js": "^4.5.1",
-    "firebase": "^12.3.0",
+    "firebase": "^12.4.0",
     "lucide-react": "^0.546.0",
-    "postcss": "^8.5.6",
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.10",
     "react-chartjs-2": "^5.3.0",
@@ -50,6 +48,8 @@
     ]
   },
   "devDependencies": {
-    "tailwindcss": "^4.1.14"
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.15"
   }
 }

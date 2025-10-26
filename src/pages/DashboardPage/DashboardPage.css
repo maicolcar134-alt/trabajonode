@@ -65,13 +65,13 @@
 
 /* Caja de contenido dentro del fondo */
 .overlay {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(227, 220, 220, 0.6);
   padding: 40px;
   border-radius: 12px;
   max-width: 900px;
   width: 95%;
   text-align: center;
-  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 25px rgba(239, 234, 234, 0.6);
 }
 
 .welcome-title {
@@ -81,7 +81,7 @@
 }
 
 .welcome-text {
-  color: #ccc;
+  color: #141414;
   margin-bottom: 20px;
 }
 
@@ -97,7 +97,7 @@
   width: 100px;
   border-radius: 50%;
   margin-top: 15px;
-  border: 3px solid #fff;
+  border: 3px solid #343131;
 }
 /* botones */
 
@@ -109,16 +109,18 @@
 
 .btn {
   font-weight: 600;
-  color: white;
-  border: 2px solid white;
+  color: rgb(8, 8, 8);
+  border: 2px solid rgb(221, 218, 215);
   border-radius: 9999px; /* hace el botón completamente redondo */
   padding: 0.75rem 2rem;
   transition: all 0.3s ease;
   cursor: pointer;
+
 }
 
 .btn-orange {
   background-color: #f97316; /* naranja */
+  color: #0b0b0b;
 }
 
 .btn-orange:hover {
@@ -127,12 +129,13 @@
 }
 
 .btn-black {
-  background-color: #000;
+  background-color: #e67417;
+  color: #100f0f;
 }
 
 .btn-black:hover {
   background-color: #fff;
-  color: #000;
+  color: #111111;
   transform: translateY(-2px);
 }
 
@@ -212,7 +215,7 @@
 }
 
 .footer .legal-box {
-  background: rgba(255, 77, 79, 0.1);
+  background: rgba(221, 211, 211, 0.1);
   border: 1px solid rgba(255, 77, 79, 0.3);
   border-radius: 12px;
   padding: 1rem;

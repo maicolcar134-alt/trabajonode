@@ -24,7 +24,7 @@ export default function HelpCenter() {
       <div className="contact-section">
         <div className="card green">
           <h3>📞 Teléfono</h3>
-          <p className="main">+57 (1) 3213148729</p>
+          <p className="main">+57  3213148729</p>
           <p>🕒 L-V: 8:00–18:00, S: 9:00–13:00</p>
           <button>Contactar</button>
         </div>

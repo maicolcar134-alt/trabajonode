@@ -4,7 +4,7 @@ import { auth, db } from '../../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import './LoginPage.css';
-import logo from '../../assets/mas.jpg';
+import logo from '../../assets/Explosión de color y energía.png';
 
 function LoginPage() {
   const [email, setEmail] = useState('');

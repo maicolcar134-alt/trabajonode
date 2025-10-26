@@ -1,0 +1,193 @@
+.auditoria {
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  padding: 30px;
+  font-family: "Poppins", sans-serif;
+}
+
+h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #f1f5f9;
+}
+
+.subtext {
+  margin-bottom: 20px;
+  color: #94a3b8;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #1e293b;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.card h2 {
+  font-size: 28px;
+  margin: 0;
+}
+
+.card.success h2 {
+  color: #22c55e;
+}
+
+.card.warning h2 {
+  color: #fbbf24;
+}
+
+.card.danger h2 {
+  color: #ef4444;
+}
+
+.card p {
+  margin-top: 5px;
+  color: #94a3b8;
+}
+
+.solo-lectura {
+  background: #1e293b;
+  padding: 14px 18px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  border-left: 4px solid #3b82f6;
+}
+
+.solo-lectura i {
+  margin-right: 8px;
+  color: #3b82f6;
+}
+
+.solo-lectura span {
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.solo-lectura p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.actividad {
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.header-actividad {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.header-actividad h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.acciones {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.btn.filtro {
+  background: #334155;
+  color: #f0ece2;
+}
+
+.btn.exportar {
+  background: #ef4444;
+  color: white;
+}
+
+.btn i {
+  margin-right: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #334155;
+  text-align: left;
+}
+
+th {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.tag {
+  background: #3b82f6;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.estado {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.estado.exito {
+  background: #14532d;
+  color: #22c55e;
+}
+
+.estado.pendiente {
+  background: #78350f;
+  color: #fbbf24;
+}
+
+.estado.fallido {
+  background: #7f1d1d;
+  color: #ef4444;
+}
+
+.retencion {
+  background: #1e293b;
+  margin-top: 20px;
+  padding: 14px 18px;
+  border-radius: 8px;
+}
+
+.retencion h4 {
+  margin: 0;
+  color: #f1f5f9;
+}
+
+.retencion p {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 6px 0;
+}
+
+.retencion span {
+  font-size: 13px;
+  color: #64748b;
+}

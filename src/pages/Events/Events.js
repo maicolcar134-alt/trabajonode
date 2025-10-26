@@ -1,5 +1,5 @@
 import React from "react";
-import "./EventsPage.css";
+import "./Events.css";
 
 export function EventsPage() {
   const eventPackages = [

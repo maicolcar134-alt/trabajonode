@@ -1,16 +1,37 @@
 import React from 'react';
 import './DashboardaAdmin.css';
 import { Line, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import { useNavigate } from 'react-router-dom';
+import { Home } from 'lucide-react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from 'chart.js';
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
 
 const DashboardaAdmin = () => {
+  const navigate = useNavigate();
+
+  // 🔹 Acción del botón Volver
+  const handleVolver = () => {
+    navigate('/Admin'); // Cambia esta ruta si deseas que regrese, por ejemplo, a "/tienda" o "/admin"
+  };
+
+  // Datos vacíos para los gráficos
   const lineData = {
-    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+    labels: [],
     datasets: [
       {
-        label: 'Ventas',
-        data: [800000, 950000, 870000, 910000, 970000, 990000, 930000],
+        label: '',
+        data: [],
         borderColor: '#f97316',
         backgroundColor: 'rgba(249, 115, 22, 0.2)',
         tension: 0.4,
@@ -19,10 +40,10 @@ const DashboardaAdmin = () => {
   };
 
   const pieData = {
-    labels: ['Bengalas', 'Cohes', 'Fuentes', 'Baterías', 'Otros'],
+    labels: [],
     datasets: [
       {
-        data: [35, 25, 20, 15, 5],
+        data: [],
         backgroundColor: ['#22c55e', '#f97316', '#eab308', '#3b82f6', '#6b7280'],
       },
     ],
@@ -30,29 +51,38 @@ const DashboardaAdmin = () => {
 
   return (
     <div className="dashboard-container">
+      {/* 🔹 Barra superior */}
       <div className="top-status-bar">
-        <span className="status-text">🟢 Sistema operando normalmente</span>
+        <span className="status-text">Panel Administrativo</span>
+
+        {/* 🔙 Botón Volver al Inicio */}
+        <button className="btn-volver" onClick={handleVolver}>
+          <Home size={16} />
+          <span>Volver  Admin </span>
+        </button>
       </div>
 
+      {/* 🔹 Tarjetas estadísticas */}
       <div className="stats-cards">
         <div className="card green">
-          <h2>$12.800.000</h2>
+          <h2>--</h2>
           <p>Ventas del Día</p>
         </div>
         <div className="card orange">
-          <h2>23</h2>
+          <h2>--</h2>
           <p>Productos</p>
         </div>
         <div className="card blue">
-          <h2>47</h2>
+          <h2>--</h2>
           <p>Activos</p>
         </div>
         <div className="card red">
-          <h2>5</h2>
+          <h2>--</h2>
           <p>Pendientes</p>
         </div>
       </div>
 
+      {/* 🔹 Gráficos */}
       <div className="charts-row">
         <div className="chart-box line-chart">
           <h3>📈 Ventas Semanales</h3>
@@ -64,29 +94,31 @@ const DashboardaAdmin = () => {
         </div>
       </div>
 
+      {/* 🔹 Cumplimiento Legal */}
       <div className="compliance-section">
         <h3>✅ Cumplimiento Legal</h3>
         <div className="progress-item">
           <span>Productos con ficha técnica</span>
-          <div className="progress-bar yellow" style={{ width: '94%' }}></div>
+          <div className="progress-bar yellow" style={{ width: '0%' }}></div>
         </div>
         <div className="progress-item">
           <span>Verificaciones KYC completadas</span>
-          <div className="progress-bar red" style={{ width: '87%' }}></div>
+          <div className="progress-bar red" style={{ width: '0%' }}></div>
         </div>
         <div className="progress-item">
           <span>Productos certificados CE</span>
-          <div className="progress-bar green" style={{ width: '100%' }}></div>
+          <div className="progress-bar green" style={{ width: '0%' }}></div>
         </div>
       </div>
 
+      {/* 🔹 Últimas Operaciones */}
       <div className="operations-section">
         <h3>🕓 Últimas Operaciones</h3>
         <ul>
-          <li className="success">#12847 - Juan Pérez — Pedido completado</li>
-          <li className="warning">#12846 - María García — Verificación KYC</li>
-          <li className="info">#12845 - Carlos López — Pedido enviado</li>
-          <li className="error">#12844 - Ana Martínez — Ficha técnica subida</li>
+          <li className="success">--</li>
+          <li className="warning">--</li>
+          <li className="info">--</li>
+          <li className="error">--</li>
         </ul>
       </div>
     </div>
