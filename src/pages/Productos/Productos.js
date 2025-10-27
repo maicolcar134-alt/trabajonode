@@ -6,64 +6,12 @@ export default function Productos() {
   const navigate = useNavigate(); // ✅ Inicializa useNavigate
 
   
-const [productos, setProductos] = useState([
- // --- TORTAS ---
-{ id: 1, nombre: "Torta 16 tiros Tsunami", precio: 750000, stock: 36, imagen: "/imagenes/torta_tsunami.jpg" },
-{ id: 2, nombre: "Torta 16 tiros Ciclón", precio: 750000, stock: 36, imagen: "/imagenes/torta_ciclon.jpg" },
-{ id: 3, nombre: "Torta 16 tiros Tornado", precio: 750000, stock: 36, imagen: "/imagenes/torta_tornado.jpg" },
-{ id: 4, nombre: "Torta 15 tiros Fin del Mundo", precio: 820000, stock: 16, imagen: "/imagenes/torta_fin_del_mundo.jpg" },
-{ id: 5, nombre: "Torta 15 tiros Tormenta de Plata", precio: 820000, stock: 16, imagen: "/imagenes/torta_tormenta_de_plata.jpg" },
-{ id: 6, nombre: "Torta 19 tiros Cazador de la Noche", precio: 680000, stock: 24, imagen: "/imagenes/torta_cazador_de_la_noche.jpg" },
-{ id: 7, nombre: "Torta 19 tiros Coyote", precio: 680000, stock: 24, imagen: "/imagenes/torta_coyote.jpg" },
-{ id: 8, nombre: "Torta 19 tiros La Traviesa", precio: 680000, stock: 24, imagen: "/imagenes/torta_la_traviesa.jpg" },
-{ id: 9, nombre: "Torta 19 tiros Cuarentena", precio: 570000, stock: 12, imagen: "/imagenes/torta_cuarentena.jpg" },
-{ id: 10, nombre: "Torta 19 tiros La Purga", precio: 570000, stock: 12, imagen: "/imagenes/torta_la_purga.jpg" },
-{ id: 11, nombre: "Torta 25 tiros Dios Egipcio", precio: 800000, stock: 24, imagen: "/imagenes/torta_dios_egipcio.jpg" },
-{ id: 12, nombre: "Torta 25 tiros Poderoso Ra", precio: 860000, stock: 24, imagen: "/imagenes/torta_poderoso_ra.jpg" },
-{ id: 13, nombre: "Torta 25 tiros Abanico Sirena", precio: 830000, stock: 12, imagen: "/imagenes/torta_sirena.jpg" },
-{ id: 14, nombre: "Torta 25 tiros Reina Egipcia", precio: 860000, stock: 24, imagen: "/imagenes/torta_reina_egipcia.jpg" },
-{ id: 15, nombre: "Torta 25 tiros Abanico Dulce Sorpresa", precio: 880000, stock: 8, imagen: "/imagenes/torta_dulce_sorpresa.jpg" },
-{ id: 16, nombre: "Torta 30 tiros Cinturón de Fuego", precio: 680000, stock: 12, imagen: "/imagenes/torta_cinturon_de_fuego.jpg" },
-{ id: 17, nombre: "Torta 36 tiros Isla Misteriosa", precio: 700000, stock: 12, imagen: "/imagenes/torta_isla_misteriosa.jpg" },
-{ id: 18, nombre: "Torta 36 tiros Abanico Megalodon", precio: 680000, stock: 12, imagen: "/imagenes/torta_megalodon.jpg" },
-{ id: 19, nombre: "Torta 36 tiros Paraíso Fantástico", precio: 680000, stock: 12, imagen: "/imagenes/torta_paraiso_fantastico.jpg" },
-{ id: 20, nombre: "Torta 42 tiros La Tremenda", precio: 640000, stock: 16, imagen: "/imagenes/torta_la_tremenda.jpg" },
-{ id: 21, nombre: "Torta 48 tiros Perlitas del Mar", precio: 500000, stock: 80, imagen: "/imagenes/torta_perlitas_del_mar.jpg" },
-{ id: 22, nombre: "Torta 49 tiros Gladiador", precio: 650000, stock: 8, imagen: "/imagenes/torta_gladiador.jpg" },
-{ id: 23, nombre: "Torta 49 tiros Spartacus", precio: 650000, stock: 8, imagen: "/imagenes/torta_spartacus.jpg" },
-{ id: 24, nombre: "Torta 49 tiros Abanico Kraken", precio: 670000, stock: 8, imagen: "/imagenes/torta_kraken.jpg" },
-{ id: 25, nombre: "Torta 100 tiros Tanque de Guerra", precio: 700000, stock: 4, imagen: "/imagenes/torta_tanque_de_guerra.jpg" },
-{ id: 26, nombre: "Torta 100 tiros Warzone", precio: 700000, stock: 4, imagen: "/imagenes/torta_warzone.jpg" },
-{ id: 27, nombre: "Torta 100 tiros Combate Aéreo", precio: 720000, stock: 4, imagen: "/imagenes/torta_combate_aereo.jpg" },
-{ id: 28, nombre: "Torta 100 tiros Apache", precio: 720000, stock: 4, imagen: "/imagenes/torta_apache.jpg" },
-{ id: 29, nombre: "Torta 200 tiros Explosión Lunar", precio: 720000, stock: 2, imagen: "/imagenes/torta_explosion_lunar.jpg" },
-{ id: 30, nombre: "Torta 200 tiros Cometa Halley", precio: 720000, stock: 2, imagen: "/imagenes/torta_cometa_halley.jpg" },
 
-// --- JUGUETERÍA ---
-{ id: 31, nombre: "Vela Pirocracker 10 tiros", precio: 650000, stock: 24, imagen: "/imagenes/vela_pirocracker_10.jpg" },
-{ id: 32, nombre: "Vela Pirocracker 15 tiros", precio: 720000, stock: 24, imagen: "/imagenes/vela_pirocracker_15.jpg" },
-{ id: 33, nombre: "Vela Pirocracker 30 tiros", precio: 750000, stock: 30, imagen: "/imagenes/vela_pirocracker_30.jpg" },
-{ id: 34, nombre: "Bazuca Fest", precio: 780000, stock: 12, imagen: "/imagenes/bazuca_fest.jpg" },
-{ id: 35, nombre: "Barril Cracker Fuente Pájaro Loco", precio: 550000, stock: 40, imagen: "/imagenes/barril_pajaro_loco.jpg" },
-{ id: 36, nombre: "Volcán 7\"", precio: 690000, stock: 8, imagen: "/imagenes/volcan_7.jpg" },
-{ id: 37, nombre: "Fuente Triangular El Anillo", precio: 600000, stock: 100, imagen: "/imagenes/fuente_el_anillo.jpg" },
-{ id: 38, nombre: "Match Cracker Metralleta", precio: 500000, stock: 24, imagen: "/imagenes/match_cracker_metralleta.jpg" },
-{ id: 39, nombre: "Misil 100 tiros", precio: 650000, stock: 20, imagen: "/imagenes/misil_100_tiros.jpg" },
-{ id: 40, nombre: "Volcancito de Colombia", precio: 1400000, stock: 200, imagen: "/imagenes/volcancito_colombia.jpg" },
+ 
+  const [carrito, setCarrito] = useState([]); 
+     
 
-// --- ESCENARIO Y PROFESIONAL ---
-{ id: 41, nombre: "Candela Cometa Verde", precio: 800000, stock: 24, imagen: "/imagenes/candela_cometa_verde.jpg" },
-{ id: 42, nombre: "Candela Cometa Roja", precio: 800000, stock: 24, imagen: "/imagenes/candela_cometa_roja.jpg" },
-{ id: 43, nombre: "Fuente Indoor Plata 3mts x 30s", precio: 1350000, stock: 20, imagen: "/imagenes/fuente_indoor_3mts.jpg" },
-{ id: 44, nombre: "Carcasa 2.5\"", precio: 1600000, stock: 96, imagen: "/imagenes/carcasa_25.jpg" },
-{ id: 45, nombre: "Carcasa 6\"", precio: 700000, stock: 9, imagen: "/imagenes/carcasa_6.jpg" },
-{ id: 46, nombre: "Carcasa 8\"", precio: 850000, stock: 9, imagen: "/imagenes/carcasa_8.jpg" },
-]);
-
-  const [carrito, setCarrito] = useState([]);
-
-  const [descuento, setDescuento] = useState(0);
-
+  const descuento = 0.05; // 5% de descuento POR mayoria
   useEffect(() => {
     const carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
     setCarrito(carritoGuardado);
@@ -157,19 +105,7 @@ const [productos, setProductos] = useState([
 
       <h2>Productos disponibles</h2>
       <div className="productos">
-        {productos.map((p) => (
-          <div key={p.id} className="producto-card">
-            <img
-              src={p.imagen}
-              alt={p.nombre}
-              style={{ width: "150px", height: "150px", objectFit: "cover", borderRadius: "8px", marginBottom: "10px" }}
-            />
-            <h3>{p.nombre}</h3>
-            <p>Precio: ${p.precio.toLocaleString()}</p>
-            <p>Stock: {p.stock}</p>
-            <button onClick={() => agregarAlCarrito(p)}>Agregar al carrito</button>
-          </div>
-        ))}
+      
       </div>
 
       <hr />
@@ -231,6 +167,7 @@ const [productos, setProductos] = useState([
         <p>Subtotal: ${calcularSubtotal().toLocaleString()}</p>
         <p>IVA (19%): ${calcularIVA(calcularSubtotal()).toLocaleString()}</p>
         <p>Envío: ${calcularEnvio(calcularSubtotal()).toLocaleString()}</p>
+        <p>Descuento (5%): -${(calcularSubtotal() * descuento).toLocaleString()}</p>
         
         <h2>Total: ${calcularTotal().toLocaleString()}</h2>
 

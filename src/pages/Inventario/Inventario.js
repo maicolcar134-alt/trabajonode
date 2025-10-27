@@ -13,12 +13,12 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { useNavigate } from "react-router-dom"; // ✅ Importa para navegación
+import { useNavigate } from "react-router-dom";
 import { db, storage } from "../../firebase";
 import "./Inventario.css";
 
 export default function Inventario() {
-  const navigate = useNavigate(); // ✅ Hook para volver
+  const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
   const [nombre, setNombre] = useState("");
   const [categoria, setCategoria] = useState("");
@@ -29,10 +29,15 @@ export default function Inventario() {
   const [editando, setEditando] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  // 🔄 Cargar productos en tiempo real
+  // Filtros
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterCategoria, setFilterCategoria] = useState("");
+
+  // 🔄 Escucha en tiempo real los productos
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "productos"), (snapshot) => {
-      setProductos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setProductos(data);
     });
     return () => unsub();
   }, []);
@@ -60,14 +65,22 @@ export default function Inventario() {
 
   // ✅ Validaciones
   const validarCampos = () => {
-    if (!nombre || !categoria || !precio || !stock)
-      return alert("⚠️ Todos los campos son obligatorios");
-    if (precio <= 0) return alert("⚠️ El precio debe ser mayor que 0");
-    if (stock < 0) return alert("⚠️ El stock no puede ser negativo");
+    if (!nombre || !categoria || !precio || !stock) {
+      alert("⚠️ Todos los campos son obligatorios");
+      return false;
+    }
+    if (precio <= 0) {
+      alert("⚠️ El precio debe ser mayor que 0");
+      return false;
+    }
+    if (stock < 0) {
+      alert("⚠️ El stock no puede ser negativo");
+      return false;
+    }
     return true;
   };
 
-  // 💾 Guardar producto
+  // 💾 Guardar producto (crear o editar)
   const handleGuardar = async (e) => {
     e.preventDefault();
     if (!validarCampos()) return;
@@ -75,6 +88,7 @@ export default function Inventario() {
     try {
       let imageUrl = editando?.imagenUrl || "";
 
+      // Si se seleccionó una nueva imagen
       if (imagen) {
         if (editando?.imagenUrl) {
           const oldRef = ref(storage, editando.imagenUrl);
@@ -139,23 +153,50 @@ export default function Inventario() {
     }
   };
 
-  // 🔙 Volver al administrador
-  const handleVolver = () => {
-    navigate("/admin"); // 🔁 Redirige a la ruta del panel administrador
-  };
+  const handleVolver = () => navigate("/admin");
+
+  // 🔍 Filtrado
+  const productosFiltrados = productos.filter((p) => {
+    return (
+      (!filterCategoria ||
+        p.categoria.toLowerCase() === filterCategoria.toLowerCase()) &&
+      (!searchTerm || p.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+  });
+
+  const categoriasUnicas = [...new Set(productos.map((p) => p.categoria))];
 
   return (
     <div className="inventario">
       <div className="inventario-header">
-        <h1>Gestión de Inventario</h1>
+        <h1>📦 Gestión de Inventario</h1>
         <button className="btn-volver" onClick={handleVolver}>
-          🔙 Volver al Administrador
+          🔙 Volver
         </button>
       </div>
 
-      <button className="btn-nuevo" onClick={() => setShowModal(true)}>
-        + Nuevo Producto
-      </button>
+      <div className="filtros">
+        <input
+          type="text"
+          placeholder="🔎 Buscar por nombre..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <select
+          value={filterCategoria}
+          onChange={(e) => setFilterCategoria(e.target.value)}
+        >
+          <option value="">Todas las categorías</option>
+          {categoriasUnicas.map((cat, i) => (
+            <option key={i} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+        <button className="btn-nuevo" onClick={() => setShowModal(true)}>
+          ➕ Nuevo Producto
+        </button>
+      </div>
 
       <table className="tabla-productos">
         <thead>
@@ -169,20 +210,11 @@ export default function Inventario() {
           </tr>
         </thead>
         <tbody>
-          {productos.map((p) => (
+          {productosFiltrados.map((p) => (
             <tr key={p.id}>
               <td>
                 {p.imagenUrl ? (
-                  <img
-                    src={p.imagenUrl}
-                    alt={p.nombre}
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "8px",
-                      objectFit: "cover",
-                    }}
-                  />
+                  <img src={p.imagenUrl} alt={p.nombre} className="miniatura" />
                 ) : (
                   "Sin imagen"
                 )}
@@ -192,10 +224,7 @@ export default function Inventario() {
               <td>${p.precio}</td>
               <td>{p.stock}</td>
               <td>
-                <button
-                  className="btn-editar"
-                  onClick={() => handleEditar(p)}
-                >
+                <button className="btn-editar" onClick={() => handleEditar(p)}>
                   ✏️ Editar
                 </button>
                 <button
@@ -210,40 +239,46 @@ export default function Inventario() {
         </tbody>
       </table>
 
+      {/* Modal */}
       {showModal && (
         <div className="modal">
           <div className="modal-content">
-            <h2>{editando ? "Editar Producto" : "Agregar Producto"}</h2>
-            <form onSubmit={handleGuardar}>
+            <h2>{editando ? "✏️ Editar Producto" : "➕ Agregar Producto"}</h2>
+            <form onSubmit={handleGuardar} className="formulario-producto">
               <input
                 type="text"
                 placeholder="Nombre del producto"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
+                required
               />
               <input
                 type="text"
                 placeholder="Categoría"
                 value={categoria}
                 onChange={(e) => setCategoria(e.target.value)}
+                required
               />
               <input
                 type="number"
                 placeholder="Precio"
                 value={precio}
                 onChange={(e) => setPrecio(e.target.value)}
+                min="0"
+                required
               />
               <input
                 type="number"
                 placeholder="Stock"
                 value={stock}
                 onChange={(e) => setStock(e.target.value)}
+                min="0"
+                required
               />
 
-              {/* Vista previa */}
               {preview && (
                 <div className="preview-container">
-                  <img src={preview} alt="Vista previa" />
+                  <img src={preview} alt="Vista previa" className="preview-img" />
                 </div>
               )}
 

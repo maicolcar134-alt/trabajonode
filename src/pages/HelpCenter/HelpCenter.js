@@ -1,10 +1,74 @@
 import React from "react";
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import "./HelpCenter.css";
+import logo from "../../assets/Explosión de color y energía.png";
+import user from "../../assets/Explosión de color y energía.png";
+
 
 export default function HelpCenter() {
+  const navigate = useNavigate();
+  const user = false; // 🔸 cambia esto por tu lógica de autenticación real
+
+  const handleLogout = () => {
+    console.log("Cerrar sesión");
+    // Aquí agregas tu lógica real para cerrar sesión (Firebase, etc.)
+  };
+
   return (
     <div className="helpcenter">
-      {/* Encabezado */}
+                 {/* NAVBAR */}
+      <Navbar expand="lg" variant="dark" className="dashboard-navbar">
+        <Container>
+          <Navbar.Brand onClick={() => navigate("/dashboard")} className="brand-logo">
+            <img src={logo} alt="logo" height="40" />
+            <span className="ms-2 fw-bold text-warning">PyroShop</span>
+          </Navbar.Brand>
+          
+
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto align-items-center">
+              <Nav.Link onClick={() => navigate("/Dashboard")} className="active-link">Inicio</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Categorias")}>Categorias</Nav.Link>
+
+              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>Ofertas</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Seguridad")}>seguridad</Nav.Link>
+              
+              <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
+              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link> 
+              <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
+                <i className="bi bi-shield-lock"></i> Admin
+              </Nav.Link>
+           
+
+              {/* Botón de usuario o iniciar sesión */}
+              {user ? (
+                <Nav.Item className="logout-container" onClick={handleLogout}>
+                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
+                    <FaSignOutAlt /> Cerrar Sesión
+                    <img src={user} alt="Foto de usuario" className="user-photo-nav" />
+                  </Nav.Link>
+                </Nav.Item>
+              ) : (
+                <Nav.Link onClick={() => navigate("/login")} className="d-flex align-items-center gap-2 fw-bold text-light">
+                  <FaUser /> Acceder
+                </Nav.Link>
+              )}
+
+              {/* Ícono carrito */}
+              <Nav.Link onClick={() => navigate("/productos")} className="cart-icon">
+                <FaShoppingCart />
+              </Nav.Link>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+
+
+      {/* 🔹 CONTENIDO PRINCIPAL */}
       <div className="header">
         <button className="btn-center">Centro de Ayuda</button>
         <h2>¿En qué podemos ayudarte?</h2>
@@ -20,11 +84,11 @@ export default function HelpCenter() {
         </div>
       </div>
 
-      {/* Tarjetas de contacto */}
+      {/* 🔹 Tarjetas de contacto */}
       <div className="contact-section">
         <div className="card green">
           <h3>📞 Teléfono</h3>
-          <p className="main">+57  3213148729</p>
+          <p className="main">+57 3213148729</p>
           <p>🕒 L-V: 8:00–18:00, S: 9:00–13:00</p>
           <button>Contactar</button>
         </div>
@@ -44,7 +108,7 @@ export default function HelpCenter() {
         </div>
       </div>
 
-      {/* Secciones de categorías */}
+      {/* 🔹 Secciones de categorías */}
       <div className="categories">
         <button className="active">📦 Pedidos y Compras</button>
         <button>🚚 Envíos y Entregas</button>
@@ -53,7 +117,7 @@ export default function HelpCenter() {
         <button>👤 Cuenta y Perfil</button>
       </div>
 
-      {/* Preguntas frecuentes */}
+      {/* 🔹 Preguntas frecuentes */}
       <div className="faq-section">
         <h3>Pedidos y Compras</h3>
         <details>
@@ -86,7 +150,7 @@ export default function HelpCenter() {
         </details>
       </div>
 
-      {/* Guías y Chat */}
+      {/* 🔹 Guías y Chat */}
       <div className="extra-section">
         <div className="guide purple">
           <h4>📘 Guías y Tutoriales</h4>
