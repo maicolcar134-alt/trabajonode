@@ -117,27 +117,126 @@
   cursor: pointer;
 
 }
-
+/* botones banner */
 .btn-orange {
-  background-color: #f97316; /* naranja */
-  color: #0b0b0b;
+  background-color: orangered;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
-
 .btn-orange:hover {
-  background-color: #fb923c;
-  transform: translateY(-2px);
+  background-color: #333;
 }
 
 .btn-black {
-  background-color: #e67417;
-  color: #100f0f;
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.btn-black:hover {
+  background-color: #333;
 }
 
-.btn-black:hover {
-  background-color: #fff;
-  color: #111111;
-  transform: translateY(-2px);
+
+/* ======== PRODUCTOS ======== */
+.productos-destacados,
+.catalogo-completo {
+  background-color: #111;
+  color: #fff !important;
+  padding: 40px 0;
 }
+
+/* Tarjetas de producto */
+.card {
+  background-color: #1a1a1a !important;
+  border-radius: 15px;
+  transition: 0.3s ease;
+  overflow: hidden;
+  border: 1px solid #222;
+  color: #fff !important;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+}
+
+.card-title {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.card-text,
+.card p,
+.card span {
+  color: #fff !important;
+}
+
+.btn-warning {
+  background-color: #f97316 !important;
+  border: none;
+  color: #fff !important;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-warning:hover {
+  background-color: #ff8f3c !important;
+  transform: scale(1.05);
+}
+
+.badge {
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #fff !important;
+}
+
+.card-img-top {
+  border-bottom: 2px solid #f97316;
+}
+
+.card .price {
+  color: #ff9900 !important;
+  font-weight: bold;
+}
+/* ======== FILTROS CATALOGO ======== */
+.filtros-catalogo {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.filtros-catalogo button {
+  background-color: transparent;
+  border: 1px solid #f97316;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.filtros-catalogo button:hover {
+  background-color: #f97316;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+}
+
+.filtros-catalogo button.active {
+  background-color: #f97316;
+  color: #fff;
+  border-color: #ffae4d;
+}
+
 
 /* Footer */
 .footer {

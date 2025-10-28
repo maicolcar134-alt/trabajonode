@@ -196,9 +196,19 @@ function DashboardPage() {
 
 {/* Botones */}
 <div className="button-group">
-  <button className="btn btn-orange">Explorar catalogo</button>
+   <button
+    className="btn btn-orange"
+    onClick={() => window.location.href = "/Categorias"}
+  >
+    Explorar catálogo
+  </button>
   
-  <button className="btn btn-black">Guia de seguridad</button>
+  <button
+  className="btn-black"
+  onClick={() => window.location.href = "/Seguridad"}
+>
+  Guía de Seguridad
+</button>
 </div>
 
 
@@ -236,13 +246,134 @@ function DashboardPage() {
     color: "#fff",
   }}
 >
+<h2
+  className="text-3xl fw-bold mb-5 pb-2 border-bottom border-warning"
+  style={{ borderColor: "#f97316", color: "white" }}
+>
+  Productos Destacados
+</h2>
+
+  <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    {/* Producto 1 */}
+    <div className="col">
+      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
+        <img
+          src={img1}
+          className="card-img-top"
+          alt="Bengalas Doradas Premium"
+          style={{ height: "220px", objectFit: "cover" }}
+        />
+        <div className="card-body">
+          <span className="badge bg-success mb-2">Riesgo Bajo</span>
+          <span className="badge bg-secondary ms-2 mb-2">Ruido: Bajo</span>
+          <h5 className="card-title">Bengalas Doradas Premium</h5>
+          <p className="card-text text-muted">
+            Pack de 10 bengalas de mano con chispas doradas de larga duración.
+          </p>
+          <p className="fw-bold text-warning">$58.000</p>
+          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+    {/* Producto 2 */}
+    <div className="col">
+      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
+        <img
+          src={img2}
+          className="card-img-top"
+          alt="Fuente Volcán de Colores"
+          style={{ height: "220px", objectFit: "cover" }}
+        />
+        <div className="card-body">
+          <span className="badge bg-warning text-dark mb-2">
+            Riesgo Moderado
+          </span>
+          <span className="badge bg-secondary ms-2 mb-2">Ruido: Medio</span>
+          <h5 className="card-title">Fuente Volcán de Colores</h5>
+          <p className="card-text text-muted">
+            Fuente pirotécnica con efectos multicolor de 60 segundos.
+          </p>
+          <p className="fw-bold text-warning">$112.000</p>
+          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+    {/* Producto 3 */}
+    <div className="col">
+      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
+        <img
+          src={img3}
+          className="card-img-top"
+          alt="Cohetes Profesionales"
+          style={{ height: "220px", objectFit: "cover" }}
+        />
+        <div className="card-body">
+          <span className="badge bg-danger mb-2">Riesgo Alto</span>
+          <span className="badge bg-secondary ms-2 mb-2">Ruido: Alto</span>
+          <h5 className="card-title">Cohetes Profesionales - Pack 12</h5>
+          <p className="card-text text-muted">
+            Set de cohetes con estallido de altura y efectos espectaculares.
+          </p>
+          <p className="fw-bold text-warning">$224.000</p>
+          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
+        </div>
+      </div>
+    </div>
+
+    {/* Producto 4 */}
+    <div className="col">
+      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
+        <img
+          src={img4}
+          className="card-img-top"
+          alt="Bengalas de Humo"
+          style={{ height: "220px", objectFit: "cover" }}
+        />
+        <div className="card-body">
+          <span className="badge bg-success mb-2">Riesgo Bajo</span>
+          <span className="badge bg-secondary ms-2 mb-2">Ruido: Bajo</span>
+          <h5 className="card-title">Bengalas de Humo de Colores</h5>
+          <p className="card-text text-muted">
+            Pack de 6 bengalas de humo en diferentes colores para fotografía.
+          </p>
+          <p className="fw-bold text-warning">$83.000</p>
+          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+{/* CATÁLOGO COMPLETO */}
+<section
+  className="catalogo-completo px-5 py-20"
+  style={{
+    backgroundColor: "#0d0d0d",
+    color: "#fff",
+  }}
+>
   <h2
     className="text-3xl fw-bold mb-5 pb-2 border-bottom border-warning"
-    style={{ borderColor: "#f97316" }}
+    style={{ borderColor: "#f97316", color: "white" }}
   >
-    Productos Destacados
+    Catálogo Completo
   </h2>
 
+  {/* Filtros */}
+<div className="filtros-catalogo">
+  <button>Todos</button>
+  <button>Bengalas</button>
+  <button>Cohetes</button>
+  <button>Fuentes</button>
+  <button>Baterías</button>
+  <button>Packs</button>
+</div>
+
+  {/* Productos del catálogo */}
   <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
     {/* Producto 1 */}
     <div className="col">
