@@ -33,16 +33,16 @@ import SeguridadAdmin from './pages/Seguridad/SeguridadAdmin';
 import HelpCenter from './pages/HelpCenter/HelpCenter';
 import OfertasPirotecnia from './pages/OfertasPirotecnia/OfertasPirotecnia';
 import EventsPage from './pages/Events/Events';
-import Pedidos from './pages/Pedidos/Pedidos';
+import Pedidos from './pages/Pedidos/pedidos';
 import Auditoria from './pages/Auditoria/Auditoria';
 import ZonasEnvioPro from './pages/ZonasEnvio/ZonasEnvio';
-import Productos from './pages/Productos/Productos';
+
+
 import Admin from './pages/Admin/Admin';
 
 
 
 
-       
 
 function App() {
   return (
@@ -65,19 +65,23 @@ function App() {
         <Route path="/usuarios" element={<ProtectedRoute> <AuxiliaresPage /> </ProtectedRoute> } />
         <Route path="/dashboarda" element={<ProtectedRoute> <DashboardaAdmin /> </ProtectedRoute> } />
       <Route path="/inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
-      <Route path="/Categorias" element={<ProtectedRoute> <CategoriasAdmin /> </ProtectedRoute> } />
+      <Route path="/Categorias" element={ <CategoriasAdmin />  } />
       <Route path="/Seguridad" element={<ProtectedRoute> <SeguridadAdmin /> </ProtectedRoute> } />
        <Route path="/DashboardaAdmin" element={<ProtectedRoute> <DashboardaAdmin /> </ProtectedRoute> } /> 
        <Route path="/Inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
         <Route path="/categorias" element={<ProtectedRoute> <CategoriasAdmin /> </ProtectedRoute> } />
-        <Route path="/seguridad" element={<ProtectedRoute> <SeguridadAdmin /> </ProtectedRoute> } />  
+        <Route path="/seguridad" element={ <SeguridadAdmin />  } />  
         <Route path="/pedidos" element={<ProtectedRoute> <Pedidos /> </ProtectedRoute> } /> 
-        <Route path="/helpcenter" element={<ProtectedRoute> <HelpCenter /> </ProtectedRoute> } />
-        <Route path="/ofertaspirotecnia" element={<ProtectedRoute> <OfertasPirotecnia /> </ProtectedRoute> } /> 
-        <Route path="/events" element={<ProtectedRoute> <EventsPage /> </ProtectedRoute> } /> 
+        <Route path="/helpcenter" element={ <HelpCenter />  } />
+        <Route path="/ofertaspirotecnia" element={ <OfertasPirotecnia />  } /> 
+        <Route path="/events" element={<EventsPage />  } /> 
         <Route path="/auditoria" element={<ProtectedRoute> <Auditoria /> </ProtectedRoute> } /> 
         <Route path="/ZonasEnvio" element={<ProtectedRoute> <ZonasEnvioPro /> </ProtectedRoute> } />
-        <Route path="/Productos" element={<ProtectedRoute> <Productos /> </ProtectedRoute> } /> 
+       
+     
+        
+     
+       
        
      
         <Route path="/Admin" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />

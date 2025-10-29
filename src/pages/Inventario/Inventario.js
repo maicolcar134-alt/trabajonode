@@ -1,299 +1,299 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   collection,
+  doc,
+  setDoc,
   addDoc,
   updateDoc,
   deleteDoc,
-  doc,
   onSnapshot,
+  serverTimestamp,
 } from "firebase/firestore";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
-import { useNavigate } from "react-router-dom";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { db, storage } from "../../firebase";
+import { useNavigate } from "react-router-dom"; // 👈 agregado
 import "./Inventario.css";
 
+const categoriasData = [
+  { nombre: "Tortas" },
+  { nombre: "Juguetería" },
+  { nombre: "Pirotecnia de Escenario" },
+  { nombre: "Uso Profesional" },
+];
+
 export default function Inventario() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // 👈 necesario para redirigir
   const [productos, setProductos] = useState([]);
-  const [nombre, setNombre] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [precio, setPrecio] = useState("");
-  const [stock, setStock] = useState("");
-  const [imagen, setImagen] = useState(null);
-  const [preview, setPreview] = useState(null);
-  const [editando, setEditando] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editando, setEditando] = useState(null);
+  const [form, setForm] = useState({ nombre: "", categoria: "", precio: "", stock: "" });
+  const [previewLocal, setPreviewLocal] = useState(null);
+  const [fileUploading, setFileUploading] = useState(false);
+  const [filtroBusqueda, setFiltroBusqueda] = useState("");
+  const [filtroCategoria, setFiltroCategoria] = useState("");
 
-  // Filtros
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterCategoria, setFilterCategoria] = useState("");
-
-  // 🔄 Escucha en tiempo real los productos
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "productos"), (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const unsub = onSnapshot(collection(db, "productos"), (snap) => {
+      const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       setProductos(data);
     });
     return () => unsub();
   }, []);
 
-  // 📸 Vista previa
-  const handleImagenChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagen(file);
-      setPreview(URL.createObjectURL(file));
-    }
-  };
-
-  // 🧼 Limpiar formulario
-  const resetForm = () => {
-    setNombre("");
-    setCategoria("");
-    setPrecio("");
-    setStock("");
-    setImagen(null);
-    setPreview(null);
-    setEditando(null);
-    setShowModal(false);
-  };
-
-  // ✅ Validaciones
-  const validarCampos = () => {
-    if (!nombre || !categoria || !precio || !stock) {
-      alert("⚠️ Todos los campos son obligatorios");
-      return false;
-    }
-    if (precio <= 0) {
-      alert("⚠️ El precio debe ser mayor que 0");
-      return false;
-    }
-    if (stock < 0) {
-      alert("⚠️ El stock no puede ser negativo");
-      return false;
-    }
-    return true;
-  };
-
-  // 💾 Guardar producto (crear o editar)
-  const handleGuardar = async (e) => {
-    e.preventDefault();
-    if (!validarCampos()) return;
-
+  const uploadImageForSku = async (sku, file) => {
+    if (!file) return null;
+    setFileUploading(true);
+    const path = `productos/${sku}_${Date.now()}_${file.name}`;
     try {
-      let imageUrl = editando?.imagenUrl || "";
-
-      // Si se seleccionó una nueva imagen
-      if (imagen) {
-        if (editando?.imagenUrl) {
-          const oldRef = ref(storage, editando.imagenUrl);
-          await deleteObject(oldRef).catch(() => {});
-        }
-        const storageRef = ref(storage, `productos/${Date.now()}_${imagen.name}`);
-        await uploadBytes(storageRef, imagen);
-        imageUrl = await getDownloadURL(storageRef);
-      }
-
-      const datosProducto = {
-        nombre,
-        categoria,
-        precio: parseFloat(precio),
-        stock: parseInt(stock),
-        imagenUrl: imageUrl,
-        fechaActualizacion: new Date(),
-      };
-
-      if (editando) {
-        await updateDoc(doc(db, "productos", editando.id), datosProducto);
-        alert("✅ Producto actualizado correctamente");
-      } else {
-        await addDoc(collection(db, "productos"), {
-          ...datosProducto,
-          fechaCreacion: new Date(),
-        });
-        alert("✅ Producto agregado correctamente");
-      }
-
-      resetForm();
-    } catch (error) {
-      console.error("Error al guardar:", error);
-      alert("❌ No se pudo guardar el producto");
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      const docRef = doc(db, "productos", sku);
+      await setDoc(
+        docRef,
+        { imagenUrl: url, imagenPath: path, fechaActualizacion: serverTimestamp() },
+        { merge: true }
+      );
+      setFileUploading(false);
+      return { url, path };
+    } catch (err) {
+      console.error("Error subiendo imagen:", err);
+      setFileUploading(false);
     }
   };
 
-  // ✏️ Editar producto
-  const handleEditar = (producto) => {
-    setEditando(producto);
-    setNombre(producto.nombre);
-    setCategoria(producto.categoria);
-    setPrecio(producto.precio);
-    setStock(producto.stock);
-    setPreview(producto.imagenUrl);
+  const deleteImageForSku = async (id) => {
+    const producto = productos.find((p) => p.id === id);
+    if (!producto?.imagenUrl) return alert("No hay imagen para eliminar");
+    if (!window.confirm("¿Eliminar imagen del producto?")) return;
+    try {
+      if (producto.imagenPath) {
+        await deleteObject(ref(storage, producto.imagenPath));
+      }
+      await updateDoc(doc(db, "productos", id), { imagenUrl: null, imagenPath: null });
+      alert("Imagen eliminada");
+    } catch (err) {
+      console.error(err);
+      alert("Error al eliminar imagen");
+    }
+  };
+
+  const abrirEditar = (p = null) => {
+    setEditando(p);
+    setForm({
+      nombre: p?.nombre || "",
+      categoria: p?.categoria || "",
+      precio: p?.precio || "",
+      stock: p?.stock || "",
+    });
+    setPreviewLocal(p?.imagenUrl || null);
     setShowModal(true);
   };
 
-  // 🗑️ Eliminar producto
-  const handleEliminar = async (producto) => {
-    if (!window.confirm(`¿Eliminar "${producto.nombre}"?`)) return;
+  const guardarProducto = async (e) => {
+    e.preventDefault();
+    if (!form.nombre || !form.categoria) return alert("Completa todos los campos");
+    const payload = {
+      nombre: form.nombre,
+      categoria: form.categoria,
+      precio: Number(form.precio),
+      stock: Number(form.stock),
+      fechaActualizacion: serverTimestamp(),
+    };
+
     try {
-      await deleteDoc(doc(db, "productos", producto.id));
-      if (producto.imagenUrl) {
-        const imgRef = ref(storage, producto.imagenUrl);
-        await deleteObject(imgRef).catch(() => {});
+      if (editando) {
+        await updateDoc(doc(db, "productos", editando.id), payload);
+      } else {
+        await addDoc(collection(db, "productos"), payload);
       }
-      alert("🗑️ Producto eliminado correctamente");
-    } catch (error) {
-      console.error("Error al eliminar:", error);
-      alert("❌ No se pudo eliminar el producto");
+      alert("Producto guardado correctamente");
+      setShowModal(false);
+      setEditando(null);
+    } catch (err) {
+      console.error(err);
+      alert("Error al guardar producto");
     }
   };
 
-  const handleVolver = () => navigate("/admin");
+  const eliminarProducto = async (id) => {
+    if (!window.confirm("¿Eliminar producto del inventario?")) return;
+    try {
+      const p = productos.find((x) => x.id === id);
+      if (p?.imagenPath) {
+        await deleteObject(ref(storage, p.imagenPath)).catch(() => {});
+      }
+      await deleteDoc(doc(db, "productos", id));
+      alert("Producto eliminado");
+    } catch (err) {
+      console.error(err);
+      alert("Error eliminando producto");
+    }
+  };
 
-  // 🔍 Filtrado
-  const productosFiltrados = productos.filter((p) => {
-    return (
-      (!filterCategoria ||
-        p.categoria.toLowerCase() === filterCategoria.toLowerCase()) &&
-      (!searchTerm || p.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-  });
-
-  const categoriasUnicas = [...new Set(productos.map((p) => p.categoria))];
+  const productosFiltrados = productos.filter(
+    (p) =>
+      (!filtroCategoria || p.categoria === filtroCategoria) &&
+      (!filtroBusqueda || p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
+  );
 
   return (
-    <div className="inventario">
-      <div className="inventario-header">
-        <h1>📦 Gestión de Inventario</h1>
-        <button className="btn-volver" onClick={handleVolver}>
-          🔙 Volver
-        </button>
-      </div>
+    <div className="inventario-root" style={{ padding: 20 }}>
+      {/* 🔙 Botón Volver al Admin */}
+      <button
+        onClick={() => navigate("/admin")} // 👈 cambia "/admin" por tu ruta del panel admin
+        className="btn-volver-admin"
+        style={{
+          backgroundColor: "#333",
+          color: "white",
+          padding: "8px 16px",
+          border: "none",
+          borderRadius: "6px",
+          cursor: "pointer",
+          marginBottom: "10px",
+        }}
+      >
+        🔙 Volver al Admin
+      </button>
 
-      <div className="filtros">
+      <h1>📦 Inventario General</h1>
+
+      <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
         <input
           type="text"
-          placeholder="🔎 Buscar por nombre..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Buscar producto..."
+          value={filtroBusqueda}
+          onChange={(e) => setFiltroBusqueda(e.target.value)}
+          style={{ padding: 8 }}
         />
         <select
-          value={filterCategoria}
-          onChange={(e) => setFilterCategoria(e.target.value)}
+          value={filtroCategoria}
+          onChange={(e) => setFiltroCategoria(e.target.value)}
+          style={{ padding: 8 }}
         >
           <option value="">Todas las categorías</option>
-          {categoriasUnicas.map((cat, i) => (
-            <option key={i} value={cat}>
-              {cat}
+          {categoriasData.map((c, i) => (
+            <option key={i} value={c.nombre}>
+              {c.nombre}
             </option>
           ))}
         </select>
-        <button className="btn-nuevo" onClick={() => setShowModal(true)}>
+        <button onClick={() => abrirEditar()} className="btn-agregar">
           ➕ Nuevo Producto
         </button>
       </div>
 
-      <table className="tabla-productos">
-        <thead>
-          <tr>
-            <th>Imagen</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productosFiltrados.map((p) => (
-            <tr key={p.id}>
-              <td>
-                {p.imagenUrl ? (
-                  <img src={p.imagenUrl} alt={p.nombre} className="miniatura" />
-                ) : (
-                  "Sin imagen"
+      <div className="inventario-grid">
+        {productosFiltrados.map((p) => (
+          <div key={p.id} className="producto-card">
+            {p.imagenUrl ? (
+              <img src={p.imagenUrl} alt={p.nombre} className="producto-imagen" />
+            ) : (
+              <div className="producto-imagen placeholder">Sin imagen</div>
+            )}
+            <div className="producto-body">
+              <h3>{p.nombre}</h3>
+              <p>Categoría: {p.categoria}</p>
+              <p>Precio: ${p.precio?.toLocaleString()}</p>
+              <p>Stock: {p.stock}</p>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => uploadImageForSku(p.id, e.target.files[0])}
+                />
+                {p.imagenUrl && (
+                  <button className="btn-eliminar" onClick={() => deleteImageForSku(p.id)}>
+                    Eliminar imagen
+                  </button>
                 )}
-              </td>
-              <td>{p.nombre}</td>
-              <td>{p.categoria}</td>
-              <td>${p.precio}</td>
-              <td>{p.stock}</td>
-              <td>
-                <button className="btn-editar" onClick={() => handleEditar(p)}>
-                  ✏️ Editar
+                <button className="btn-editar" onClick={() => abrirEditar(p)}>
+                  Editar
                 </button>
-                <button
-                  className="btn-eliminar"
-                  onClick={() => handleEliminar(p)}
-                >
-                  🗑️ Eliminar
+                <button className="btn-eliminar" onClick={() => eliminarProducto(p.id)}>
+                  Eliminar
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="modal">
           <div className="modal-content">
-            <h2>{editando ? "✏️ Editar Producto" : "➕ Agregar Producto"}</h2>
-            <form onSubmit={handleGuardar} className="formulario-producto">
+            <h3>{editando ? "Editar Producto" : "Nuevo Producto"}</h3>
+            <form onSubmit={guardarProducto}>
               <input
                 type="text"
-                placeholder="Nombre del producto"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
+                placeholder="Nombre"
+                value={form.nombre}
+                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
                 required
               />
-              <input
-                type="text"
-                placeholder="Categoría"
-                value={categoria}
-                onChange={(e) => setCategoria(e.target.value)}
+              <select
+                value={form.categoria}
+                onChange={(e) => setForm({ ...form, categoria: e.target.value })}
                 required
-              />
+              >
+                <option value="">Selecciona categoría</option>
+                {categoriasData.map((c, i) => (
+                  <option key={i} value={c.nombre}>
+                    {c.nombre}
+                  </option>
+                ))}
+              </select>
               <input
                 type="number"
                 placeholder="Precio"
-                value={precio}
-                onChange={(e) => setPrecio(e.target.value)}
-                min="0"
+                value={form.precio}
+                onChange={(e) => setForm({ ...form, precio: e.target.value })}
                 required
               />
               <input
                 type="number"
                 placeholder="Stock"
-                value={stock}
-                onChange={(e) => setStock(e.target.value)}
-                min="0"
+                value={form.stock}
+                onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 required
               />
-
-              {preview && (
-                <div className="preview-container">
-                  <img src={preview} alt="Vista previa" className="preview-img" />
-                </div>
+              {previewLocal && (
+                <img
+                  src={previewLocal}
+                  alt="Preview"
+                  style={{
+                    width: 140,
+                    height: 140,
+                    objectFit: "cover",
+                    borderRadius: 8,
+                    marginTop: 8,
+                  }}
+                />
               )}
+              <div style={{ marginTop: 8 }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    setPreviewLocal(URL.createObjectURL(file));
+                    if (editando) await uploadImageForSku(editando.id, file);
+                  }}
+                />
+              </div>
 
-              <input type="file" accept="image/*" onChange={handleImagenChange} />
-
-              <div className="botones">
+              <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
                 <button type="submit" className="btn-guardar">
-                  {editando ? "Actualizar" : "Agregar"}
+                  Guardar
                 </button>
                 <button
                   type="button"
                   className="btn-cancelar"
-                  onClick={resetForm}
+                  onClick={() => setShowModal(false)}
                 >
-                  Cancelar
+                  Cerrar
                 </button>
               </div>
             </form>

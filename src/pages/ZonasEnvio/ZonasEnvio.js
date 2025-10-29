@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase"; // ajusta la ruta si es necesario
 import "./ZonasEnvio.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function ZonasEnvioProFirebase() {
   const navigate = useNavigate();

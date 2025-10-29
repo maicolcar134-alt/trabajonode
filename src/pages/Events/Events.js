@@ -115,7 +115,7 @@ export default function EventsPage() {
               )}
 
               {/* Ícono carrito */}
-              <Nav.Link onClick={() => navigate("/productos")} className="cart-icon">
+              <Nav.Link onClick={() => navigate("/Carrito")} className="cart-icon">
                 <FaShoppingCart />
               </Nav.Link>
             </Nav>
