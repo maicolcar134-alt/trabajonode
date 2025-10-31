@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,  } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase";
 import "./CategoriasAdmin.css";
@@ -97,13 +97,22 @@ export default function CategoriasAdmin() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
               <Nav.Link onClick={() => navigate("/Dashboard")}>Inicio</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>Categorías</Nav.Link>
-              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>Ofertas</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>Seguridad</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Categorias")}>
+                Categorías
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>
+                Ofertas
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/Seguridad")}>
+                Seguridad
+              </Nav.Link>
               <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
               <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
 
-              <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
+              <Nav.Link
+                onClick={() => navigate("/Admin")}
+                className="text-warning"
+              >
                 <i className="bi bi-shield-lock"></i> Admin
               </Nav.Link>
 
@@ -187,7 +196,9 @@ export default function CategoriasAdmin() {
                       </div>
                       <div className="producto-info">
                         <h3>{p.nombre}</h3>
-                        <p className="precio">💰 ${p.precio?.toLocaleString()}</p>
+                        <p className="precio">
+                          💰 ${p.precio?.toLocaleString()}
+                        </p>
                         <p className="stock">📦 Stock: {p.stock}</p>
                         <button
                           onClick={() => agregarAlCarrito(p)}

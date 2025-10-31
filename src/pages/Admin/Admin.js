@@ -26,7 +26,7 @@ const Admin = () => {
         <div className="logo-section">
           <div className="logo-icon">🔥</div>
           <div>
-            <h1 className="logo-title">PyroAdmin</h1>
+            <h1 className="logo-title">PyroShopAdmin</h1>
             <p className="logo-subtitle">Panel de Control</p>
           </div>
         </div>

@@ -12,9 +12,7 @@ import {
 import { Loader2, Plus, Edit, Trash2, Home, Download } from "lucide-react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-
+import "bootstrap/dist/css/bootstrap.min.css";
 
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
@@ -95,9 +93,7 @@ export default function Pedidos() {
         const pedidoRef = doc(db, "pedidos", id);
         await updateDoc(pedidoRef, { estado: nuevoEstado });
         setPedidos(
-          pedidos.map((p) =>
-            p.id === id ? { ...p, estado: nuevoEstado } : p
-          )
+          pedidos.map((p) => (p.id === id ? { ...p, estado: nuevoEstado } : p))
         );
         Swal.fire("✅ Estado actualizado", "", "success");
       } catch (error) {
@@ -139,7 +135,14 @@ export default function Pedidos() {
       return;
     }
 
-    const encabezados = ["Cliente", "Email", "Monto", "Estado", "Fecha", "Items"];
+    const encabezados = [
+      "Cliente",
+      "Email",
+      "Monto",
+      "Estado",
+      "Fecha",
+      "Items",
+    ];
     const filas = pedidos.map((p) => [
       p.cliente,
       p.email,

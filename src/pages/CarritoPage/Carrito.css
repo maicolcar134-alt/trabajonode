@@ -1,0 +1,53 @@
+.carrito-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.carrito-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.carrito-tabla th,
+.carrito-tabla td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.btn-eliminar {
+  background: red;
+  color: white;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.btn-vaciar {
+  background: #dc3545;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.btn-pagar {
+  background: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.btn-volver {
+  background: black;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  margin-bottom: 10px;
+  cursor: pointer;
+}

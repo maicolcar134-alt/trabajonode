@@ -367,11 +367,11 @@ function DashboardPage() {
   {/* Filtros */}
 <div className="filtros-catalogo">
   <button>Todos</button>
-  <button>Bengalas</button>
-  <button>Cohetes</button>
-  <button>Fuentes</button>
-  <button>Baterías</button>
-  <button>Packs</button>
+  <button>Tortas</button>
+  <button>Juguetería</button>
+  <button>Uso Profesional</button>
+  
+  
 </div>
 
   {/* Productos del catálogo */}

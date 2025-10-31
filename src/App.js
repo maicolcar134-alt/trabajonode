@@ -33,9 +33,11 @@ import SeguridadAdmin from './pages/Seguridad/SeguridadAdmin';
 import HelpCenter from './pages/HelpCenter/HelpCenter';
 import OfertasPirotecnia from './pages/OfertasPirotecnia/OfertasPirotecnia';
 import EventsPage from './pages/Events/Events';
-import Pedidos from './pages/Pedidos/pedidos';
+import Pedidos from './pages/pedidos/pedidos';
 import Auditoria from './pages/Auditoria/Auditoria';
 import ZonasEnvioPro from './pages/ZonasEnvio/ZonasEnvio';
+import Carrito from "./pages/CarritoPage/Carrito";
+
 
 
 import Admin from './pages/Admin/Admin';
@@ -55,6 +57,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+
       
 
        
@@ -77,12 +80,8 @@ function App() {
         <Route path="/events" element={<EventsPage />  } /> 
         <Route path="/auditoria" element={<ProtectedRoute> <Auditoria /> </ProtectedRoute> } /> 
         <Route path="/ZonasEnvio" element={<ProtectedRoute> <ZonasEnvioPro /> </ProtectedRoute> } />
-       
-     
-        
-     
-       
-       
+       <Route path="/Carrito" element={<ProtectedRoute> <Carrito /> </ProtectedRoute> } />
+          
      
         <Route path="/Admin" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />
         {/* Ruta genérica para páginas no encontradas */}
