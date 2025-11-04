@@ -26,7 +26,7 @@ import Swal from "sweetalert2";
 import { auth, db } from "../../firebase";
 import { signOut } from "firebase/auth";
 import "./AuxiliaresPage.css";
-import logo from "../../assets/mas.jpg";
+import logo from "../../assets/Explosión de color y energía.png";
 
 function AuxiliaresPage() {
   const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import "./HelpCenter.css";
 import logo from "../../assets/Explosión de color y energía.png";
-import user from "../../assets/Explosión de color y energía.png";
+
 
 
 export default function HelpCenter() {
