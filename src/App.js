@@ -33,7 +33,7 @@ import SeguridadAdmin from './pages/Seguridad/SeguridadAdmin';
 import HelpCenter from './pages/HelpCenter/HelpCenter';
 import OfertasPirotecnia from './pages/OfertasPirotecnia/OfertasPirotecnia';
 import EventsPage from './pages/Events/Events';
-import Pedidos from './pages/pedidos/pedidos';
+import Pedidos from './pages/Pedidos/Pedidos';
 import Auditoria from './pages/Auditoria/Auditoria';
 import ZonasEnvioPro from './pages/ZonasEnvio/ZonasEnvio';
 import Carrito from "./pages/CarritoPage/Carrito";
