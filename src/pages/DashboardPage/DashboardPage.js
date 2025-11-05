@@ -8,16 +8,21 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
-import { useEffect } from "react";
-import img1 from "../../assets/espectaculo-fuegos-artificiales.jpg";
-import img2 from "../../assets/fuegos-artificiales-rojos-azules-sobre-fondo-negro_69379-78.jpg";
-import img3 from "../../assets/imagen2.jpg";
-import img4 from "../../assets/images.jpg";
 import "react-bootstrap"
+import React, { useEffect, useState } from "react";
+import { collection, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../../firebase";
+
 
 function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
+
+
+  const [productos, setProductos] = useState([]);
+  const [carrito, setCarrito] = useState([]);
+  const [filtroCategoria, setFiltroCategoria] = useState("");
+  const [filtroBusqueda, setFiltroBusqueda] = useState("");
 
     const userPhoto = user?.photoURL || userDefault;
 
@@ -95,6 +100,104 @@ function DashboardPage() {
     }
   };
 
+
+// 🔹 Cargar productos desde Firestore
+useEffect(() => {
+  const unsub = onSnapshot(collection(db, "productos"), (snap) => {
+    const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    setProductos(data);
+  });
+  return () => unsub();
+}, []);
+
+// 🔹 Cargar carrito desde localStorage
+useEffect(() => {
+  const carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
+  setCarrito(carritoGuardado);
+}, []);
+
+// 🔹 Guardar cambios del carrito
+const actualizarCarrito = (nuevoCarrito) => {
+  setCarrito(nuevoCarrito);
+  localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
+};
+
+// 🛒 Agregar producto al carrito
+const agregarAlCarrito = (producto) => {
+  const existe = carrito.find((item) => item.id === producto.id);
+  let nuevoCarrito;
+  if (existe) {
+    nuevoCarrito = carrito.map((item) =>
+      item.id === producto.id
+        ? { ...item, cantidad: item.cantidad + 1 }
+        : item
+    );
+  } else {
+    nuevoCarrito = [...carrito, { ...producto, cantidad: 1 }];
+  }
+  actualizarCarrito(nuevoCarrito);
+
+  const notificacion = document.createElement("div");
+  notificacion.className = "toast-notificacion";
+  notificacion.innerText = `🛒 ${producto.nombre} agregado al carrito`;
+  document.body.appendChild(notificacion);
+  setTimeout(() => notificacion.remove(), 2500);
+};
+
+// 🧾 Finalizar compra (guardar pedido en Firestore)
+const finalizarCompra = async () => {
+  if (carrito.length === 0) {
+    alert("Tu carrito está vacío.");
+    return;
+  }
+
+  const total = carrito.reduce(
+    (sum, item) => sum + item.precio * item.cantidad,
+    0
+  );
+
+  try {
+    await addDoc(collection(db, "pedidos"), {
+      cliente: {
+        nombre: user.nombre,
+        email: user.email,
+      },
+      items: carrito,
+      total,
+      estado: "Pendiente",
+      fecha: serverTimestamp(),
+    });
+
+    // Vaciar carrito
+    actualizarCarrito([]);
+
+    alert("✅ ¡Compra realizada con éxito!");
+    navigate("/mis-pedidos"); // Redirigir a la página de pedidos del usuario
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error al guardar el pedido");
+  }
+};
+
+const categorias = [...new Set(productos.map((p) => p.categoria))].filter(Boolean);
+
+const productosFiltrados = productos.filter(
+  (p) =>
+    (!filtroCategoria || p.categoria === filtroCategoria) &&
+    (!filtroBusqueda ||
+      p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
+);
+
+const productosPorCategoria = categorias.map((cat) => ({
+  nombre: cat,
+  productos: productosFiltrados.filter((p) => p.categoria === cat),
+}));
+
+
+
+
+  
+
   return (
     <>
               {/* NAVBAR */}
@@ -165,7 +268,7 @@ function DashboardPage() {
       backgroundSize: "cover",
       backgroundPosition: "center",
       width: "100vw",
-      height: "100vh",
+      height: "70vh",
       marginLeft: "calc(-50vw + 50%)",
       position: "relative",
     }}
@@ -178,7 +281,7 @@ function DashboardPage() {
       className="relative z-10 flex flex-col justify-center h-full text-left"
       style={{
         paddingLeft: "3vw", // margen desde la izquierda
-        maxWidth: "700px", // ancho del bloque
+        maxWidth: "600px", // ancho del bloque
       }}
     >
       <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 px-4 py-2 rounded-full mb-6 w-fit">
@@ -214,24 +317,24 @@ function DashboardPage() {
 
 
 {/* porcentajes */}
-<br></br>
+
 <div class="contenedor"></div>
-      <div className="mt-8 flex gap-8">
-        <div>
-          <div className="text-3xl text-orange-400 font-semibold">500+</div>
-          <div className="text-sm text-white/70">Productos</div>
-        </div>
-        <br></br>
-        <div>
-          <div className="text-3xl text-orange-400 font-semibold">100%</div>
-          <div className="text-sm text-white/70">Certificados</div>
-        </div>
-        <br></br>
-        <div>
-          <div className="text-3xl text-orange-400 font-semibold">24/7</div>
-          <div className="text-sm text-white/70">Soporte</div>
-        </div>
-      </div>
+ <div className="contenedor">
+    <div>
+      <div className="numero">500+</div>
+      <div className="etiqueta">Productos</div>
+    </div>
+
+    <div>
+      <div className="numero">100%</div>
+      <div className="etiqueta">Certificados</div>
+    </div>
+
+    <div>
+      <div className="numero">24/7</div>
+      <div className="etiqueta">Soporte</div>
+    </div>
+  </div>
     </div>
   </section>
 </main>
@@ -254,219 +357,64 @@ function DashboardPage() {
   Productos Destacados
 </h2>
 
-  <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-    {/* Producto 1 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img1}
-          className="card-img-top"
-          alt="Bengalas Doradas Premium"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-success mb-2">Riesgo Bajo</span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Bajo</span>
-          <h5 className="card-title">Bengalas Doradas Premium</h5>
-          <p className="card-text text-muted">
-            Pack de 10 bengalas de mano con chispas doradas de larga duración.
-          </p>
-          <p className="fw-bold text-warning">$58.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
+      {/* 🔹 CATÁLOGO */}
+      <div className="catalogo-contenedor">
+        <h1 className="titulo-catalogo"></h1>
+
+        <div className="filtros">
+          <select
+            value={filtroCategoria}
+            onChange={(e) => setFiltroCategoria(e.target.value)}
+            className="select-categoria"
+          >
+            <option value="">Todas las categorías</option>
+            {categorias.map((c, i) => (
+              <option key={i} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
-    </div>
 
-    {/* Producto 2 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img2}
-          className="card-img-top"
-          alt="Fuente Volcán de Colores"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-warning text-dark mb-2">
-            Riesgo Moderado
-          </span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Medio</span>
-          <h5 className="card-title">Fuente Volcán de Colores</h5>
-          <p className="card-text text-muted">
-            Fuente pirotécnica con efectos multicolor de 60 segundos.
-          </p>
-          <p className="fw-bold text-warning">$112.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
-        </div>
-      </div>
-    </div>
+        {productosPorCategoria.map(
+          (cat) =>
+            cat.productos.length > 0 && (
+              <section key={cat.nombre} className="seccion-categoria">
+                <h2 className="categoria-titulo">{cat.nombre}</h2>
+                <div className="productos-grid">
+                  {cat.productos.map((p) => (
+                    <div key={p.id} className="producto-card">
+                      <div className="producto-imagen-wrapper">
+                        {p.imagenUrl ? (
+                          <img src={p.imagenUrl} alt={p.nombre} />
+                        ) : (
+                          <div className="no-imagen">Sin imagen</div>
+                        )}
+                      </div>
+                      <div className="producto-info">
+                        <h3>{p.nombre}</h3>
+                        <p className="precio">
+                          💰 ${p.precio?.toLocaleString()}
+                        </p>
+                        <p className="stock">📦 Stock: {p.stock}</p>
+                        <button
+                          onClick={() => agregarAlCarrito(p)}
+                          className="btn-agregar"
+                        >
+                          🛒 Añadir al carrito
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )
+        )}
+                   {/* 🧾 Botón para finalizar compra */}
 
-    {/* Producto 3 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img3}
-          className="card-img-top"
-          alt="Cohetes Profesionales"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-danger mb-2">Riesgo Alto</span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Alto</span>
-          <h5 className="card-title">Cohetes Profesionales - Pack 12</h5>
-          <p className="card-text text-muted">
-            Set de cohetes con estallido de altura y efectos espectaculares.
-          </p>
-          <p className="fw-bold text-warning">$224.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
-        </div>
-      </div>
-    </div>
-
-    {/* Producto 4 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img4}
-          className="card-img-top"
-          alt="Bengalas de Humo"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-success mb-2">Riesgo Bajo</span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Bajo</span>
-          <h5 className="card-title">Bengalas de Humo de Colores</h5>
-          <p className="card-text text-muted">
-            Pack de 6 bengalas de humo en diferentes colores para fotografía.
-          </p>
-          <p className="fw-bold text-warning">$83.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-{/* CATÁLOGO COMPLETO */}
-<section
-  className="catalogo-completo px-5 py-20"
-  style={{
-    backgroundColor: "#0d0d0d",
-    color: "#fff",
-  }}
->
-  <h2
-    className="text-3xl fw-bold mb-5 pb-2 border-bottom border-warning"
-    style={{ borderColor: "#f97316", color: "white" }}
-  >
-    Catálogo Completo
-  </h2>
-
-  {/* Filtros */}
-<div className="filtros-catalogo">
-  <button>Todos</button>
-  <button>Tortas</button>
-  <button>Juguetería</button>
-  <button>Uso Profesional</button>
-  
-  
 </div>
-
-  {/* Productos del catálogo */}
-  <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-    {/* Producto 1 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img1}
-          className="card-img-top"
-          alt="Bengalas Doradas Premium"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-success mb-2">Riesgo Bajo</span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Bajo</span>
-          <h5 className="card-title">Bengalas Doradas Premium</h5>
-          <p className="card-text text-muted">
-            Pack de 10 bengalas de mano con chispas doradas de larga duración.
-          </p>
-          <p className="fw-bold text-warning">$58.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
-        </div>
-      </div>
-    </div>
-
-    {/* Producto 2 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img2}
-          className="card-img-top"
-          alt="Fuente Volcán de Colores"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-warning text-dark mb-2">
-            Riesgo Moderado
-          </span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Medio</span>
-          <h5 className="card-title">Fuente Volcán de Colores</h5>
-          <p className="card-text text-muted">
-            Fuente pirotécnica con efectos multicolor de 60 segundos.
-          </p>
-          <p className="fw-bold text-warning">$112.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
-        </div>
-      </div>
-    </div>
-
-    {/* Producto 3 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img3}
-          className="card-img-top"
-          alt="Cohetes Profesionales"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-danger mb-2">Riesgo Alto</span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Alto</span>
-          <h5 className="card-title">Cohetes Profesionales - Pack 12</h5>
-          <p className="card-text text-muted">
-            Set de cohetes con estallido de altura y efectos espectaculares.
-          </p>
-          <p className="fw-bold text-warning">$224.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
-        </div>
-      </div>
-    </div>
-
-    {/* Producto 4 */}
-    <div className="col">
-      <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-        <img
-          src={img4}
-          className="card-img-top"
-          alt="Bengalas de Humo"
-          style={{ height: "220px", objectFit: "cover" }}
-        />
-        <div className="card-body">
-          <span className="badge bg-success mb-2">Riesgo Bajo</span>
-          <span className="badge bg-secondary ms-2 mb-2">Ruido: Bajo</span>
-          <h5 className="card-title">Bengalas de Humo de Colores</h5>
-          <p className="card-text text-muted">
-            Pack de 6 bengalas de humo en diferentes colores para fotografía.
-          </p>
-          <p className="fw-bold text-warning">$83.000</p>
-          <button className="btn btn-warning w-100 fw-semibold">Añadir</button>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
+
 
 
 
