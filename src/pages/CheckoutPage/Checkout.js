@@ -15,7 +15,7 @@ export default function Checkout() {
   try {
     carritoContext = require("../context/CarritoContext").useCarrito?.();
   } catch {
-    carritoContext = null;
+    carritoContext = null; 
   }
 
   const [carrito, setCarrito] = useState([]);

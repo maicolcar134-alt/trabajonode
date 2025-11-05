@@ -45,7 +45,7 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  min-height: 100vh;
+  min-height: 70vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,100 +142,215 @@
   background-color: #333;
 }
 
-
-/* ======== PRODUCTOS ======== */
-.productos-destacados,
-.catalogo-completo {
-  background-color: #111;
-  color: #fff !important;
-  padding: 40px 0;
+/* porcentaje  */
+.contenedor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 80px; /* separación entre cada bloque */
+  margin-top: 1rem;
+  text-align: center;
 }
 
-/* Tarjetas de producto */
-.card {
-  background-color: #1a1a1a !important;
-  border-radius: 15px;
-  transition: 0.3s ease;
+.contenedor div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contenedor div .numero {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #ffa500; /* naranja dorado */
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.contenedor div .etiqueta {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 🎬 Efecto hover para dar vida */
+.contenedor div:hover .numero {
+  transform: scale(1.1);
+  color: #ffca2c;
+}
+
+/* 💫 Animación de aparición */
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.contenedor div {
+  animation: aparecer 0.8s ease forwards;
+}
+
+body {
+  background-color: #0d0d0d;
+}
+
+
+
+
+/* === ESTRUCTURA GENERAL === */
+.catalogo-root {
+  background-color: #0d0d0d;
+  min-height: 100vh;
+  color: white;
+}
+
+/* === NAVBAR === */
+.dashboard-navbar {
+  background: linear-gradient(90deg, #111, #222, #111);
+  border-bottom: 1px solid #ffc107;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.user-photo-nav {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* === CATÁLOGO DE PRODUCTOS === */
+.catalogo-contenedor {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.titulo-catalogo {
+  color: #ffc107;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.seccion-categoria {
+  margin-bottom: 40px;
+}
+
+.categoria-titulo {
+  color: #ffc107;
+  margin-bottom: 15px;
+}
+
+
+
+/* === PRODUCTOS === */
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.producto-card {
+  background-color: #1c1c1c;
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #222;
-  color: #fff !important;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
 }
 
-.card:hover {
+.producto-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
 }
 
-.card-title {
-  color: #fff !important;
-  font-weight: 600;
+.producto-imagen-wrapper {
+  height: 200px;
+  overflow: hidden;
+  border-bottom: 1px solid #333;
 }
 
-.card-text,
-.card p,
-.card span {
-  color: #fff !important;
+.producto-imagen-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.3s ease;
 }
 
-.btn-warning {
-  background-color: #f97316 !important;
-  border: none;
-  color: #fff !important;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-.btn-warning:hover {
-  background-color: #ff8f3c !important;
+.producto-card:hover img {
   transform: scale(1.05);
 }
 
-.badge {
-  border-radius: 6px;
-  font-size: 0.75rem;
-  color: #fff !important;
+.producto-info {
+  padding: 15px;
 }
 
-.card-img-top {
-  border-bottom: 2px solid #f97316;
-}
-
-.card .price {
-  color: #ff9900 !important;
+.precio {
+  color: #00c853;
   font-weight: bold;
 }
-/* ======== FILTROS CATALOGO ======== */
-.filtros-catalogo {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
-  margin-bottom: 30px;
-}
 
-.filtros-catalogo button {
-  background-color: transparent;
-  border: 1px solid #f97316;
-  color: #fff;
-  padding: 10px 20px;
-  border-radius: 30px;
-  font-weight: 500;
+.btn-agregar {
+  background-color: #ffc107;
+  color: black;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  width: 100%;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 16px;
+  transition: 0.2s;
 }
 
-.filtros-catalogo button:hover {
-  background-color: #f97316;
-  color: #fff;
-  transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+.btn-agregar:hover {
+  background-color: #ffca2c;
 }
 
-.filtros-catalogo button.active {
-  background-color: #f97316;
-  color: #fff;
-  border-color: #ffae4d;
+/* === NOTIFICACIÓN DE CARRITO === */
+.toast-notificacion {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #1c1c1c;
+  color: #ffc107;
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+  animation: aparecer 0.5s ease, desaparecer 0.5s ease 2.2s forwards;
+  font-weight: bold;
 }
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes desaparecer {
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+
+
+
+
+
 
 
 /* Footer */
