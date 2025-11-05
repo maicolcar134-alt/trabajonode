@@ -7,7 +7,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFoundPage from './pages/components/NotFoundPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage';
-import LoginPage from './pages/LoginPage/LoginPage';
+import LoginPage from './pages/loginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 
@@ -15,9 +15,9 @@ import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 // Rutas para hooks
 
-import UseEffectPlay from './pages/Playground/UseEffectPlay';
-import UseRefPlay from './pages/Playground/UseRefPlay';
-import UseStatePlay from './pages/Playground/UseStatePlay';
+import UseEffectPlay from './pages/playground/UseEffectPlay';
+import UseRefPlay from './pages/playground/UseRefPlay';
+import UseStatePlay from './pages/playground/UseStatePlay';
 import './App.css';
 
 
@@ -33,7 +33,7 @@ import SeguridadAdmin from './pages/Seguridad/SeguridadAdmin';
 import HelpCenter from './pages/HelpCenter/HelpCenter';
 import OfertasPirotecnia from './pages/OfertasPirotecnia/OfertasPirotecnia';
 import EventsPage from './pages/Events/Events';
-import Pedidos from  './pages/pedidos/pedidos'
+import Pedidos from  './pages/Pedidos/Pedidos'
 import Auditoria from './pages/Auditoria/Auditoria';
 import ZonasEnvioPro from './pages/ZonasEnvio/ZonasEnvio';
 import Carrito from "./pages/CarritoPage/Carrito";
