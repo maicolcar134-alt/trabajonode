@@ -1,53 +1,146 @@
+/* Fondo oscuro pulido */
 .carrito-container {
+  padding: 40px;
   max-width: 900px;
   margin: auto;
-  padding: 20px;
-  text-align: center;
+  color: #fff;
+  background: #0d0d0d;
+  min-height: 100vh;
 }
 
+/* Botón volver */
+.btn-volver {
+  background: #111;
+  border: 1px solid #ffcc00;
+  color: #ffcc00;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-volver:hover {
+  background: #ffcc00;
+  color: #000;
+}
+
+/* Título */
+h1 {
+  text-align: center;
+  font-size: 2.3rem;
+  margin-bottom: 25px;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+/* Tabla estilo premium */
 .carrito-tabla {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-bottom: 25px;
+  background: #121212;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
 }
 
 .carrito-tabla th,
 .carrito-tabla td {
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
+  padding: 14px;
+  text-align: center;
+  border-bottom: 1px solid #333;
 }
 
-.btn-eliminar {
-  background: red;
-  color: white;
-  border: none;
+.carrito-tabla th {
+  background: #1c1c1c;
+  font-size: 1.1rem;
+  color: #ffd700;
+  text-transform: uppercase;
+}
+
+.carrito-tabla tbody tr:hover {
+  background: #1a1a1a;
+}
+
+/* Input cantidad */
+.input-cantidad {
+  width: 65px;
   padding: 6px;
-  cursor: pointer;
+  background: #000;
+  border: 1px solid #ffd700;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
 }
 
+/* Botones */
+.btn-eliminar {
+  background: #d11;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-eliminar:hover {
+  background: #ff0000;
+}
+
+/* Footer total + botones */
+.carrito-footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.carrito-footer h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #00d26a;
+}
+
+/* Botón vaciar */
 .btn-vaciar {
-  background: #dc3545;
-  color: white;
-  padding: 10px 15px;
+  background: #e63946;
   border: none;
-  margin-top: 15px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.1rem;
+  margin-right: 10px;
   cursor: pointer;
+  transition: 0.3s;
 }
 
+.btn-vaciar:hover {
+  background: #ff4757;
+}
+
+/* Botón pagar */
 .btn-pagar {
-  background: #28a745;
-  color: white;
-  padding: 10px 15px;
+  background: #03c04a;
   border: none;
-  margin-left: 10px;
+  padding: 12px 24px;
+  border-radius: 10px;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
   cursor: pointer;
+  transition: 0.3s;
 }
 
-.btn-volver {
-  background: black;
-  color: white;
-  padding: 8px 15px;
-  border: none;
-  margin-bottom: 10px;
-  cursor: pointer;
+.btn-pagar:hover {
+  background: #00ff6a;
+}
+
+/* Carrito vacío */
+.empty-cart {
+  text-align: center;
+  font-size: 1.3rem;
+  margin-top: 40px;
+  opacity: 0.8;
 }

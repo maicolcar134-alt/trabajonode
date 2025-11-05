@@ -1,18 +1,25 @@
-import React, { useEffect, useState,  } from "react";
-import { collection, onSnapshot } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import "./CategoriasAdmin.css";
-import { Navbar, Nav, Container, Badge } from "react-bootstrap";
+import { Navbar, Nav, Container, Badge, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
+import { FaSignOutAlt, FaUser, FaShoppingCart, FaCheck } from "react-icons/fa";
 import logo from "../../assets/Explosión de color y energía.png";
 
 export default function CategoriasAdmin() {
   const [productos, setProductos] = useState([]);
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
-  const [user, setUser] = useState(null);
-  const [userPhoto, setUserPhoto] = useState("");
+  const [user, setUser] = useState({
+    nombre: "Invitado",
+    email: "invitado@correo.com",
+  });
   const [carrito, setCarrito] = useState([]);
 
   const navigate = useNavigate();
@@ -32,25 +39,11 @@ export default function CategoriasAdmin() {
     setCarrito(carritoGuardado);
   }, []);
 
-  // 🔹 Actualizar el contador de carrito cuando se agrega algo nuevo
+  // 🔹 Guardar cambios del carrito
   const actualizarCarrito = (nuevoCarrito) => {
     setCarrito(nuevoCarrito);
     localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
   };
-
-  const categorias = [...new Set(productos.map((p) => p.categoria))].filter(Boolean);
-
-  const productosFiltrados = productos.filter(
-    (p) =>
-      (!filtroCategoria || p.categoria === filtroCategoria) &&
-      (!filtroBusqueda ||
-        p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
-  );
-
-  const productosPorCategoria = categorias.map((cat) => ({
-    nombre: cat,
-    productos: productosFiltrados.filter((p) => p.categoria === cat),
-  }));
 
   // 🛒 Agregar producto al carrito
   const agregarAlCarrito = (producto) => {
@@ -67,13 +60,63 @@ export default function CategoriasAdmin() {
     }
     actualizarCarrito(nuevoCarrito);
 
-    // 🔔 Notificación visual elegante
     const notificacion = document.createElement("div");
     notificacion.className = "toast-notificacion";
     notificacion.innerText = `🛒 ${producto.nombre} agregado al carrito`;
     document.body.appendChild(notificacion);
     setTimeout(() => notificacion.remove(), 2500);
   };
+
+  // 🧾 Finalizar compra (guardar pedido en Firestore)
+  const finalizarCompra = async () => {
+    if (carrito.length === 0) {
+      alert("Tu carrito está vacío.");
+      return;
+    }
+
+    const total = carrito.reduce(
+      (sum, item) => sum + item.precio * item.cantidad,
+      0
+    );
+
+    try {
+      await addDoc(collection(db, "pedidos"), {
+        cliente: {
+          nombre: user.nombre,
+          email: user.email,
+        },
+        items: carrito,
+        total,
+        estado: "Pendiente",
+        fecha: serverTimestamp(),
+      });
+
+      // Vaciar carrito
+      actualizarCarrito([]);
+
+      alert("✅ ¡Compra realizada con éxito!");
+      navigate("/mis-pedidos"); // Redirigir a la página de pedidos del usuario
+    } catch (err) {
+      console.error(err);
+      alert("❌ Error al guardar el pedido");
+    }
+  };
+
+  const categorias = [...new Set(productos.map((p) => p.categoria))].filter(
+    Boolean
+  );
+
+  const productosFiltrados = productos.filter(
+    (p) =>
+      (!filtroCategoria || p.categoria === filtroCategoria) &&
+      (!filtroBusqueda ||
+        p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
+  );
+
+  const productosPorCategoria = categorias.map((cat) => ({
+    nombre: cat,
+    productos: productosFiltrados.filter((p) => p.categoria === cat),
+  }));
 
   const handleLogout = () => {
     setUser(null);
@@ -109,22 +152,12 @@ export default function CategoriasAdmin() {
               <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
               <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
 
-              <Nav.Link
-                onClick={() => navigate("/Admin")}
-                className="text-warning"
-              >
-                <i className="bi bi-shield-lock"></i> Admin
-              </Nav.Link>
+             
 
               {user ? (
                 <Nav.Item onClick={handleLogout}>
                   <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
                     <FaSignOutAlt /> Cerrar Sesión
-                    <img
-                      src={userPhoto}
-                      alt="Foto de usuario"
-                      className="user-photo-nav"
-                    />
                   </Nav.Link>
                 </Nav.Item>
               ) : (
@@ -136,7 +169,6 @@ export default function CategoriasAdmin() {
                 </Nav.Link>
               )}
 
-              {/* 🛒 Carrito con contador */}
               <Nav.Link
                 onClick={() => navigate("/Carrito")}
                 className="position-relative text-light"
@@ -212,6 +244,15 @@ export default function CategoriasAdmin() {
                 </div>
               </section>
             )
+        )}
+
+        {/* 🧾 Botón para finalizar compra */}
+        {carrito.length > 0 && (
+          <div className="text-center mt-4">
+            <Button variant="success" size="lg" onClick={finalizarCompra}>
+              <FaCheck /> Finalizar compra
+            </Button>
+          </div>
         )}
       </div>
     </div>
