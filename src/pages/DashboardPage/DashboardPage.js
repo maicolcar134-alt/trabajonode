@@ -410,7 +410,7 @@ const productosPorCategoria = categorias.map((cat) => ({
               </section>
             )
         )}
-                   {/* 🧾 Botón para finalizar compra */}
+
 
 </div>
 </section>

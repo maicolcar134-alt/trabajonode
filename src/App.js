@@ -7,17 +7,15 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFoundPage from './pages/components/NotFoundPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage';
-import LoginPage from './pages/loginPage/LoginPage';
+import LoginPage from './pages/LoginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
-
-
 
 
 // Rutas para hooks
 
-import UseEffectPlay from './pages/playground/UseEffectPlay';
-import UseRefPlay from './pages/playground/UseRefPlay';
-import UseStatePlay from './pages/playground/UseStatePlay';
+import UseEffectPlay from './pages/Playground/UseEffectPlay';
+import UseRefPlay from './pages/Playground/UseRefPlay';
+import UseStatePlay from './pages/Playground/UseStatePlay';
 import './App.css';
 
 

@@ -11,13 +11,6 @@ import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 export default function Checkout() {
   const navigate = useNavigate();
 
-  let carritoContext;
-  try {
-    carritoContext = require("../context/CarritoContext").useCarrito?.();
-  } catch {
-    carritoContext = null; 
-  }
-
   const [carrito, setCarrito] = useState([]);
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
@@ -33,12 +26,9 @@ export default function Checkout() {
   const [mostrarPayPal, setMostrarPayPal] = useState(false);
 
   useEffect(() => {
-    if (carritoContext && carritoContext.carrito) {
-      setCarrito(carritoContext.carrito);
-    } else {
-      setCarrito(JSON.parse(localStorage.getItem("carrito")) || []);
-    }
-  }, [carritoContext]);
+    const storedCarrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    setCarrito(storedCarrito);
+  }, []);
 
   const total = useMemo(
     () => carrito.reduce((acc, i) => acc + i.precio * i.cantidad, 0),
@@ -53,7 +43,6 @@ export default function Checkout() {
 
   const limpiarCarrito = () => {
     localStorage.removeItem("carrito");
-    carritoContext?.vaciarCarrito?.();
     setCarrito([]);
   };
 

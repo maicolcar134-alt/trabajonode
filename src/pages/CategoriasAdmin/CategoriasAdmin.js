@@ -238,11 +238,17 @@ export default function CategoriasAdmin() {
                   ))}
                 </div>
               </section>
-            )
+            ) 
         )}
 
         {/* 🧾 Botón para finalizar compra */}
-      
+        {carrito.length > 0 && (
+          <div className="text-center mt-4">
+            <Button variant="success" size="lg" onClick={finalizarCompra}>
+              <FaCheck /> Finalizar compra
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
