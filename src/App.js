@@ -42,6 +42,7 @@ import Gracias from './pages/Gracias/Gracias';
 
 
 
+
 import Admin from './pages/Admin/Admin';
 
 
@@ -85,6 +86,7 @@ function App() {
        <Route path="/Carrito" element={<ProtectedRoute> <Carrito /> </ProtectedRoute> } />
        <Route path="/checkout" element={<ProtectedRoute> < Checkout/> </ProtectedRoute> } />
        <Route path="/gracias" element={<ProtectedRoute> < Gracias/> </ProtectedRoute> } />
+        
        
           
      

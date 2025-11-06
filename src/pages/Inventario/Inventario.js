@@ -9,25 +9,33 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { db, storage } from "../../firebase";
-import { useNavigate } from "react-router-dom"; // 👈 agregado
+import { useNavigate } from "react-router-dom";
 import "./Inventario.css";
 
 const categoriasData = [
   { nombre: "Tortas" },
   { nombre: "Juguetería" },
-  { nombre: "Pirotecnia de Escenario" },
   { nombre: "Uso Profesional" },
 ];
 
 export default function Inventario() {
-  const navigate = useNavigate(); // 👈 necesario para redirigir
+  const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState(null);
-  const [form, setForm] = useState({ nombre: "", categoria: "", precio: "", stock: "" });
+  const [form, setForm] = useState({
+    nombre: "",
+    categoria: "",
+    precio: "",
+    stock: "",
+  });
   const [previewLocal, setPreviewLocal] = useState(null);
   const [fileUploading, setFileUploading] = useState(false);
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
@@ -52,7 +60,11 @@ export default function Inventario() {
       const docRef = doc(db, "productos", sku);
       await setDoc(
         docRef,
-        { imagenUrl: url, imagenPath: path, fechaActualizacion: serverTimestamp() },
+        {
+          imagenUrl: url,
+          imagenPath: path,
+          fechaActualizacion: serverTimestamp(),
+        },
         { merge: true }
       );
       setFileUploading(false);
@@ -71,7 +83,10 @@ export default function Inventario() {
       if (producto.imagenPath) {
         await deleteObject(ref(storage, producto.imagenPath));
       }
-      await updateDoc(doc(db, "productos", id), { imagenUrl: null, imagenPath: null });
+      await updateDoc(doc(db, "productos", id), {
+        imagenUrl: null,
+        imagenPath: null,
+      });
       alert("Imagen eliminada");
     } catch (err) {
       console.error(err);
@@ -93,13 +108,15 @@ export default function Inventario() {
 
   const guardarProducto = async (e) => {
     e.preventDefault();
-    if (!form.nombre || !form.categoria) return alert("Completa todos los campos");
+    if (!form.nombre || !form.categoria)
+      return alert("Completa todos los campos");
     const payload = {
       nombre: form.nombre,
       categoria: form.categoria,
       precio: Number(form.precio),
       stock: Number(form.stock),
       fechaActualizacion: serverTimestamp(),
+      destacado: editando?.destacado || false, // 👈 nuevo campo
     };
 
     try {
@@ -132,17 +149,35 @@ export default function Inventario() {
     }
   };
 
-  const productosFiltrados = productos.filter(
-    (p) =>
-      (!filtroCategoria || p.categoria === filtroCategoria) &&
-      (!filtroBusqueda || p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
-  );
+  const toggleDestacado = async (producto) => {
+    try {
+      await updateDoc(doc(db, "productos", producto.id), {
+        destacado: !producto.destacado,
+      });
+      alert(
+        producto.destacado
+          ? "❌ Producto quitado de destacados"
+          : "⭐ Producto marcado como destacado"
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Error al actualizar destacado");
+    }
+  };
+
+  const productosFiltrados = productos
+    .filter(
+      (p) =>
+        (!filtroCategoria || p.categoria === filtroCategoria) &&
+        (!filtroBusqueda ||
+          p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
+    )
+    .sort((a, b) => (b.destacado === true) - (a.destacado === true)); // 👈 destacados primero
 
   return (
     <div className="inventario-root" style={{ padding: 20 }}>
-      {/* 🔙 Botón Volver al Admin */}
       <button
-        onClick={() => navigate("/admin")} // 👈 cambia "/admin" por tu ruta del panel admin
+        onClick={() => navigate("/admin")}
         className="btn-volver-admin"
         style={{
           backgroundColor: "#333",
@@ -186,14 +221,24 @@ export default function Inventario() {
 
       <div className="inventario-grid">
         {productosFiltrados.map((p) => (
-          <div key={p.id} className="producto-card">
+          <div
+            key={p.id}
+            className={`producto-card ${p.destacado ? "destacado" : ""}`}
+          >
             {p.imagenUrl ? (
-              <img src={p.imagenUrl} alt={p.nombre} className="producto-imagen" />
+              <img
+                src={p.imagenUrl}
+                alt={p.nombre}
+                className="producto-imagen"
+              />
             ) : (
               <div className="producto-imagen placeholder">Sin imagen</div>
             )}
             <div className="producto-body">
-              <h3>{p.nombre}</h3>
+              <h3>
+                {p.nombre}{" "}
+                {p.destacado && <span style={{ color: "gold" }}>⭐</span>}
+              </h3>
               <p>Categoría: {p.categoria}</p>
               <p>Precio: ${p.precio?.toLocaleString()}</p>
               <p>Stock: {p.stock}</p>
@@ -204,15 +249,31 @@ export default function Inventario() {
                   onChange={(e) => uploadImageForSku(p.id, e.target.files[0])}
                 />
                 {p.imagenUrl && (
-                  <button className="btn-eliminar" onClick={() => deleteImageForSku(p.id)}>
+                  <button
+                    className="btn-eliminar"
+                    onClick={() => deleteImageForSku(p.id)}
+                  >
                     Eliminar imagen
                   </button>
                 )}
                 <button className="btn-editar" onClick={() => abrirEditar(p)}>
                   Editar
                 </button>
-                <button className="btn-eliminar" onClick={() => eliminarProducto(p.id)}>
+                <button
+                  className="btn-eliminar"
+                  onClick={() => eliminarProducto(p.id)}
+                >
                   Eliminar
+                </button>
+                <button
+                  className="btn-destacar"
+                  style={{
+                    backgroundColor: p.destacado ? "gold" : "#555",
+                    color: p.destacado ? "black" : "white",
+                  }}
+                  onClick={() => toggleDestacado(p)}
+                >
+                  {p.destacado ? "⭐ Quitar Destacado" : "⭐ Destacar"}
                 </button>
               </div>
             </div>
@@ -234,7 +295,9 @@ export default function Inventario() {
               />
               <select
                 value={form.categoria}
-                onChange={(e) => setForm({ ...form, categoria: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, categoria: e.target.value })
+                }
                 required
               >
                 <option value="">Selecciona categoría</option>

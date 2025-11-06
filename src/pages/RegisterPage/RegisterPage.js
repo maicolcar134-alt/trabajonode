@@ -5,7 +5,7 @@ import { auth } from '../../firebase';
 import { db } from '../../firebase';
 import { doc, setDoc } from 'firebase/firestore';
 import './RegisterPage.css';
-import logo from '../../assets/mas.jpg';
+import logo from '../../assets/Explosión de color y energía.png';
 
 
 

@@ -95,7 +95,7 @@ export default function CategoriasAdmin() {
       actualizarCarrito([]);
 
       alert("✅ ¡Compra realizada con éxito!");
-      navigate("/mis-pedidos"); // Redirigir a la página de pedidos del usuario
+      navigate("/"); // Redirigir a la página de pedidos del usuario
     } catch (err) {
       console.error(err);
       alert("❌ Error al guardar el pedido");
@@ -246,14 +246,7 @@ export default function CategoriasAdmin() {
             )
         )}
 
-        {/* 🧾 Botón para finalizar compra */}
-        {carrito.length > 0 && (
-          <div className="text-center mt-4">
-            <Button variant="success" size="lg" onClick={finalizarCompra}>
-              <FaCheck /> Finalizar compra
-            </Button>
-          </div>
-        )}
+    
       </div>
     </div>
   );
