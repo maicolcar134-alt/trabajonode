@@ -1,26 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  collection,
-  getDocs,
-  deleteDoc,
-  doc,
-  updateDoc,
-} from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, updateDoc, } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import {
-  Navbar,
-  Nav,
-  NavDropdown,
-  Table,
-  Button,
-  Modal,
-  Form,
-  Container,
-  Image,
-  Row,
-  Col,
-  Card,
-} from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Table, Button, Modal, Form, Container, Image, Row, Col, Card, } from "react-bootstrap";
 import { FaUserCircle, FaCheckCircle, FaEye, FaStore } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { auth, db } from "../../firebase";

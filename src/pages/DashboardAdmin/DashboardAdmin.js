@@ -88,7 +88,7 @@ export default function DashboardAdmin() {
     });
 
     return () => unsub();
-  }, []);
+  }, );
 
   /* 🔄 Cargar datos de Firestore */
   async function loadData() {

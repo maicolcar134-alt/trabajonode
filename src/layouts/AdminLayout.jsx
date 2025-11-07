@@ -1,27 +1,27 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { FaChartBar, FaBox, FaClipboardList, FaUsers, FaTruck, FaStore} from "react-icons/fa";
-
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { FaChartBar, FaBox, FaClipboardList, FaUsers, FaTruck, FaStore } from "react-icons/fa";
 import "./Admin.css";
 
-const Admin = () => {
+const AdminLayout = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { name: "Dashboard", path: "/DashboardaAdmin", icon: <FaChartBar />, badge: null },
-    { name: "Inventario", path: "/inventario", icon: <FaBox />, badge: null },
-    { name: "Pedidos", path: "/pedidos", icon: <FaClipboardList />, badge: null },
-    { name: "Usuarios", path: "/usuarios", icon: <FaUsers /> },
-    { name: "Envío / Zonas", path: "/ZonasEnvio", icon: <FaTruck />, badge: null },
-    { name: "Auditoría / Logs", path: "/auditoria", icon: <FaClipboardList /> },
+    { name: "Dashboard", path: "/admin/dashboard", icon: <FaChartBar /> },
+    { name: "Inventario", path: "/admin/inventario", icon: <FaBox /> },
+    { name: "Pedidos", path: "/admin/pedidos", icon: <FaClipboardList /> },
+    { name: "Usuarios", path: "/admin/usuarios", icon: <FaUsers /> },
+    { name: "Envío / Zonas", path: "/admin/zonas", icon: <FaTruck /> },
+    { name: "Auditoría / Logs", path: "/admin/auditoria", icon: <FaClipboardList /> },
   ];
 
   const handleVolver = () => {
-    navigate("/Dashboard");
+    navigate("/dashboard");
   };
 
   return (
     <div className="admin-container">
-      {/* Sidebar Izquierda */}
+
+      {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="logo-section">
           <div className="logo-icon">🔥</div>
@@ -31,7 +31,6 @@ const Admin = () => {
           </div>
         </div>
 
-        {/* Menú */}
         <nav className="menu">
           {menuItems.map((item) => (
             <NavLink
@@ -46,15 +45,13 @@ const Admin = () => {
                 {item.icon}
                 <span>{item.name}</span>
               </div>
-              {item.badge && <span className="badge">{item.badge}</span>}
             </NavLink>
           ))}
         </nav>
 
-        {/* Botón Volver */}
         <button className="btn-volver" onClick={handleVolver}>
           <FaStore />
-          <span>Volver a Admin</span>
+          <span>Volver a la Tienda</span>
         </button>
 
         <div className="footer">
@@ -62,9 +59,12 @@ const Admin = () => {
         </div>
       </aside>
 
-      
+      {/* ✅ AQUÍ SE RENDERIZAN LAS PÁGINAS */}
+      <main className="admin-content">
+        <Outlet />
+      </main>
     </div>
   );
 };
 
-export default Admin;
+export default AdminLayout;
