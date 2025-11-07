@@ -10,19 +10,45 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
-import img1 from "../../assets/espectaculo-fuegos-artificiales.jpg";
-import img2 from "../../assets/fuegos-artificiales-rojos-azules-sobre-fondo-negro_69379-78.jpg";
-import img3 from "../../assets/imagen2.jpg";
-import img4 from "../../assets/images.jpg";
+
 import "react-bootstrap";
 
 function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
   const userPhoto = user?.photoURL || userDefault;
+  const [productos, setProductos] = useState([]);
+  const [filtroCategoria, setFiltroCategoria] = useState("");
 
+  // ✅ Cargar productos desde Firestore
   // ✅ Estado para productos destacados
   const [destacados, setDestacados] = useState([]);
+  // ✅ Añadir al carrito
+  const agregarAlCarrito = (producto) => {
+    Swal.fire({
+      icon: "success",
+      title: "Producto añadido",
+      text: `${producto.nombre} se agregó al carrito.`,
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  // ✅ Cargar productos destacados
+  useEffect(() => {
+    const q = query(
+      collection(db, "productos"),
+      where("destacado", "==", true)
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const productos = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setDestacados(productos);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // ✅ Cargar productos destacados desde Firebase
   useEffect(() => {
@@ -39,6 +65,25 @@ function DashboardPage() {
     });
     return () => unsubscribe();
   }, []);
+  // ✅ Cargar todos los productos desde Firestore
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "productos"), (snapshot) => {
+      const productos = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProductos(productos);
+    });
+    return () => unsubscribe();
+  }, []);
+  // ✅ Filtrar productos por categoría
+  const productosFiltrados = filtroCategoria
+    ? productos.filter((p) => p.categoria === filtroCategoria)
+    : productos;
+  // ✅ Obtener lista única de categorías
+  const categorias = [
+    ...new Set(productos.map((p) => p.categoria).filter((c) => c)),
+  ];
 
   // ✅ Mostrar alerta +18 solo una vez por sesión
   useEffect(() => {
@@ -204,7 +249,7 @@ function DashboardPage() {
             backgroundSize: "cover",
             backgroundPosition: "center",
             width: "100vw",
-            height: "100vh",
+            height: "70vh",
             marginLeft: "calc(-50vw + 50%)",
             position: "relative",
           }}
@@ -251,29 +296,21 @@ function DashboardPage() {
               </button>
             </div>
 
-            {/* porcentajes */}
-            <br></br>
             <div class="contenedor"></div>
-            <div className="mt-8 flex gap-8">
+            <div className="contenedor">
               <div>
-                <div className="text-3xl text-orange-400 font-semibold">
-                  500+
-                </div>
-                <div className="text-sm text-white/70">Productos</div>
+                <div className="numero">500+</div>
+                <div className="etiqueta">Productos</div>
               </div>
-              <br></br>
+
               <div>
-                <div className="text-3xl text-orange-400 font-semibold">
-                  100%
-                </div>
-                <div className="text-sm text-white/70">Certificados</div>
+                <div className="numero">100%</div>
+                <div className="etiqueta">Certificados</div>
               </div>
-              <br></br>
+
               <div>
-                <div className="text-3xl text-orange-400 font-semibold">
-                  24/7
-                </div>
-                <div className="text-sm text-white/70">Soporte</div>
+                <div className="numero">24/7</div>
+                <div className="etiqueta">Soporte</div>
               </div>
             </div>
           </div>
@@ -329,7 +366,7 @@ function DashboardPage() {
         )}
       </section>
 
-      {/* CATÁLOGO COMPLETO */}
+      {/* 🔥 CATÁLOGO COMPLETO (versión dinámica con productos reales) */}
       <section
         className="catalogo-completo px-5 py-20"
         style={{
@@ -344,26 +381,81 @@ function DashboardPage() {
           Catálogo Completo
         </h2>
 
-        <div className="filtros-catalogo">
-          <button>Todos</button> 
-          <button>Tortas</button>
-          <button>Juguetería</button>
-          <button>Uso Profesional</button>
+        {/* 🔹 Filtros simples */}
+        <div
+          className="filtros-catalogo d-flex gap-3 mb-4"
+          style={{ justifyContent: "center" }}
+        >
+          <button
+            className={`btn ${
+              filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
+            }`}
+            onClick={() => setFiltroCategoria("")}
+          >
+            Todos
+          </button>
+          {categorias.map((c, i) => (
+            <button
+              key={i}
+              className={`btn ${
+                filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
+              }`}
+              onClick={() => setFiltroCategoria(c)}
+            >
+              {c}
+            </button>
+          ))}
         </div>
 
-        {/* Productos del catálogo (mock local) */}
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mt-3">
-          {/* Aquí irían los productos del catálogo completo */}
+        {/* 🔹 Productos reales desde Firestore */}
+        {productosFiltrados.length === 0 ? (
           <p className="text-center text-muted">
-      
-            (Catálogo completo de productos próximamente...)    
-
-              
+            No se encontraron productos en esta categoría.
           </p>
-        </div>
+        ) : (
+          <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            {productosFiltrados.map((p) => (
+              <div key={p.id} className="col">
+                <div className="card h-100 bg-dark text-light border-0 shadow-lg">
+                  {p.imagenUrl ? (
+                    <img
+                      src={p.imagenUrl}
+                      className="card-img-top"
+                      alt={p.nombre}
+                      style={{ height: "220px", objectFit: "cover" }}
+                    />
+                  ) : (
+                    <div
+                      className="d-flex align-items-center justify-content-center bg-secondary text-light"
+                      style={{ height: "220px" }}
+                    >
+                      Sin imagen
+                    </div>
+                  )}
+                  <div className="card-body">
+                    <span className="badge bg-warning text-dark mb-2">
+                      {p.categoria || "General"}
+                    </span>
+                    <h5 className="card-title">{p.nombre}</h5>
+                    <p className="card-text text-muted">
+                      {p.descripcion || "Sin descripción disponible."}
+                    </p>
+                    <p className="fw-bold text-warning">
+                      💰 ${Number(p.precio).toLocaleString()}
+                    </p>
+                    <button
+                      className="btn btn-warning w-100 fw-semibold"
+                      onClick={() => agregarAlCarrito(p)}
+                    >
+                      Añadir al carrito
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
-        
-
 
       {/* FOOTER */}
       <footer className="footer mt-auto">
