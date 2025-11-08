@@ -3,6 +3,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
+import "./DashboardAdmin";
 import {
   BarChart,
   Bar,
@@ -88,7 +89,7 @@ export default function DashboardAdmin() {
     });
 
     return () => unsub();
-  }, );
+  }, []);
 
   /* 🔄 Cargar datos de Firestore */
   async function loadData() {

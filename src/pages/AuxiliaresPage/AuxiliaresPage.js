@@ -94,46 +94,7 @@ function AuxiliaresPage() {
 
   return (
     <>
-      {/* NAVBAR */}
-      <Navbar expand="lg" bg="dark" variant="dark" className="dashboard-navbar">
-        <Container>
-          <Navbar.Brand
-            onClick={() => navigate("/dashboard")}
-            style={{ cursor: "pointer" }}
-          >
-            <img src={logo} alt="mas Logo" height="40" />
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              <NavDropdown
-                title={
-                  user?.photoURL ? (
-                    <Image
-                      src={user.photoURL}
-                      roundedCircle
-                      width="40"
-                      height="40"
-                    />
-                  ) : (
-                    <FaUserCircle size={24} color="#f1edeaff" />
-                  )
-                }
-                id="user-nav-dropdown"
-                align="end"
-              >
-                <NavDropdown.Item disabled>
-                  {user?.email || "Usuario"}
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>
-                  Cerrar Sesión
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+    
 
       {/* MAIN */}
       <main className="content">

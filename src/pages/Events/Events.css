@@ -189,12 +189,13 @@ body {
 }
 
 .btn-primary {
-  background: var(--dark);
-  color: #fff;
+  background: transparent !important;
+  border: 1px solid #fff !important;
+  color: #fff !important;
 }
 
 .btn-primary:hover {
-  background: var(--accent-light);
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .btn-secondary {

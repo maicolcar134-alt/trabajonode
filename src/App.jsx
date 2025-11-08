@@ -43,6 +43,7 @@ import Gracias from './pages/Gracias/Gracias';
 import AdminLayout from './layouts/AdminLayout';
 import { User } from 'lucide-react';
 import UsuariosPage from './pages/Usuarios/UsuariosPage';
+import { BiCategory } from 'react-icons/bi';
 
 function App() {
   return (
@@ -81,8 +82,10 @@ function App() {
         </Route>
 
         {/* ✅ TIENDA (PÚBLICO / CLIENTES) */}
+        <Route path="/categorias" element={<CategoriasAdmin />} />
         <Route path="/helpcenter" element={<HelpCenter />} />
         <Route path="/ofertaspirotecnia" element={<OfertasPirotecnia />} />
+        <Route path="seguridad" element={<SeguridadAdmin />} />
         <Route path="/events" element={<EventsPage />} />
 
         {/* ✅ COMPRA */}
