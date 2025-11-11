@@ -14,7 +14,10 @@ import { collection, onSnapshot, addDoc, serverTimestamp } from "firebase/firest
 import { db } from "../../firebase";
 
 
-function DashboardPage() {
+
+
+
+function DashboardPage() {  
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
