@@ -151,6 +151,7 @@ export default function CategoriasAdmin() {
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
               <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
+              <Nav.Link onClick={() => navigate("/Admin")}className="text-warning"><i className="bi bi-shield-lock"></i> Admin</Nav.Link>
 
              
 

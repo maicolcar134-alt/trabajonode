@@ -24,6 +24,7 @@ import {
 } from "react-icons/fi";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
+import "./DashboardAdmin.css";
 
 export default function DashboardAdmin() {
   const navigate = useNavigate();
@@ -198,21 +199,27 @@ export default function DashboardAdmin() {
         </div>
 
         {/* 📈 Gráficos */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* 📊 Ventas por mes */}
           <div className="bg-white p-4 rounded-xl shadow">
-            <h2 className="text-lg font-semibold mb-3">Ventas por Mes</h2>
+            <h2 className="text-lg font-semibold mb-3 text-center text-indigo-700">
+              Ventas por Mes
+            </h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={ventasMes}>
                 <XAxis dataKey="mes" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="total" fill="#4f46e5" />
+                <Bar dataKey="total" fill="#4f46e5" barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
+          {/* 🧾 Pedidos por Estado */}
           <div className="bg-white p-4 rounded-xl shadow">
-            <h2 className="text-lg font-semibold mb-3">Pedidos por Estado</h2>
+            <h2 className="text-lg font-semibold mb-3 text-center text-green-700">
+              Pedidos por Estado
+            </h2>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
                 <Pie
@@ -220,6 +227,7 @@ export default function DashboardAdmin() {
                   dataKey="value"
                   nameKey="name"
                   outerRadius={90}
+                  label
                 >
                   {estadosData.map((_, i) => (
                     <Cell key={i} fill={chartColors[i % chartColors.length]} />
@@ -228,6 +236,42 @@ export default function DashboardAdmin() {
                 <Tooltip />
                 <Legend />
               </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* 💰 Ventas por Estado de Pago */}
+          <div className="bg-white p-4 rounded-xl shadow">
+            <h2 className="text-lg font-semibold mb-3 text-center text-yellow-700">
+              Ventas por Estado de Pago
+            </h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart
+                data={[
+                  {
+                    name: "Pagado",
+                    total: pedidos
+                      .filter((p) => p.pago === "Pagado")
+                      .reduce((a, b) => a + (b.total || 0), 0),
+                  },
+                  {
+                    name: "Pendiente",
+                    total: pedidos
+                      .filter((p) => p.pago === "Pendiente")
+                      .reduce((a, b) => a + (b.total || 0), 0),
+                  },
+                  {
+                    name: "Rechazado",
+                    total: pedidos
+                      .filter((p) => p.pago === "Rechazado")
+                      .reduce((a, b) => a + (b.total || 0), 0),
+                  },
+                ]}
+              >
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="total" fill="#f59e0b" barSize={40} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>

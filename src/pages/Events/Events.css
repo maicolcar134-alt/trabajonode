@@ -1,6 +1,7 @@
 :root {
-  --accent: #f97316; /* naranja cálido */
-  --accent-light: #180701;
+  --accent: #f97316;
+  /* naranja cálido */
+  --accent-light: #fbbf24;
   --dark: #0b0b0e;
   --surface: #141416;
   --surface-light: #1b1b1f;
@@ -28,7 +29,7 @@ body {
   text-align: center;
   padding: 100px 20px;
   width: 100%;
-  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  background: linear-gradient(135deg, #000000, #c7b02c);
   color: #fff;
 }
 
@@ -75,14 +76,17 @@ body {
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 10px; /* 🔸 Más juntos */
+  gap: 10px;
+  /* 🔸 Más juntos */
   margin-top: 40px;
 }
 
 .card {
-  background: var(--surface-light); /* 🔸 Fondo más oscuro */
+  background: var(--surface-light);
+  /* 🔸 Fondo más oscuro */
   padding: 25px;
-  border-radius: 0; /* 🔸 Sin bordes redondeados para unir visualmente */
+  border-radius: 0;
+  /* 🔸 Sin bordes redondeados para unir visualmente */
   text-align: left;
   color: var(--text-main);
   border: 1px solid #222;
@@ -147,7 +151,7 @@ body {
 
 /* === STATUS (Eventos) === */
 .status.ok {
-  color: #f36d2a;
+  color: #7fff7f;
 }
 
 .status.pending {
@@ -156,7 +160,7 @@ body {
 
 /* === CTA === */
 .cta {
-  background: var(--accent);
+  background: linear-gradient(135deg, #000000, #c7b02c);
   color: var(--light);
   text-align: center;
   padding: 80px 20px;
@@ -189,12 +193,13 @@ body {
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: #fff;
+  background: transparent !important;
+  border: 1px solid #fff !important;
+  color: #fff !important;
 }
 
 .btn-primary:hover {
-  background: var(--accent-light);
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .btn-secondary {
@@ -208,12 +213,12 @@ body {
 }
 
 .btn-light {
-  background: #fff;
+  background: #88888871;
   color: var(--accent);
 }
 
 .btn-light:hover {
-  background: #f3f3f3;
+  background: #313131c9;
 }
 
 .btn-primary.small {

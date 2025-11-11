@@ -8,7 +8,7 @@ import userDefault from "../../assets/Explosión de color y energía.png";
 import "./DashboardPage.css";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav, Badge, Container } from "react-bootstrap";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 
 import "react-bootstrap";
@@ -19,20 +19,48 @@ function DashboardPage() {
   const userPhoto = user?.photoURL || userDefault;
   const [productos, setProductos] = useState([]);
   const [filtroCategoria, setFiltroCategoria] = useState("");
+  const [carrito, setCarrito] = useState([]);
 
-  // ✅ Cargar productos desde Firestore
-  // ✅ Estado para productos destacados
-  const [destacados, setDestacados] = useState([]);
-  // ✅ Añadir al carrito
+  useEffect(() => {
+    const carritoGuardado = JSON.parse(localStorage.getItem("carrito")) || [];
+    setCarrito(carritoGuardado);
+  }, []);
+  // 🛒 Añadir producto al carrito
   const agregarAlCarrito = (producto) => {
+    const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
+    const productoExistente = carritoActual.find(
+      (item) => item.id === producto.id
+    );
+
+    let nuevoCarrito;
+    if (productoExistente) {
+      nuevoCarrito = carritoActual.map((item) =>
+        item.id === producto.id
+          ? { ...item, cantidad: item.cantidad + 1 }
+          : item
+      );
+    } else {
+      nuevoCarrito = [...carritoActual, { ...producto, cantidad: 1 }];
+    }
+
+    localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
+    setCarrito(nuevoCarrito);
+
     Swal.fire({
+      toast: true,
+      position: "top-end",
       icon: "success",
-      title: "Producto añadido",
-      text: `${producto.nombre} se agregó al carrito.`,
-      timer: 1500,
+      title: `${producto.nombre} añadido al carrito 🛒`,
       showConfirmButton: false,
+      timer: 2000,
+      background: "#111",
+      color: "#fff",
     });
   };
+
+  // ✅ Estado para productos destacados
+  const [destacados, setDestacados] = useState([]);
+
 
   // ✅ Cargar productos destacados
   useEffect(() => {
@@ -183,7 +211,7 @@ function DashboardPage() {
               >
                 Inicio
               </Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>
+              <Nav.Link onClick={() => navigate("/categorias")}>
                 Categorias
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>
@@ -221,11 +249,27 @@ function DashboardPage() {
                 </Nav.Link>
               )}
 
+              {/* 🛒 CARRITO CON CONTADOR */}
               <Nav.Link
                 onClick={() => navigate("/Carrito")}
-                className="cart-icon"
+                className="position-relative"
               >
-                <FaShoppingCart />
+                <FaShoppingCart size={20} />
+                {carrito.length > 0 && (
+                  <Badge
+                    bg="warning"
+                    text="dark"
+                    pill
+                    style={{
+                      position: "absolute",
+                      top: "0px",
+                      right: "0px",
+                      fontSize: "0.7rem",
+                    }}
+                  >
+                    {carrito.length}
+                  </Badge>
+                )}
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
@@ -338,24 +382,50 @@ function DashboardPage() {
             {destacados.map((p) => (
               <div key={p.id} className="col">
                 <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-                  {p.imagen && (
-                    <img
-                      src={p.imagen}
-                      className="card-img-top"
-                      alt={p.nombre}
-                      style={{ height: "220px", objectFit: "cover" }}
-                    />
-                  )}
+                  {/* Imagen del producto */}
+                  <img
+                    src={p.imagen} // 👈 si no hay imagen en Firestore, usa la importada
+                    className="card-img-top"
+                    alt={p.nombre}
+                    style={{ height: "220px", objectFit: "cover" }}
+                  />
+
                   <div className="card-body">
                     <span className="badge bg-warning text-dark mb-2">
                       {p.categoria || "Pirotecnia"}
                     </span>
                     <h5 className="card-title">{p.nombre}</h5>
+
+                    {p.mensajeDestacado && (
+                      <div
+                        className="mensaje-destacado my-2 p-2 rounded"
+                        style={{
+                          backgroundColor: "#fff8dc",
+                          color: "#b8860b",
+                          fontStyle: "italic",
+                          fontWeight: "500",
+                          border: "1px solid gold",
+                          boxShadow: "0 0 8px rgba(255, 215, 0, 0.4)",
+                        }}
+                      >
+                        💫 {p.mensajeDestacado}
+                      </div>
+                    )}
+
                     <p className="card-text text-muted">{p.descripcion}</p>
                     <p className="fw-bold text-warning">
-                      ${Number(p.precio).toLocaleString()}
+                      💰 ${Number(p.precio).toLocaleString()}
                     </p>
-                    <button className="btn btn-warning w-100 fw-semibold">
+                    <p
+                      className="text-light mb-3"
+                      style={{ fontSize: "0.9rem", opacity: 0.8 }}
+                    >
+                      📦 Stock: <span className="fw-bold">{p.stock || 0}</span>
+                    </p>
+                    <button
+                      className="btn btn-warning w-100 fw-semibold"
+                      onClick={() => agregarAlCarrito(p)}
+                    >
                       Añadir
                     </button>
                   </div>
@@ -366,22 +436,19 @@ function DashboardPage() {
         )}
       </section>
 
-      {/* 🔥 CATÁLOGO COMPLETO (versión dinámica con productos reales) */}
+      {/* 🔥 CATÁLOGO COMPLETO */}
       <section
         className="catalogo-completo px-5 py-20"
-        style={{
-          backgroundColor: "#0d0d0d",
-          color: "#fff",
-        }}
+        style={{ backgroundColor: "#0d0d0d", color: "#fff" }}
       >
         <h2
           className="text-3xl fw-bold mb-5 pb-2 border-bottom border-warning"
-          style={{ borderColor: "#f97316", color: "white" }}
+          style={{ borderColor: "#f97316" }}
         >
           Catálogo Completo
         </h2>
 
-        {/* 🔹 Filtros simples */}
+        {/* 🔹 Filtros */}
         <div
           className="filtros-catalogo d-flex gap-3 mb-4"
           style={{ justifyContent: "center" }}
@@ -407,7 +474,6 @@ function DashboardPage() {
           ))}
         </div>
 
-        {/* 🔹 Productos reales desde Firestore */}
         {productosFiltrados.length === 0 ? (
           <p className="text-center text-muted">
             No se encontraron productos en esta categoría.
@@ -432,22 +498,22 @@ function DashboardPage() {
                       Sin imagen
                     </div>
                   )}
-                  <div className="card-body">
-                    <span className="badge bg-warning text-dark mb-2">
-                      {p.categoria || "General"}
-                    </span>
-                    <h5 className="card-title">{p.nombre}</h5>
-                    <p className="card-text text-muted">
-                      {p.descripcion || "Sin descripción disponible."}
-                    </p>
-                    <p className="fw-bold text-warning">
+                  <div className="card-body text-center">
+                    <h5 className="fw-bold text-uppercase">{p.nombre}</h5>
+                    <p className="fw-bold text-success mb-1">
                       💰 ${Number(p.precio).toLocaleString()}
+                    </p>
+                    <p
+                      className="text-light mb-3"
+                      style={{ fontSize: "0.9rem", opacity: 0.8 }}
+                    >
+                      📦 Stock: <span className="fw-bold">{p.stock || 0}</span>
                     </p>
                     <button
                       className="btn btn-warning w-100 fw-semibold"
                       onClick={() => agregarAlCarrito(p)}
                     >
-                      Añadir al carrito
+                      Añadir al carrito 🛒
                     </button>
                   </div>
                 </div>
@@ -527,7 +593,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href=""
+                    href="/Seguridad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
                     Guía de Seguridad
@@ -591,9 +657,7 @@ function DashboardPage() {
               <a
                 href="#"
                 className="hover:text-[var(--brand-warm)] no-underline"
-              >
-                Mapa del sitio
-              </a>
+              ></a>
             </div>
           </div>
         </div>

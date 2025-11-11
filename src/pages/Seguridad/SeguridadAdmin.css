@@ -1,6 +1,6 @@
 🔹 Contenedor general */
 .seguridad-container {
-  background-color: #12111f;
+  background-color: #e0e0e9;
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
   color: #ffffff;
@@ -17,6 +17,7 @@
 }
 
 .titulo-principal {
+  color:#eeeb13;
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 10px;

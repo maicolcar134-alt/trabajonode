@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/Explosión de color y energía.png"; 
+import logo from "../../assets/Explosión de color y energía.png";
 import userDefault from "../../assets/Explosión de color y energía.png";
 import "./OfertasPirotecnia.css";
 
@@ -76,10 +76,28 @@ export default function OfertasPirotecnia() {
   // 🛒 Estado del carrito
   const [cart, setCart] = useState([]);
 
-  // Función para añadir producto al carrito
+  // 🔥 Cargar carrito desde localStorage
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(storedCart);
+  }, []);
+
+  // ✅ Guardar carrito en localStorage cuando cambia
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
+  // ✅ Función para añadir producto al carrito
   const addToCart = (product) => {
     setCart((prev) => [...prev, product]);
     alert(`🛒 ${product.title} se agregó al carrito`);
+  };
+
+  // ✅ Función para realizar compra directa (banner)
+  const buyNow = (product) => {
+    setCart((prev) => [...prev, product]);
+    localStorage.setItem("cart", JSON.stringify([...cart, product]));
+    navigate("/Carrito"); // 🔥 redirige al carrito
   };
 
   // Tiempo restante venta flash
@@ -114,53 +132,80 @@ export default function OfertasPirotecnia() {
 
   return (
     <div className="ofertas-page">
-              {/* NAVBAR */}
+      {/* NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
-          <Navbar.Brand onClick={() => navigate("/dashboard")} className="brand-logo">
+          <Navbar.Brand
+            onClick={() => navigate("/dashboard")}
+            className="brand-logo"
+          >
             <img src={logo} alt="logo" height="40" />
             <span className="ms-2 fw-bold text-warning">PyroShop</span>
           </Navbar.Brand>
-          
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
-              <Nav.Link onClick={() => navigate("/Dashboard")} className="active-link">Inicio</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>Categorias</Nav.Link>
-
-              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>Ofertas</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>seguridad</Nav.Link>
-              
+              <Nav.Link
+                onClick={() => navigate("/Dashboard")}
+                className="active-link"
+              >
+                Inicio
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/Categorias")}>
+                Categorias
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>
+                Ofertas
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/Seguridad")}>
+                Seguridad
+              </Nav.Link>
               <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link> 
-              <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
+              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
+              <Nav.Link
+                onClick={() => navigate("/Admin")}
+                className="text-warning"
+              >
                 <i className="bi bi-shield-lock"></i> Admin
               </Nav.Link>
-           
 
               {/* Botón de usuario o iniciar sesión */}
               {user ? (
                 <Nav.Item className="logout-container" onClick={handleLogout}>
                   <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
                     <FaSignOutAlt /> Cerrar Sesión
-                    <img src={user } alt="Foto de usuario" className="user-photo-nav" />
+                    <img
+                      src={userPhoto}
+                      alt="Foto de usuario"
+                      className="user-photo-nav"
+                    />
                   </Nav.Link>
                 </Nav.Item>
               ) : (
-                <Nav.Link onClick={() => navigate("/login")} className="d-flex align-items-center gap-2 fw-bold text-light">
+                <Nav.Link
+                  onClick={() => navigate("/login")}
+                  className="d-flex align-items-center gap-2 fw-bold text-light"
+                >
                   <FaUser /> Acceder
                 </Nav.Link>
               )}
 
               {/* Ícono carrito */}
-              <Nav.Link onClick={() => navigate("/Carrito")} className="cart-icon">
+              <Nav.Link
+                onClick={() => navigate("/Carrito")}
+                className="cart-icon position-relative"
+              >
                 <FaShoppingCart />
+                {cart.length > 0 && (
+                  <span className="cart-badge">{cart.length}</span> // 🔥 cantidad en el icono
+                )}
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
+
       {/* CONTENIDO DE OFERTAS */}
       <div className="ofertas-wrap">
         {/* Banner Venta Flash */}
@@ -210,10 +255,7 @@ export default function OfertasPirotecnia() {
             </div>
 
             {/* ✅ Botón funcional del banner */}
-            <button
-              className="btn-primary"
-              onClick={() => addToCart(mainProduct)}
-            >
+            <button className="btn-primary" onClick={() => buyNow(mainProduct)}>
               Comprar Ahora
             </button>
           </div>

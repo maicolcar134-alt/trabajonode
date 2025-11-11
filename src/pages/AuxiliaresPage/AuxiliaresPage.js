@@ -8,32 +8,48 @@ import {
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import {
-  Navbar,
-  Nav,
-  NavDropdown,
   Table,
   Button,
   Modal,
   Form,
   Container,
-  Image,
   Row,
   Col,
   Card,
 } from "react-bootstrap";
-import { FaUserCircle, FaCheckCircle, FaEye, FaStore } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaEye,
+  FaUserTie,
+} from "react-icons/fa";
 import Swal from "sweetalert2";
 import { auth, db } from "../../firebase";
 import { signOut } from "firebase/auth";
 import "./AuxiliaresPage.css";
-import logo from "../../assets/Explosión de color y energía.png";
 
 function AuxiliaresPage() {
   const navigate = useNavigate();
   const [auxiliares, setAuxiliares] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedAux, setSelectedAux] = useState(null);
+  const [currentUserData, setCurrentUserData] = useState(null);
+  const [edadVerificada, setEdadVerificada] = useState(0);
 
+  // 🔹 Calcular edad desde fecha de nacimiento
+  const calcularEdad = (fechaNacimiento) => {
+    if (!fechaNacimiento) return 0;
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--;
+    }
+    return edad;
+  };
+
+  // 🔹 Cargar usuarios y detectar mayores de edad
   const fetchAuxiliares = async () => {
     try {
       const querySnapshot = await getDocs(collection(db, "usuarios"));
@@ -41,23 +57,82 @@ function AuxiliaresPage() {
         id: doc.id,
         ...doc.data(),
       }));
+
       setAuxiliares(data);
+
+      // 🔍 Detectar mayores de edad
+      const mayoresEdad = data.filter(
+        (u) => calcularEdad(u.fechaNacimiento) >= 18
+      );
+      setEdadVerificada(mayoresEdad.length);
+
+      // ⚠️ Mostrar alerta si hay mayores
+      if (mayoresEdad.length > 0) {
+        const listaMayores = mayoresEdad
+          .map(
+            (m) =>
+              `👤 ${m.nombres || "Sin nombre"} (${calcularEdad(
+                m.fechaNacimiento
+              )} años)`
+          )
+          .join("<br>");
+        Swal.fire({
+          icon: "info",
+          title: "Usuarios mayores de edad detectados",
+          html: `<strong>${mayoresEdad.length}</strong> verificación(es):<br><br>${listaMayores}`,
+          confirmButtonText: "Aceptar",
+        });
+      }
     } catch (error) {
       console.error("Error cargando usuarios:", error);
     }
   };
 
+  // 🔹 Cargar usuario actual y verificar rol
   useEffect(() => {
-    fetchAuxiliares();
-  }, []);
+    const fetchData = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const querySnapshot = await getDocs(collection(db, "usuarios"));
+        const allUsers = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        const current = allUsers.find((u) => u.email === user.email);
+        setCurrentUserData(current);
+
+        if (!current || current.Rol !== "Admin") {
+          Swal.fire({
+            icon: "error",
+            title: "Acceso Denegado",
+            text: "Solo los administradores pueden acceder a esta página.",
+            confirmButtonText: "Volver al Dashboard",
+          }).then(() => {
+            navigate("/Dashboard");
+          });
+        } else {
+          setAuxiliares(allUsers);
+          // 👇 Ejecutar conteo de mayores aquí también
+          const mayoresEdad = allUsers.filter(
+            (u) => calcularEdad(u.fechaNacimiento) >= 18
+          );
+          setEdadVerificada(mayoresEdad.length);
+        }
+      } else {
+        navigate("/login");
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   const handleLogout = async () => {
     await signOut(auth);
-    navigate("/Auditoria");
+    navigate("/login");
   };
 
   const handleVolver = () => {
-    navigate("/Admin"); // redirige a la tienda
+    navigate("/Admin");
   };
 
   const handleEliminar = async (id) => {
@@ -104,65 +179,32 @@ function AuxiliaresPage() {
     setSelectedAux({ ...selectedAux, [name]: value });
   };
 
-  const user = auth.currentUser;
-
   const totalUsuarios = auxiliares.length;
-  const edadVerificada = auxiliares.filter((u) => u.estado === "Activo").length;
   const kycCompletado = auxiliares.filter((u) => u.Rol === "Admin").length;
   const kycPendiente = totalUsuarios - kycCompletado;
 
+  if (!currentUserData || currentUserData.Rol !== "Admin") {
+    return null;
+  }
+
   return (
     <>
-      {/* NAVBAR */}
-      <Navbar expand="lg" bg="dark" variant="dark" className="dashboard-navbar">
-        <Container>
-          <Navbar.Brand
-            onClick={() => navigate("/dashboard")}
-            style={{ cursor: "pointer" }}
-          >
-            <img src={logo} alt="mas Logo" height="40" />
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto">
-              <NavDropdown
-                title={
-                  user?.photoURL ? (
-                    <Image
-                      src={user.photoURL}
-                      roundedCircle
-                      width="40"
-                      height="40"
-                    />
-                  ) : (
-                    <FaUserCircle size={24} color="#f1edeaff" />
-                  )
-                }
-                id="user-nav-dropdown"
-                align="end"
-              >
-                <NavDropdown.Item disabled>
-                  {user?.email || "Usuario"}
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleLogout}>
-                  Cerrar Sesión
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-      {/* MAIN */}
       <main className="content">
         <Container fluid className="mt-4">
+          {/* 🔹 Mensaje de bienvenida */}
+          <div className="d-flex align-items-center justify-content-start mb-3 p-3 bg-light rounded shadow-sm">
+            <FaUserTie className="text-primary me-2" size={28} />
+            <h5 className="m-0 text-dark">
+              👋 Bienvenido, <strong>Admin {currentUserData?.nombres}</strong>
+            </h5>
+          </div>
+
           <h2 className="page-title mb-2">Gestión de Usuarios</h2>
           <p className="page-subtitle mb-4">
             Administra usuarios y verificaciones
           </p>
 
-          {/* Tarjetas */}
+          {/* 🔹 Tarjetas resumen */}
           <Row className="mb-4">
             <Col md={3}>
               <Card className="summary-card">
@@ -173,10 +215,21 @@ function AuxiliaresPage() {
               </Card>
             </Col>
             <Col md={3}>
-              <Card className="summary-card verified">
+              <Card
+                className={`summary-card ${
+                  edadVerificada > 0 ? "verified" : "no-verified"
+                }`}
+              >
                 <Card.Body>
-                  <h4>{edadVerificada}</h4>
-                  <p>Edad Verificada</p>
+                  <div className="d-flex align-items-center justify-content-center gap-2">
+                    {edadVerificada > 0 ? (
+                      <FaCheckCircle className="text-success" />
+                    ) : (
+                      <FaExclamationTriangle className="text-warning" />
+                    )}
+                    <h4 className="m-0">{edadVerificada}</h4>
+                  </div>
+                  <p className="mt-2">Edad Verificada</p>
                 </Card.Body>
               </Card>
             </Col>
@@ -198,7 +251,7 @@ function AuxiliaresPage() {
             </Col>
           </Row>
 
-          {/* Tabla */}
+          {/* 🔹 Tabla de usuarios */}
           <Card className="table-card mb-4">
             <Card.Header className="table-header">
               Lista de Usuarios
@@ -209,7 +262,7 @@ function AuxiliaresPage() {
                   <tr>
                     <th>Usuario</th>
                     <th>Rol</th>
-                    <th>Edad Verificada</th>
+                    <th>Edad</th>
                     <th>KYC</th>
                     <th>Pedidos</th>
                     <th>Estado</th>
@@ -220,12 +273,10 @@ function AuxiliaresPage() {
                   {auxiliares.map((aux) => (
                     <tr key={aux.id}>
                       <td>
-                        <div>
-                          <strong>
-                            {aux.nombres} {aux.apellidos}
-                          </strong>
-                          <div className="email">{aux.email}</div>
-                        </div>
+                        <strong>
+                          {aux.nombres} {aux.apellidos}
+                        </strong>
+                        <div className="email">{aux.email}</div>
                       </td>
                       <td>
                         <span
@@ -236,20 +287,14 @@ function AuxiliaresPage() {
                           {aux.Rol || "Cliente"}
                         </span>
                       </td>
-                      <td>
-                        <FaCheckCircle className="text-success" />
-                      </td>
+                      <td>{calcularEdad(aux.fechaNacimiento)}</td>
                       <td>
                         <span
                           className={`kyc-badge ${
-                            aux.estado === "Activo"
-                              ? "verificado"
-                              : "pendiente"
+                            aux.estado === "Activo" ? "verificado" : "pendiente"
                           }`}
                         >
-                          {aux.estado === "Activo"
-                            ? "Verificado"
-                            : "Pendiente"}
+                          {aux.estado === "Activo" ? "Verificado" : "Pendiente"}
                         </span>
                       </td>
                       <td>{aux.pedidos || 0}</td>
@@ -272,21 +317,10 @@ function AuxiliaresPage() {
               </Table>
             </Card.Body>
           </Card>
-
-          {/* BOTÓN VOLVER */}
-          <div className="text-center mt-4 mb-5">
-            <Button
-              onClick={handleVolver}
-              className="btn-volver-tienda d-flex align-items-center justify-content-center mx-auto"
-            >
-              <FaStore className="me-2" />
-              Volver   Admin 
-            </Button>
-          </div>
         </Container>
       </main>
 
-      {/* MODAL */}
+      {/* 🔹 Modal para editar usuario */}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Editar Usuario</Modal.Title>

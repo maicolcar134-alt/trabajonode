@@ -1,36 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   collection,
   query,
   where,
   onSnapshot,
-  getDocs,
   updateDoc,
   doc,
   addDoc,
+  deleteDoc,
   serverTimestamp,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../../firebase";
-import { Container, Spinner, Table, Badge, Button } from "react-bootstrap";
-import { FaBoxOpen, FaArrowLeft } from "react-icons/fa";
-import { useNavigate } from "react-router-dom"; // <-- Importar
+import {
+  Container,
+  Spinner,
+  Table,
+  Badge,
+  Button,
+  Form,
+} from "react-bootstrap";
+import { FaBoxOpen, FaTrashAlt, FaSyncAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "./Pedidos.css";
 
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [telefono, setTelefono] = useState("");
   const [cargando, setCargando] = useState(false);
-  const navigate = useNavigate(); // <-- Hook de navegación
+  const [listenerActivo, setListenerActivo] = useState(null);
+  const [seleccionados, setSeleccionados] = useState([]);
+  const navigate = useNavigate();
 
-  const volverAdmin = () => {
-    navigate("/Admin"); // <-- Ajusta la ruta según tu panel de admin
-  };
-
-  // 🔍 Buscar pedidos por número de teléfono
+  // 🔍 Buscar pedidos por teléfono
   const buscarPedidos = () => {
-    if (!telefono.trim())
-      return alert("Por favor ingresa tu número de teléfono");
+    if (!telefono.trim()) {
+      alert("Por favor ingresa un número de teléfono.");
+      return;
+    }
     setCargando(true);
+    if (listenerActivo) listenerActivo();
+
     const q = query(
       collection(db, "pedidos"),
       where("cliente.telefono", "==", telefono)
@@ -39,17 +49,39 @@ export default function Pedidos() {
       setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
       setCargando(false);
     });
-    return () => unsub();
+
+    setListenerActivo(() => unsub);
   };
 
   // 📋 Mostrar todos los pedidos
-  const mostrarTodos = async () => {
+  const mostrarTodos = () => {
     setCargando(true);
+    if (listenerActivo) listenerActivo();
+
     const q = query(collection(db, "pedidos"));
-    const snapshot = await getDocs(q);
+    const unsub = onSnapshot(q, (snapshot) => {
+      setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setCargando(false);
+    });
+
+    setListenerActivo(() => unsub);
+  };
+
+  // 🔁 Actualizar pedidos manualmente
+  const actualizarPedidos = async () => {
+    setCargando(true);
+    const snapshot = await getDocs(collection(db, "pedidos"));
     setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
     setCargando(false);
   };
+
+  // 🧹 Limpieza
+  useEffect(() => {
+    mostrarTodos();
+    return () => {
+      if (listenerActivo) listenerActivo();
+    };
+  }, []);
 
   // 🎨 Colores del estado
   const colorEstado = (estado) => {
@@ -65,7 +97,7 @@ export default function Pedidos() {
     }
   };
 
-  // 🧾 Registrar en la colección de auditoría
+  // 🧾 Registrar acción en auditoría
   const registrarAuditoria = async (accion, idPedido, detalles = {}) => {
     try {
       await addDoc(collection(db, "auditoria_logs"), {
@@ -75,28 +107,23 @@ export default function Pedidos() {
         fecha: serverTimestamp(),
         usuario: "Administrador",
       });
-      console.log("Auditoría registrada:", accion);
     } catch (error) {
       console.error("Error registrando auditoría:", error);
     }
   };
 
-  // ✅ Actualizar estado del pedido en Firestore y registrar log
+  // ✅ Actualizar estado
   const actualizarEstado = async (idPedido, nuevoEstado) => {
     try {
       const ref = doc(db, "pedidos", idPedido);
       await updateDoc(ref, { estado: nuevoEstado });
-      await registrarAuditoria("Cambio de estado", idPedido, {
-        nuevoEstado,
-      });
-      alert("✅ Estado del pedido actualizado correctamente.");
+      await registrarAuditoria("Cambio de estado", idPedido, { nuevoEstado });
     } catch (error) {
-      console.error("Error actualizando estado:", error);
       alert("Error al actualizar el estado del pedido.");
     }
   };
 
-  // 💵 Actualizar estado de pago y registrar log
+  // 💳 Actualizar pago
   const actualizarPago = async (idPedido, nuevoPago) => {
     try {
       const ref = doc(db, "pedidos", idPedido);
@@ -104,29 +131,74 @@ export default function Pedidos() {
       await registrarAuditoria("Actualización de pago", idPedido, {
         nuevoPago,
       });
-      alert("✅ Estado del pago actualizado correctamente.");
     } catch (error) {
-      console.error("Error actualizando pago:", error);
       alert("Error al actualizar el estado del pago.");
+    }
+  };
+
+  // 🗑️ Eliminar un pedido individual
+  const eliminarPedido = async (idPedido) => {
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este pedido?"
+    );
+    if (!confirmar) return;
+    try {
+      await deleteDoc(doc(db, "pedidos", idPedido));
+      await registrarAuditoria("Eliminación de pedido", idPedido);
+      setPedidos((prev) => prev.filter((p) => p.id !== idPedido));
+      alert("Pedido eliminado correctamente ✅");
+    } catch (error) {
+      alert("Error al eliminar el pedido.");
+    }
+  };
+
+  // ✅ Seleccionar/desmarcar pedido
+  const toggleSeleccion = (id) => {
+    setSeleccionados((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  // ✅ Seleccionar todos
+  const seleccionarTodos = () => {
+    if (seleccionados.length === pedidos.length) {
+      setSeleccionados([]);
+    } else {
+      setSeleccionados(pedidos.map((p) => p.id));
+    }
+  };
+
+  // 🗑️ Eliminar pedidos seleccionados
+  const eliminarSeleccionados = async () => {
+    if (seleccionados.length === 0) {
+      alert("⚠️ No hay pedidos seleccionados.");
+      return;
+    }
+    const confirmar = window.confirm(
+      `¿Eliminar ${seleccionados.length} pedidos seleccionados?`
+    );
+    if (!confirmar) return;
+    try {
+      for (const id of seleccionados) {
+        await deleteDoc(doc(db, "pedidos", id));
+        await registrarAuditoria("Eliminación múltiple de pedido", id);
+      }
+
+      setPedidos((prev) => prev.filter((p) => !seleccionados.includes(p.id)));
+      setSeleccionados([]);
+      alert("✅ Pedidos eliminados correctamente.");
+    } catch (error) {
+      alert("❌ Error al eliminar pedidos seleccionados.");
     }
   };
 
   return (
     <Container className="mt-5 mb-5 text-white">
-      {/* BOTÓN REGRESAR AL ADMIN */}
-      <div className="mb-3">
-        <Button variant="secondary" onClick={volverAdmin}>
-          <FaArrowLeft className="me-2" />
-          Regresar al Admin
-        </Button>
-      </div>
-
       <h2 className="text-center mb-4 fw-bold">
-        <FaBoxOpen className="me-2" />
-        Gestión de Pedidos
+        <FaBoxOpen className="me-2" /> Gestión de Pedidos
       </h2>
 
-      {/* 🔍 Barra de búsqueda */}
+      {/* 🔍 BUSCADOR */}
       <div className="d-flex justify-content-center mb-4">
         <input
           type="text"
@@ -141,12 +213,35 @@ export default function Pedidos() {
         >
           Buscar
         </button>
-        <button className="btn btn-secondary fw-bold" onClick={mostrarTodos}>
+        <button
+          className="btn btn-secondary fw-bold me-2"
+          onClick={mostrarTodos}
+        >
           Mostrar todos
+        </button>
+        <button
+          className="btn btn-info fw-bold text-white"
+          onClick={actualizarPedidos}
+        >
+          <FaSyncAlt className="me-1" /> Actualizar
         </button>
       </div>
 
-      {/* ⏳ Cargando */}
+      {/* 🔘 ELIMINAR SELECCIONADOS */}
+      {pedidos.length > 0 && (
+        <div className="text-center mb-3">
+          <Button
+            variant="danger"
+            onClick={eliminarSeleccionados}
+            disabled={seleccionados.length === 0}
+          >
+            <FaTrashAlt className="me-2" /> Eliminar seleccionados (
+            {seleccionados.length})
+          </Button>
+        </div>
+      )}
+
+      {/* ⏳ CARGANDO */}
       {cargando && (
         <div className="text-center my-5">
           <Spinner animation="border" />
@@ -154,19 +249,24 @@ export default function Pedidos() {
         </div>
       )}
 
-      {/* ⚠️ Sin resultados */}
+      {/* ⚠️ SIN RESULTADOS */}
       {!cargando && pedidos.length === 0 && (
-        <p className="text-center text-muted">
-          No se encontraron pedidos para mostrar.
-        </p>
+        <p className="text-center text-muted">No se encontraron pedidos.</p>
       )}
 
-      {/* 📦 Tabla de pedidos */}
+      {/* 📦 TABLA DE PEDIDOS */}
       {pedidos.length > 0 && (
         <div className="table-responsive shadow-sm mt-4">
           <Table striped bordered hover variant="dark">
             <thead className="text-center align-middle">
               <tr>
+                <th>
+                  <Form.Check
+                    type="checkbox"
+                    checked={seleccionados.length === pedidos.length}
+                    onChange={seleccionarTodos}
+                  />
+                </th>
                 <th>ID Pedido</th>
                 <th>Cliente</th>
                 <th>Teléfono</th>
@@ -174,11 +274,19 @@ export default function Pedidos() {
                 <th>Total</th>
                 <th>Pago</th>
                 <th>Estado envío</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {pedidos.map((pedido) => (
                 <tr key={pedido.id}>
+                  <td className="text-center">
+                    <Form.Check
+                      type="checkbox"
+                      checked={seleccionados.includes(pedido.id)}
+                      onChange={() => toggleSeleccion(pedido.id)}
+                    />
+                  </td>
                   <td className="text-center fw-semibold">{pedido.id}</td>
                   <td>{pedido.cliente?.nombre || "Sin nombre"}</td>
                   <td>{pedido.cliente?.telefono || "N/A"}</td>
@@ -198,14 +306,20 @@ export default function Pedidos() {
                     ${pedido.total?.toLocaleString() || "0"}
                   </td>
 
-                  {/* 💳 Estado de pago */}
+                  {/* 💳 PAGO */}
                   <td className="text-center">
                     <select
-                      className="form-select form-select-sm d-inline w-auto bg-dark text-white border-secondary"
+                      className="form-select form-select-sm bg-dark text-white border-secondary"
                       value={pedido.pago || "Pendiente"}
-                      onChange={(e) =>
-                        actualizarPago(pedido.id, e.target.value)
-                      }
+                      onChange={(e) => {
+                        const nuevoPago = e.target.value;
+                        actualizarPago(pedido.id, nuevoPago);
+                        setPedidos((prev) =>
+                          prev.map((p) =>
+                            p.id === pedido.id ? { ...p, pago: nuevoPago } : p
+                          )
+                        );
+                      }}
                     >
                       <option value="Pendiente">Pendiente</option>
                       <option value="Pagado">Pagado</option>
@@ -213,22 +327,41 @@ export default function Pedidos() {
                     </select>
                   </td>
 
-                  {/* 🚚 Estado de envío */}
+                  {/* 🚚 ESTADO */}
                   <td className="text-center">
                     <Badge bg={colorEstado(pedido.estado)} className="me-2">
                       {pedido.estado || "Pendiente"}
                     </Badge>
                     <select
-                      className="form-select form-select-sm d-inline w-auto bg-dark text-white border-secondary"
-                      value={pedido.estado}
-                      onChange={(e) =>
-                        actualizarEstado(pedido.id, e.target.value)
-                      }
+                      className="form-select form-select-sm bg-dark text-white border-secondary"
+                      value={pedido.estado || "En proceso"}
+                      onChange={(e) => {
+                        const nuevoEstado = e.target.value;
+                        actualizarEstado(pedido.id, nuevoEstado);
+                        setPedidos((prev) =>
+                          prev.map((p) =>
+                            p.id === pedido.id
+                              ? { ...p, estado: nuevoEstado }
+                              : p
+                          )
+                        );
+                      }}
                     >
                       <option value="En proceso">En proceso</option>
                       <option value="Enviado">Enviado</option>
                       <option value="Entregado">Entregado</option>
                     </select>
+                  </td>
+
+                  {/* 🗑️ ELIMINAR */}
+                  <td className="text-center">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => eliminarPedido(pedido.id)}
+                    >
+                      <FaTrashAlt /> Eliminar
+                    </Button>
                   </td>
                 </tr>
               ))}
