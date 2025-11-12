@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import "./HelpCenter.css";
 import logo from "../../assets/Explosión de color y energía.png";
+import userDefault from "../../assets/Explosión de color y energía.png";
 
 
 
 export default function HelpCenter() {
   const navigate = useNavigate();
   const user = false; // 🔸 cambia esto por tu lógica de autenticación real
+  const userPhoto = user?.photoURL || userDefault;
 
   const handleLogout = () => {
     console.log("Cerrar sesión");
@@ -18,7 +20,7 @@ export default function HelpCenter() {
 
   return (
     <div className="helpcenter">
-                 {/* NAVBAR */}
+              {/* NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
           <Navbar.Brand onClick={() => navigate("/dashboard")} className="brand-logo">
@@ -48,7 +50,7 @@ export default function HelpCenter() {
                 <Nav.Item className="logout-container" onClick={handleLogout}>
                   <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
                     <FaSignOutAlt /> Cerrar Sesión
-                    <img src={user} alt="Foto de usuario" className="user-photo-nav" />
+                    <img src={userPhoto} alt="Foto de usuario" className="user-photo-nav" />
                   </Nav.Link>
                 </Nav.Item>
               ) : (
@@ -59,6 +61,7 @@ export default function HelpCenter() {
 
               {/* Ícono carrito */}
               <Nav.Link onClick={() => navigate("/Carrito")} className="cart-icon">
+
                 <FaShoppingCart />
               </Nav.Link>
             </Nav>

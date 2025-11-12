@@ -1,0 +1,14 @@
+// src/layouts/DashboardLayout.jsx
+import NavbarMain from "./NavbarMain";
+import { Outlet } from "react-router-dom";
+
+const DashboardLayout = ({ user, handleLogout }) => {
+  return (
+    <>
+      <NavbarMain user={user} handleLogout={handleLogout} />
+      <Outlet /> {/* Aquí se cargan las páginas del dashboard */}
+    </>
+  );
+};
+
+export default DashboardLayout;

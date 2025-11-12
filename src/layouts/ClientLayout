@@ -1,0 +1,15 @@
+// src/layouts/ClientLayout.jsx
+import { Outlet } from "react-router-dom";
+import NavbarMain from "./NavbarMain";
+
+const ClientLayout = () => {
+  return (
+    <>
+      <NavbarMain />
+      <Outlet /> {/* Aquí se renderizan las páginas del cliente */}
+    </>
+  );
+};
+
+export default ClientLayout;
+

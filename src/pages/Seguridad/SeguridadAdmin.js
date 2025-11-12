@@ -21,7 +21,7 @@ function SeguridadAdmin() {
 
   return(
      <div className="seguridad-container">
-         {/* NAVBAR */}
+ {/* NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
           <Navbar.Brand onClick={() => navigate("/dashboard")} className="brand-logo">
@@ -61,7 +61,8 @@ function SeguridadAdmin() {
               )}
 
               {/* Ícono carrito */}
-              <Nav.Link onClick={() => navigate("/productos")} className="cart-icon">
+              <Nav.Link onClick={() => navigate("/Carrito")} className="cart-icon">
+
                 <FaShoppingCart />
               </Nav.Link>
             </Nav>

@@ -101,27 +101,28 @@ export default function EventsPage() {
            
 
               {/* Botón de usuario o iniciar sesión */}
-              {user ? (
-                <Nav.Item className="logout-container" onClick={handleLogout}>
-                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
-                    <FaSignOutAlt /> Cerrar Sesión
-                    <img src={userPhoto} alt="Foto de usuario" className="user-photo-nav" />
-                  </Nav.Link>
-                </Nav.Item>
-              ) : (
-                <Nav.Link onClick={() => navigate("/login")} className="d-flex align-items-center gap-2 fw-bold text-light">
-                  <FaUser /> Acceder
-                </Nav.Link>
-              )}
-
-              {/* Ícono carrito */}
-              <Nav.Link onClick={() => navigate("/Carrito")} className="cart-icon">
-                <FaShoppingCart />
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+                            {user ? (
+                              <Nav.Item className="logout-container" onClick={handleLogout}>
+                                <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
+                                  <FaSignOutAlt /> Cerrar Sesión
+                                  <img src={userPhoto} alt="Foto de usuario" className="user-photo-nav" />
+                                </Nav.Link>
+                              </Nav.Item>
+                            ) : (
+                              <Nav.Link onClick={() => navigate("/login")} className="d-flex align-items-center gap-2 fw-bold text-light">
+                                <FaUser /> Acceder
+                              </Nav.Link>
+                            )}
+              
+                            {/* Ícono carrito */}
+                            <Nav.Link onClick={() => navigate("/Carrito")} className="cart-icon">
+              
+                              <FaShoppingCart />
+                            </Nav.Link>
+                          </Nav>
+                        </Navbar.Collapse>
+                      </Container>
+                    </Navbar>
 
 
       {/* HERO */}

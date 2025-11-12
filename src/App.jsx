@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import NotFoundPage from './pages/components/NotFoundPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage';
-import LoginPage from './pages/loginPage/LoginPage';
+import LoginPage from './pages/LoginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 
 // Playground hooks
@@ -41,9 +41,7 @@ import Gracias from './pages/Gracias/Gracias';
 
 // Layout admin persistente
 import AdminLayout from './layouts/AdminLayout';
-import { User } from 'lucide-react';
-import UsuariosPage from './pages/Usuarios/UsuariosPage';
-import { BiCategory } from 'react-icons/bi';
+import ClientLayout from './layouts/ClientLayout';
 
 function App() {
   return (
@@ -51,6 +49,7 @@ function App() {
       <Routes>
 
         {/* ✅ RUTAS PÚBLICAS */}
+        <Route element={<ClientLayout />}></Route>
         <Route path="/" element={<DashboardPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -62,7 +61,9 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/usuarios" element={<ProtectedRoute><AuxiliaresPage /></ProtectedRoute>} />
 
-        {/* ✅✅✅ PANEL ADMIN CON SIDEBAR FIJO ✅✅✅ */}
+        
+
+        {/* 🔐 Panel Admin con layout propio */}
         <Route
           path="/admin"
           element={
@@ -71,6 +72,7 @@ function App() {
             </ProtectedRoute>
           }
         >
+          {/* Subrutas del admin */}
           <Route path="dashboard" element={<DashboardAdmin />} />
           <Route path="inventario" element={<Inventario />} />
           <Route path="categorias" element={<CategoriasAdmin />} />
