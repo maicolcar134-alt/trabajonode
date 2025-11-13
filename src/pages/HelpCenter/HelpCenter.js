@@ -130,7 +130,7 @@ export default function HelpCenter() {
             específica.
           </p>
 <a 
-  href="https://mail.google.com/mail/?view=cm&fs=1&to=soporte@pyroshop.com"
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=pyroshopmc@gmail.com"
   class="btn-soporte"
 >
   💬 Abrir Chat de Soporte
@@ -160,11 +160,11 @@ export default function HelpCenter() {
   {/* Email */}
   <div className="card blue">
     <h3>📧 Email</h3>
-    <p className="main">soporte@pyroshop.co</p>
+    <p className="main">pyroshopmc@gmail.com</p>
     <p>📬 Respuesta en 24h</p>
 
     <a
-      href="https://mail.google.com/mail/?view=cm&fs=1&to=soporte@pyroshop.co"
+      href="https://mail.google.com/mail/?view=cm&fs=1&to=pyroshopmc@gmail.com"
       target="_blank"
       rel="noopener noreferrer"
       className="btn-contact"
