@@ -70,7 +70,8 @@ export default function HelpCenter() {
 
       {/* 🔹 CONTENIDO PRINCIPAL */}
       <div className="header">
-        <button className="btn-center">Centro de Ayuda</button>
+      <h2>Centro De Ayuda</h2>
+      <br></br>
         <h2>¿En qué podemos ayudarte?</h2>
         <p>
           Encuentra respuestas rápidas o contacta con nuestro equipo de soporte.
@@ -83,32 +84,7 @@ export default function HelpCenter() {
           />
         </div>
       </div>
-
-      {/* 🔹 Tarjetas de contacto */}
-      <div className="contact-section">
-        <div className="card green">
-          <h3>📞 Teléfono</h3>
-          <p className="main">+57 3213148729</p>
-          <p>🕒 L-V: 8:00–18:00, S: 9:00–13:00</p>
-          <button>Contactar</button>
-        </div>
-
-        <div className="card blue">
-          <h3>📧 Email</h3>
-          <p className="main">soporte@pyroshop.co</p>
-          <p>📬 Respuesta en 24h</p>
-          <button>Contactar</button>
-        </div>
-
-        <div className="card orange">
-          <h3>💬 WhatsApp</h3>
-          <p className="main">+57 3213148729</p>
-          <p>🕓 L-V: 7:00–21:00</p>
-          <button>Contactar</button>
-        </div>
-      </div>
-
-      {/* 🔹 Secciones de categorías */}
+            {/* 🔹 Secciones de categorías */}
       <div className="categories">
         <button className="active">📦 Pedidos y Compras</button>
         <button>🚚 Envíos y Entregas</button>
@@ -168,10 +144,68 @@ export default function HelpCenter() {
             Nuestro equipo está disponible para ayudarte con cualquier consulta
             específica.
           </p>
-          <button>💬 Abrir Chat de Soporte</button>
+<a 
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=soporte@pyroshop.com"
+  class="btn-soporte"
+>
+  💬 Abrir Chat de Soporte
+</a>      
           <small>Tiempo medio de respuesta: 5 minutos</small>
         </div>
       </div>
+
+
+      
+<div className="contact-section">
+
+  {/* Teléfono */}
+  <div className="card green">
+    <h3>📞 Teléfono</h3>
+    <p className="main">+57 3213148729</p>
+    <p>🕒 L-V: 8:00–18:00, S: 9:00–13:00</p>
+
+    <a
+      href="tel:+573213148729"
+      className="btn-contact"
+    >
+      Contactar
+    </a>
+  </div>
+
+  {/* Email */}
+  <div className="card blue">
+    <h3>📧 Email</h3>
+    <p className="main">soporte@pyroshop.co</p>
+    <p>📬 Respuesta en 24h</p>
+
+    <a
+      href="https://mail.google.com/mail/?view=cm&fs=1&to=soporte@pyroshop.co"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-contact"
+    >
+      Contactar
+    </a>
+  </div>
+
+  {/* WhatsApp */}
+  <div className="card orange">
+    <h3>💬 WhatsApp</h3>
+    <p className="main">+57 3213148729</p>
+    <p>🕓 L-V: 7:00–21:00</p>
+
+    <a
+      href="https://wa.me/573213148729"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-contact"
+    >
+      Contactar
+    </a>
+  </div>
+
+</div>
+
     </div>
   );
 }
