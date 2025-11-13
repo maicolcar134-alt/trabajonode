@@ -26,7 +26,7 @@ body {
 
 .hero {
   text-align: center;
-  padding: 150px 240px 140px;
+  padding: 150px 240px 40px;
   background: radial-gradient(circle at 50% 20%, rgba(255, 150, 0, 0.15), rgba(0, 0, 0, 0.9));
   color: #fff;
   position: relative;

@@ -76,21 +76,6 @@ export default function HelpCenter() {
         <p>
           Encuentra respuestas rápidas o contacta con nuestro equipo de soporte.
         </p>
-
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="🔍 Buscar en preguntas frecuentes..."
-          />
-        </div>
-      </div>
-            {/* 🔹 Secciones de categorías */}
-      <div className="categories">
-        <button className="active">📦 Pedidos y Compras</button>
-        <button>🚚 Envíos y Entregas</button>
-        <button>🔁 Devoluciones y Cambios</button>
-        <button>🔒 Seguridad y Legal</button>
-        <button>👤 Cuenta y Perfil</button>
       </div>
 
       {/* 🔹 Preguntas frecuentes */}
