@@ -1,0 +1,41 @@
+/* ===== NAVBAR ===== */
+
+.dashboard-navbar {
+  background-color: #1a1d23 !important;
+  padding: 10px 20px;
+  border-bottom: 2px solid #ff5722;
+}
+
+.dashboard-navbar .brand-logo img {
+  border-radius: 5px;
+}
+
+.dashboard-navbar .nav-link {
+  color: #e0e0e0 !important;
+  font-weight: 500;
+  margin: 0 10px;
+  transition: all 0.3s ease;
+}
+
+.dashboard-navbar .nav-link:hover {
+  color: #ff5722 !important;
+}
+
+.active-link {
+  background-color: #ff5722;
+  color: #fff !important;
+  border-radius: 6px;
+  padding: 6px 12px !important;
+}
+
+.cart-icon {
+  font-size: 1.2rem;
+}
+
+/* ===== FOTO DE USUARIO ===== */
+.user-photo-nav {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid #ff5722;
+}
