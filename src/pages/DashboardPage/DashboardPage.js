@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { signOut } from "firebase/auth";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import logo from "../../assets/Explosión de color y energía.png";

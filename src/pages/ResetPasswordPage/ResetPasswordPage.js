@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import "./ResetPasswordPage.css";
-import logo from "../../assets/fuegos-artificiales-rojos-azules-sobre-fondo-negro_69379-78.jpg";
+import logo from "../../assets/Explosión de color y energía.png";
 import { confirmPasswordReset, getAuth } from "firebase/auth";
 import { useSearchParams } from "react-router-dom";
 

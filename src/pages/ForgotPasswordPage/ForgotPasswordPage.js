@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import './ForgotPasswordPage.css';
-import logo from '../../assets/fuegos-artificiales-rojos-azules-sobre-fondo-negro_69379-78.jpg';
-import { auth } from '../../firebase';
+import logo from '../../assets/Explosión de color y energía.png';
+import { auth } from '../../firebaseConfig';
 import { sendPasswordResetEmail } from 'firebase/auth';
 
 function ForgotPasswordPage() {

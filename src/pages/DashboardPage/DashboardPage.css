@@ -1,25 +1,65 @@
-/* Navbar general */
+/* 🌑 NAVBAR COMPLETO DE ORILLA A ORILLA */
 .dashboard-navbar {
   background-color: #1a1d23 !important;
-  padding: 10px 20px;
+  width: 100%;
+  /* 💡 Ocupa todo el ancho de la pantalla */
+  margin: 0;
+  padding: 10px 0;
+  /* Sin espacio lateral */
   border-bottom: 2px solid #ff5722;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Logo izquierda - iconos derecha */
+  box-shadow: 0 0 15px rgba(255, 87, 34, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  /* 💡 Se asegura que llegue al borde derecho */
+  z-index: 1000;
 }
 
+/* 🔥 Contenedor interior */
+.dashboard-navbar .container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0 30px;
+  /* 💡 Ligero espacio interno (opcional) */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 🟠 Logo */
 .dashboard-navbar .brand-logo img {
-  border-radius: 5px;
+  border-radius: 80px;
+  width: 55px;
+  height: 55px;
 }
 
+/* 🧭 Enlaces centrados */
+.dashboard-navbar .navbar-collapse {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  /* 💡 Menú centrado */
+}
+
+/* 🔗 Enlaces */
 .dashboard-navbar .nav-link {
   color: #e0e0e0 !important;
   font-weight: 500;
-  margin: 0 10px;
-  transition: all 0.3s ease;
+  margin: 10px;
+  transition: all 0.0s ease;
 }
 
 .dashboard-navbar .nav-link:hover {
   color: #ff5722 !important;
 }
 
+/* 🔶 Enlace activo */
 .active-link {
   background-color: #ff5722;
   color: #fff !important;
@@ -27,16 +67,26 @@
   padding: 6px 12px !important;
 }
 
+/* 🛒 Carrito */
 .cart-icon {
   font-size: 1.2rem;
 }
 
-/* Foto de usuario */
+/* 👤 Foto de usuario */
 .user-photo-nav {
-  width: 35px;
-  height: 35px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 2px solid #ff5722;
+  border: 2px solid #ffcc00;
+  box-shadow: 0 0 10px #ffcc00;
+}
+
+/* 💫 Alineación del grupo de links */
+.dashboard-navbar .navbar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 /* Fondo principal  */
@@ -103,7 +153,7 @@
 
 .button-group {
   display: flex;
-  gap: 1.5rem; /* separa los botones */
+  gap: 0.1rem; /* separa los botones */
   margin-top: 3rem; /* espacio superior respecto al párrafo */
 }
 
@@ -113,7 +163,7 @@
   border: 2px solid rgb(221, 218, 215);
   border-radius: 9999px; /* hace el botón completamente redondo */
   padding: 0.75rem 2rem;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
   cursor: pointer;
 
 }
@@ -122,7 +172,7 @@
   background-color: orangered;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 40px 250px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -148,8 +198,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 80px;
-  /* separación entre cada bloque */
+  gap: 80px; /* separación entre cada bloque */
   margin-top: 1rem;
   text-align: center;
 }
@@ -163,9 +212,8 @@
 .contenedor div .numero {
   font-size: 2rem;
   font-weight: 600;
-  color: #ffa500;
-  /* naranja dorado */
-  transition: transform 0.3s ease, color 0.3s ease;
+  color: #ffa500; /* naranja dorado */
+  transition: transform 0.1s ease, color 0.1s ease;
 }
 
 .contenedor div .etiqueta {
@@ -185,7 +233,6 @@
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -241,12 +288,12 @@ body {
   border: none;
   color: #fff !important;
   font-weight: 600;
-  transition: 0.3s;
+  transition: 0.1s;
 }
 
 .btn-warning:hover {
   background-color: #ff8f3c !important;
-  transform: scale(1.05);
+  transform: scale(0.01);
 }
 
 .badge {
@@ -279,7 +326,7 @@ body {
   border-radius: 30px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
   font-size: 16px;
 }
 
@@ -287,7 +334,7 @@ body {
   background-color: #f97316;
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.1);
 }
 
 .filtros-catalogo button.active {
@@ -325,11 +372,11 @@ body {
 .footer h3,
 .footer h4 {
   color: #fff;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.1rem;
 }
 
 .footer a {
-  transition: color 0.3s ease;
+  transition: color 0.1s ease;
 }
 
 .footer a:hover {
@@ -342,7 +389,7 @@ body {
 }
 
 .footer p {
-  line-height: 1.5;
+  line-height: 0.1;
 }
 
 .footer .grid {

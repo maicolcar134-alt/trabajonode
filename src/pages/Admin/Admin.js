@@ -8,7 +8,7 @@ import {
   FaStore,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { auth } from "../../firebase"; // ⚠️ ajusta la ruta a tu archivo firebase.js
+import { auth } from "../../firebaseConfig"; // ⚠️ ajusta la ruta a tu archivo firebase.js
 import Swal from "sweetalert2";
 import "./Admin.css";
 

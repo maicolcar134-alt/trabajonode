@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../firebaseConfig";
 import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import "./RegisterPage.css";

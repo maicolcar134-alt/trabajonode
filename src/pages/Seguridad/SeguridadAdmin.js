@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import "./SeguridadAdmin.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { auth } from "../../firebase";
+import { auth } from "../../firebaseConfig";
 import logo from "../../assets/Explosión de color y energía.png";
 import userPhoto from "../../assets/Explosión de color y energía.png";
 
@@ -26,7 +26,7 @@ function SeguridadAdmin() {
   };
 
   return (
-    <div className="seguridad-container">
+    <>
       {/* 🟡 NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
@@ -210,7 +210,7 @@ function SeguridadAdmin() {
         </p>
         <button className="btn-descarga">Descargar PDF</button>
       </footer>
-    </div>
+    </>
   );
 }
 

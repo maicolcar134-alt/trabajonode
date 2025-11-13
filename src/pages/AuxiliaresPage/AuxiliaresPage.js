@@ -24,7 +24,7 @@ import {
   FaUserTie,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
 import "./AuxiliaresPage.css";
 

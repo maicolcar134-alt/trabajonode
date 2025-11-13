@@ -1,23 +1,163 @@
-🔹 Contenedor general */
+/* =========================================================
+   🎇 ESTILOS GENERALES - SEGURIDAD ADMIN
+   ========================================================= */
+
+/* 🔹 Contenedor general */
 .seguridad-container {
-  background-color: #e0e0e9;
+  background-color: #000000;
   min-height: 100vh;
   font-family: "Poppins", sans-serif;
   color: #ffffff;
+  padding-top: 90px;
+  /* para compensar el navbar fijo */
+}
+/* 🌑 NAVBAR COMPLETO DE ORILLA A ORILLA */
+.dashboard-navbar {
+  background-color: #1a1d23 !important;
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 2px solid #ff5722;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 15px rgba(255, 87, 34, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
-/* 🔹 Encabezado principal */
+/* 🔥 Contenedor interno */
+.dashboard-navbar .container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 🟡 Logo y nombre */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+}
+
+.brand-logo span {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffcc00;
+}
+
+/* 🧭 Enlaces centrados */
+.dashboard-navbar .navbar-collapse {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-navbar .navbar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+/* 🔗 Enlaces */
+.dashboard-navbar .nav-link {
+  color: #e0e0e0 !important;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 6px 12px !important;
+}
+
+.dashboard-navbar .nav-link:hover {
+  color: #ff5722 !important;
+}
+
+/* 🔶 Enlace activo */
+.active-link {
+  background-color: #ff5722;
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 6px 14px !important;
+}
+
+/* 👤 Sección derecha (usuario + carrito) */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 🟠 Icono usuario */
+.user-photo-nav {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #ffcc00;
+  box-shadow: 0 0 15px #ffcc00;
+}
+
+/* 🛒 Carrito */
+.cart-icon {
+  position: relative;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.cart-icon::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: #ffcc00;
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 💫 Ajustes visuales */
+@media (max-width: 992px) {
+  .dashboard-navbar .navbar-collapse {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================================
+   🧨 ENCABEZADO PRINCIPAL
+   ========================================================= */
 .header {
   text-align: center;
   background: linear-gradient(135deg, #343a40, #555);
-  color: white;
-  padding: 40px 20px;
+  color: rgb(54, 82, 141);
+  padding: 120px 20px;
   border-radius: 0 0 20px 20px;
   margin-bottom: 30px;
 }
 
 .titulo-principal {
-  color:#eeeb13;
+  color: #eeeb13;
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 10px;
@@ -26,10 +166,12 @@
 .subtitulo {
   font-size: 1rem;
   font-weight: 400;
-  color: #ddd;
+  color: #4b6cad;
 }
 
-/* 🔹 Bloques de contenido */
+/* =========================================================
+   🔹 BLOQUES DE CONTENIDO
+   ========================================================= */
 .bloque {
   background: rgb(30, 26, 52);
   max-width: 900px;
@@ -47,7 +189,7 @@
 
 .bloque h2 {
   font-size: 1.5rem;
-  color: floralwhite;
+  color: rgb(204, 141, 14);
   margin-bottom: 15px;
 }
 
@@ -62,7 +204,9 @@
   line-height: 1.6;
 }
 
-/* 🔹 Colores temáticos por sección */
+/* =========================================================
+   🎨 COLORES TEMÁTICOS POR SECCIÓN
+   ========================================================= */
 .advertencia {
   border-left: 6px solid #ff4b4b;
 }
@@ -83,7 +227,9 @@
   border-left: 6px solid #198754;
 }
 
-/* 🔹 Grid de pasos */
+/* =========================================================
+   🚀 GRID DE PASOS
+   ========================================================= */
 .pasos-grid {
   display: grid;
   background-color: #1d1a36;
@@ -100,12 +246,14 @@
 }
 
 .paso h3 {
-  color: #fbfbfb;
+  color: #3b6f87;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
-/* 🔹 Botones */
+/* =========================================================
+   🔘 BOTONES
+   ========================================================= */
 .btn-protocolo,
 .btn-descarga {
   background-color: #0d6efd;
@@ -123,7 +271,9 @@
   background-color: #0b5ed7;
 }
 
-/* 🔹 FAQ (preguntas frecuentes) */
+/* =========================================================
+   ❓ FAQ (Preguntas Frecuentes)
+   ========================================================= */
 .faq details {
   margin: 10px 0;
   background: #1d1a36;
@@ -141,10 +291,12 @@
   font-size: 0.95rem;
 }
 
-/* 🔹 Footer */
+/* =========================================================
+   📄 FOOTER
+   ========================================================= */
 .footer {
   background: #212529;
-  color: #fff;
+  color: #273475;
   text-align: center;
   padding: 40px 20px;
   margin-top: 50px;
@@ -154,36 +306,4 @@
 .footer h3 {
   font-size: 1.3rem;
   margin-bottom: 10px;
-}
-
-/* 🔹 Navbar (ajustes menores de Bootstrap) */
-.navbar-dark .navbar-nav .nav-link {
-  color: #ddd;
-  font-weight: 500;
-  transition: color 0.3s;
-}
-
-.navbar-dark .navbar-nav .nav-link:hover {
-  color: #fff;
-}
-
-.navbar-dark .navbar-brand {
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-/* 🔹 Responsivo */
-@media (max-width: 768px) {
-  .titulo-principal {
-    font-size: 1.6rem;
-  }
-
-  .bloque {
-    padding: 20px;
-  }
-
-  .footer {
-    font-size: 0.9rem;
-  }
 }

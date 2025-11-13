@@ -1,60 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, Nav,Badge, Container, Spinner } from "react-bootstrap";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 import logo from "../../assets/Explosión de color y energía.png";
 import userDefault from "../../assets/Explosión de color y energía.png";
+import Swal from "sweetalert2";
 import "./OfertasPirotecnia.css";
 
 const DURATION_HOURS = 3;
 const SALE_END_TIMESTAMP = null;
-
-const sampleProducts = [
-  {
-    id: 1,
-    title: "Pack Celebración Familiar",
-    subtitle: "10 bengalas + 3 fuentes + 5 voladores",
-    image: "",
-    price: 291000,
-    oldPrice: 404000,
-    discountPercent: 28,
-    stock: 15,
-    endsInDays: 2,
-  },
-  {
-    id: 2,
-    title: "Combo Nochevieja 2025",
-    subtitle: "Pack especial para fin de año",
-    image: "",
-    price: 538000,
-    oldPrice: 673000,
-    discountPercent: 20,
-    stock: 8,
-    endsInDays: 5,
-  },
-  {
-    id: 3,
-    title: "Bengalas Premium x20",
-    subtitle: "Pack especial de bengalas doradas",
-    image: "",
-    price: 85000,
-    oldPrice: 112000,
-    discountPercent: 24,
-    stock: 35,
-    endsInDays: 7,
-  },
-  {
-    id: 4,
-    title: "Kit Inicio Pirotecnia",
-    subtitle: "Productos básicos + guía de seguridad",
-    image: "",
-    price: 134000,
-    oldPrice: 206000,
-    discountPercent: 35,
-    stock: 22,
-    endsInDays: 3,
-  },
-];
 
 function formatCurrency(num) {
   return "$" + new Intl.NumberFormat("es-CO").format(Math.round(num));
@@ -73,40 +29,30 @@ export default function OfertasPirotecnia() {
     navigate("/dashboard");
   };
 
-  // 🛒 Estado del carrito
   const [cart, setCart] = useState([]);
-
-  // 🔥 Cargar carrito desde localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
   }, []);
-
-  // ✅ Guardar carrito en localStorage cuando cambia
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // ✅ Función para añadir producto al carrito
   const addToCart = (product) => {
     setCart((prev) => [...prev, product]);
-    alert(`🛒 ${product.title} se agregó al carrito`);
+    alert(`🛒 ${product.nombre || product.title} se agregó al carrito`);
   };
-
-  // ✅ Función para realizar compra directa (banner)
   const buyNow = (product) => {
     setCart((prev) => [...prev, product]);
     localStorage.setItem("cart", JSON.stringify([...cart, product]));
-    navigate("/Carrito"); // 🔥 redirige al carrito
+    navigate("/Carrito");
   };
 
-  // Tiempo restante venta flash
   const [targetTime] = useState(() => {
     if (SALE_END_TIMESTAMP) return SALE_END_TIMESTAMP;
     const now = Date.now();
     return now + DURATION_HOURS * 60 * 60 * 1000;
   });
-
   const [timeLeft, setTimeLeft] = useState(targetTime - Date.now());
   useEffect(() => {
     const interval = setInterval(() => {
@@ -130,9 +76,46 @@ export default function OfertasPirotecnia() {
     progressPercent: 50,
   };
 
+  const [ofertas, setOfertas] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 🔥 Traer productos en oferta desde Inventario
+  useEffect(() => {
+    const q = query(collection(db, "productos"), where("enOferta", "==", true));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const lista = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setOfertas(lista);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 📝 Copiar mensaje de oferta al portapapeles
+  const copiarMensajeOferta = (producto) => {
+    const texto = `🔥 ${producto.mensajeOferta || "¡Aprovecha esta oferta!"} ${
+      producto.porcentajeOferta
+    }% de descuento en ${producto.nombre}. Precio: ${formatCurrency(
+      producto.precio - (producto.precio * producto.porcentajeOferta) / 100
+    )}`;
+    navigator.clipboard
+      .writeText(texto)
+      .then(() =>
+        Swal.fire(
+          "📋 Copiado",
+          "Texto de la oferta copiado al portapapeles",
+          "success"
+        )
+      )
+      .catch(() =>
+        Swal.fire("❌ Error", "No se pudo copiar el texto", "error")
+      );
+  };
+
   return (
     <div className="ofertas-page">
-      {/* NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
           <Navbar.Brand
@@ -146,14 +129,9 @@ export default function OfertasPirotecnia() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto align-items-center">
-              <Nav.Link
-                onClick={() => navigate("/Dashboard")}
-                className="active-link"
-              >
-                Inicio
-              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/Dashboard")}>Inicio</Nav.Link>
               <Nav.Link onClick={() => navigate("/Categorias")}>
-                Categorias
+                Categorías
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>
                 Ofertas
@@ -170,7 +148,6 @@ export default function OfertasPirotecnia() {
                 <i className="bi bi-shield-lock"></i> Admin
               </Nav.Link>
 
-              {/* Botón de usuario o iniciar sesión */}
               {user ? (
                 <Nav.Item className="logout-container" onClick={handleLogout}>
                   <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
@@ -191,14 +168,13 @@ export default function OfertasPirotecnia() {
                 </Nav.Link>
               )}
 
-              {/* Ícono carrito */}
               <Nav.Link
                 onClick={() => navigate("/Carrito")}
                 className="cart-icon position-relative"
               >
                 <FaShoppingCart />
                 {cart.length > 0 && (
-                  <span className="cart-badge">{cart.length}</span> // 🔥 cantidad en el icono
+                  <span className="cart-badge">{cart.length}</span>
                 )}
               </Nav.Link>
             </Nav>
@@ -206,7 +182,6 @@ export default function OfertasPirotecnia() {
         </Container>
       </Navbar>
 
-      {/* CONTENIDO DE OFERTAS */}
       <div className="ofertas-wrap">
         {/* Banner Venta Flash */}
         <div className="flash-banner">
@@ -253,77 +228,76 @@ export default function OfertasPirotecnia() {
                 <span className="timer-sub">s</span>
               </div>
             </div>
-
-            {/* ✅ Botón funcional del banner */}
             <button className="btn-primary" onClick={() => buyNow(mainProduct)}>
               Comprar Ahora
             </button>
           </div>
         </div>
 
-        {/* Tarjetas de productos */}
-        <div className="cards-grid">
-          {sampleProducts.map((p) => (
-            <article key={p.id} className="product-card">
-              <div className="card-media">
-                <img src={p.image} alt={p.title} />
-                <div className="badge-left">Destacado</div>
-                <div className="badge-right">-{p.discountPercent}%</div>
-              </div>
-
-              <div className="card-body">
-                <h3 className="card-title">{p.title}</h3>
-                <p className="card-sub">{p.subtitle}</p>
-
-                <div className="price-row">
-                  <div className="price-block">
-                    <div className="current">{formatCurrency(p.price)}</div>
-                    <div className="old">{formatCurrency(p.oldPrice)}</div>
-                  </div>
-                  <div className="meta">
-                    <small>Stock: {p.stock}</small>
-                    <small>Termina en {p.endsInDays} días</small>
-                  </div>
-                </div>
-
-                <div className="card-progress">
-                  <div className="mini-track">
-                    <div
-                      className="mini-fill"
-                      style={{
-                        width: `${Math.min(90, Math.max(10, 100 - p.stock))}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                {/* ✅ Botón funcional */}
-                <button className="btn-add" onClick={() => addToCart(p)}>
-                  Añadir al Carrito
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {/* Beneficios */}
-        <div className="benefits-grid">
-          <div className="benefit">
-            <div className="benefit-icon">🏷️</div>
-            <h4>Mejor Precio Garantizado</h4>
-            <p>Si encuentras un precio mejor, lo igualamos</p>
+        {/* Productos en oferta desde Firebase */}
+        {loading ? (
+          <div className="text-center mt-4">
+            <Spinner animation="border" />
+            <p className="text-muted mt-2">Cargando ofertas...</p>
           </div>
-          <div className="benefit">
-            <div className="benefit-icon">✨</div>
-            <h4>Ofertas Exclusivas</h4>
-            <p>Suscríbete para recibir ofertas especiales</p>
+        ) : ofertas.length === 0 ? (
+          <p className="text-center text-muted mt-4">
+            No hay productos en oferta actualmente.
+          </p>
+        ) : (
+          <div className="cards-grid">
+            {ofertas.map((p) => {
+              const precioFinal =
+                p.precio - (p.precio * p.porcentajeOferta) / 100;
+
+              return (
+                <article key={p.id} className="product-card">
+                  <div className="card-media">
+                    <img src={p.imagen || ""} alt={p.nombre} />
+                    <div className="badge-left">Oferta</div>
+                    <div className="badge-right">-{p.porcentajeOferta}%</div>
+                  </div>
+
+                  <div className="card-body">
+                    <h3 className="card-title">{p.nombre}</h3>
+                    <p className="card-sub">{p.descripcion || ""}</p>
+
+                    <div className="price-row">
+                      <div className="price-block">
+                        <div className="current">
+                          {formatCurrency(precioFinal)}
+                        </div>
+                        <div className="old">{formatCurrency(p.precio)}</div>
+                      </div>
+                      <div className="meta">
+                        <small>Stock: {p.stock || 0}</small>
+                      </div>
+                    </div>
+
+                    {/* Mostrar mensaje de oferta */}
+                    {p.mensajeOferta && (
+                      <div className="offer-message">
+                        <textarea
+                          readOnly
+                          value={`${p.mensajeOferta} (${p.porcentajeOferta}% OFF)`}
+                          onFocus={(e) => e.target.select()}
+                        />
+                       
+                      </div>
+                    )}
+
+                    
+
+                    <button className="btn-add" onClick={() => addToCart(p)}>
+      
+                      Añadir al Carrito
+                    </button>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-          <div className="benefit">
-            <div className="benefit-icon">⏳</div>
-            <h4>Ofertas Limitadas</h4>
-            <p>Nuevas promociones cada semana</p>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

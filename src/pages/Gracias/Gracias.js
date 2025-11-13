@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import "./Gracias.css";
 import { FaCheckCircle, FaHome, FaReceipt } from "react-icons/fa";
 
+
 export default function Gracias() {
   const location = useLocation();
   const navigate = useNavigate();

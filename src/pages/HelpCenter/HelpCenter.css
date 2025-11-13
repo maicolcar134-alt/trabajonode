@@ -1,38 +1,149 @@
-/* 🔹 Estilo general */
-.helpcenter {
-  font-family: 'Poppins', sans-serif;
-  background-color: #0d0d0d;
-  color: #f5f5f5;
-  min-height: 100vh;
+/* 🌑 NAVBAR COMPLETO DE ORILLA A ORILLA */
+.dashboard-navbar {
+  background-color: #1a1d23 !important;
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 2px solid #ff5722;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 15px rgba(255, 87, 34, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
-/* 🔹 Navbar */
-.dashboard-navbar {
-  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
-  background: linear-gradient(90deg, #000000, #1a1a1a);
+/* 🔥 Contenedor interno */
+.dashboard-navbar .container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+
+/* 🟡 Logo y nombre */
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+}
+
+.brand-logo span {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffcc00;
+}
+
+/* 🧭 Enlaces centrados */
+.dashboard-navbar .navbar-collapse {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-navbar .navbar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+/* 🔗 Enlaces */
 .dashboard-navbar .nav-link {
-  color: #ccc !important;
-  margin: 0 6px;
-  transition: 0.3s;
+  color: #e0e0e0 !important;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 6px 12px !important;
 }
-.dashboard-navbar .nav-link:hover,
-.dashboard-navbar .nav-link.active-link {
-  color: #ffc107 !important;
-  text-shadow: 0 0 8px #ffc107;
+
+.dashboard-navbar .nav-link:hover {
+  color: #ff5722 !important;
+}
+
+/* 🔶 Enlace activo */
+.active-link {
+  background-color: #ff5722;
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 6px 14px !important;
+}
+
+/* 👤 Sección derecha (usuario + carrito) */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 🟠 Icono usuario */
+.user-photo-nav {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #ffcc00;
+  box-shadow: 0 0 15px #ffcc00;
+}
+
+/* 🛒 Carrito */
+.cart-icon {
+  position: relative;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.cart-icon::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background-color: #ffcc00;
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 💫 Ajustes visuales */
+@media (max-width: 992px) {
+  .dashboard-navbar .navbar-collapse {
+    justify-content: flex-start;
+  }
 }
 
 /* 🔹 Header principal */
 .header {
   text-align: center;
-  padding: 60px 20px 40px;
+  padding:120px 20px 40px;
   background: radial-gradient(circle at top, #202020, #0d0d0d);
 }
+
 .header h2 {
   color: #ffc107;
   margin-top: 10px;
   font-weight: 700;
 }
+
 .header p {
   color: #bfbfbf;
   font-size: 1rem;
@@ -50,6 +161,7 @@
   letter-spacing: 0.5px;
   transition: all 0.3s ease;
 }
+
 .btn-center:hover {
   background-color: #ffca2c;
   transform: scale(1.05);
@@ -61,6 +173,7 @@
   justify-content: center;
   margin-top: 25px;
 }
+
 .search-bar input {
   width: 80%;
   max-width: 600px;
@@ -72,6 +185,7 @@
   color: #f5f5f5;
   transition: border 0.3s ease;
 }
+
 .search-bar input:focus {
   border-color: #ffc107;
 }
@@ -94,19 +208,23 @@
   box-shadow: 0 0 12px rgba(255, 193, 7, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .contact-section .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
 }
+
 .card h3 {
   font-size: 1.2rem;
   margin-bottom: 10px;
 }
+
 .card p.main {
   font-size: 1.1rem;
   font-weight: 600;
   color: #fff;
 }
+
 .card button {
   margin-top: 12px;
   background-color: #ffc107;
@@ -117,41 +235,22 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
+
 .card button:hover {
   background-color: #ffca2c;
 }
 
 /* Colores personalizados */
-.card.green { border-top: 4px solid #00ff88; }
-.card.blue { border-top: 4px solid #4da6ff; }
-.card.orange { border-top: 4px solid #ffa64d; }
+.card.green {
+  border-top: 4px solid #00ff88;
+}
 
-/* 🔹 Categorías */
-.categories {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding: 25px 15px;
+.card.blue {
+  border-top: 4px solid #4da6ff;
 }
-.categories button {
-  background: #222;
-  color: #ccc;
-  border: 1px solid #333;
-  border-radius: 25px;
-  padding: 8px 20px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.3s;
-}
-.categories button:hover {
-  color: #fff;
-  background-color: #333;
-}
-.categories .active {
-  background-color: #ffc107;
-  color: #000;
-  border: none;
+
+.card.orange {
+  border-top: 4px solid #ffa64d;
 }
 
 /* 🔹 Preguntas frecuentes */
@@ -160,10 +259,12 @@
   margin: 40px auto;
   padding: 0 20px;
 }
+
 .faq-section h3 {
   color: #ffc107;
   margin-bottom: 15px;
 }
+
 details {
   background: #1a1a1a;
   border: 1px solid #333;
@@ -172,14 +273,17 @@ details {
   margin-bottom: 12px;
   transition: background 0.3s ease;
 }
+
 details:hover {
   background: #242424;
 }
+
 summary {
   cursor: pointer;
   font-weight: 600;
   color: #fff;
 }
+
 details p {
   color: #ccc;
   margin-top: 8px;
@@ -194,6 +298,7 @@ details p {
   gap: 25px;
   padding: 40px 20px 80px;
 }
+
 .extra-section .guide,
 .extra-section .support {
   width: 360px;
@@ -202,18 +307,22 @@ details p {
   background: #1a1a1a;
   box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
 }
+
 .extra-section h4 {
   color: #ffc107;
   margin-bottom: 10px;
 }
+
 .guide ul {
   list-style: none;
   padding-left: 0;
 }
+
 .guide li {
   color: #ccc;
   margin: 6px 0;
 }
+
 .support button {
   background: #ffc107;
   border: none;
@@ -224,9 +333,11 @@ details p {
   cursor: pointer;
   transition: 0.3s;
 }
+
 .support button:hover {
   background: #ffca2c;
 }
+
 .support small {
   display: block;
   margin-top: 8px;
@@ -236,14 +347,16 @@ details p {
 
 /* 🔹 Responsivo */
 @media (max-width: 768px) {
-  .contact-section {
-    flex-direction: column;
-    align-items: center;
+  .dashboard-navbar .container {
+    padding: 0 15px;
   }
+
+  .contact-section,
   .extra-section {
     flex-direction: column;
     align-items: center;
   }
+
   .header h2 {
     font-size: 1.6rem;
   }

@@ -1,64 +1,139 @@
-/* 🌙 Estilo general */
-.catalogo-root {
-  background: radial-gradient(circle at top, #0d0d0d 0%, #000 100%);
-  min-height: 100vh;
-  color: #f5f5f5;
-  font-family: "Poppins", sans-serif;
-  transition: background 0.4s ease;
-}
-
-/* 🔝 Navbar */
+/* 🌑 NAVBAR COMPLETO DE ORILLA A ORILLA */
 .dashboard-navbar {
-  background: linear-gradient(90deg, #111, #1a1a1a, #111);
-  border-bottom: 1px solid #ffcc00;
-  box-shadow: 0 2px 10px rgba(255, 204, 0, 0.15);
-  position: sticky;
+  background-color: #1a1d23 !important;
+  width: 100%;
+  margin: 0;
+  padding: 10px 0;
+  border-bottom: 2px solid #ff5722;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 0 15px rgba(255, 87, 34, 0.3);
+  position: fixed;
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
+/* 🔥 Contenedor interno */
+.dashboard-navbar .container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 🟡 Logo y nombre */
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
+  gap: 12px;
+}
+
+.brand-logo img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+}
+
+.brand-logo span {
+  font-size: 1.4rem;
   font-weight: bold;
-  color: #ffcc00;
-  text-shadow: 0 0 6px rgba(255, 204, 0, 0.6);
-  transition: transform 0.3s;
+  color: #ffd700;
+  text-shadow: 0 0 8px #ffcc00;
 }
 
-.brand-logo:hover {
-  transform: scale(1.05);
+/* 🧭 Enlaces centrados */
+.dashboard-navbar .navbar-collapse {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
 }
 
-/* 👤 Imagen usuario */
+.dashboard-navbar .navbar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+/* 🔗 Enlaces */
+.dashboard-navbar .nav-link {
+  color: #e0e0e0 !important;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  padding: 6px 12px !important;
+}
+
+.dashboard-navbar .nav-link:hover {
+  color: #ff5722 !important;
+}
+
+/* 🔶 Enlace activo */
+.active-link {
+  background-color: #ff5722;
+  color: #fff !important;
+  border-radius: 8px;
+  padding: 6px 14px !important;
+}
+
+/* 👤 Sección derecha (usuario + carrito) */
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* 🟠 Icono usuario */
 .user-photo-nav {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   border: 2px solid #ffcc00;
-  object-fit: cover;
-  box-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+  box-shadow: 0 0 15px #ffcc00;
 }
 
-/* 🛒 Badge carrito */
-.cart-badge {
+/* 🛒 Carrito */
+.cart-icon {
+  position: relative;
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.cart-icon::after {
+  content: attr(data-count);
   position: absolute;
-  top: -6px;
+  top: -8px;
   right: -10px;
-  color: #111;
-  background: #ffcc00;
-  border-radius: 50%;
-  padding: 2px 6px;
-  font-size: 0.75rem;
+  background-color: #ffcc00;
+  color: #000;
+  font-size: 0.7rem;
   font-weight: bold;
-  box-shadow: 0 0 8px rgba(255, 204, 0, 0.7);
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 💫 Ajustes visuales */
+@media (max-width: 992px) {
+  .dashboard-navbar .navbar-collapse {
+    justify-content: flex-start;
+  }
 }
 
 /* 📦 Contenedor principal */
 .catalogo-contenedor {
-  padding: 50px 30px;
+  padding: 90px 30px;
   max-width: 1300px;
   margin: 0 auto;
 }

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import {
   collection,
   doc,
-  setDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -15,8 +14,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { db, storage } from "../../firebase";
-import { useNavigate } from "react-router-dom";
+import { db, storage } from "../../firebaseConfig";
 import Swal from "sweetalert2";
 import "./Inventario.css";
 
@@ -26,8 +24,11 @@ const categoriasData = [
   { nombre: "Uso Profesional" },
 ];
 
+// 🆕 Imagen por defecto (enlace válido o público)
+const imagenDefault =
+  "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTeo-HU5cWit5l0RBtsCZ8dNJxan73EBnXLzcXkLM0wnegrW4bgq";
+
 export default function Inventario() {
-  const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState(null);
@@ -36,12 +37,14 @@ export default function Inventario() {
     categoria: "",
     precio: "",
     stock: "",
+    porcentajeOferta: 0,
+    file: null,
   });
   const [previewLocal, setPreviewLocal] = useState(null);
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
-  const [activeTab, setActiveTab] = useState("inventario");
 
+  // 🔄 Cargar productos en tiempo real
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "productos"), (snap) => {
       const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -50,90 +53,7 @@ export default function Inventario() {
     return () => unsub();
   }, []);
 
-  const uploadImageForSku = async (sku, file) => {
-    if (!file) return null;
-    const path = `productos/${sku}_${Date.now()}_${file.name}`;
-    try {
-      const storageRef = ref(storage, path);
-      await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(storageRef);
-      const docRef = doc(db, "productos", sku);
-      await setDoc(
-        docRef,
-        {
-          imagenUrl: url,
-          imagenPath: path,
-          fechaActualizacion: serverTimestamp(),
-        },
-        { merge: true }
-      );
-      return { url, path };
-    } catch (err) {
-      console.error("Error subiendo imagen:", err);
-    }
-  };
-
-  const deleteImageForSku = async (id) => {
-    const producto = productos.find((p) => p.id === id);
-    if (!producto?.imagenUrl) return alert("No hay imagen para eliminar");
-    if (!window.confirm("¿Eliminar imagen del producto?")) return;
-    try {
-      if (producto.imagenPath) {
-        await deleteObject(ref(storage, producto.imagenPath));
-      }
-      await updateDoc(doc(db, "productos", id), {
-        imagenUrl: null,
-        imagenPath: null,
-      });
-      alert("Imagen eliminada");
-    } catch (err) {
-      console.error(err);
-      alert("Error al eliminar imagen");
-    }
-  };
-
-  const abrirEditar = (p = null) => {
-    setEditando(p);
-    setForm({
-      nombre: p?.nombre || "",
-      categoria: p?.categoria || "",
-      precio: p?.precio || "",
-      stock: p?.stock || "",
-    });
-    setPreviewLocal(p?.imagenUrl || null);
-    setShowModal(true);
-  };
-
-  const guardarProducto = async (e) => {
-    e.preventDefault();
-    if (!form.nombre || !form.categoria)
-      return Swal.fire("⚠️", "Completa todos los campos", "warning");
-
-    const payload = {
-      nombre: form.nombre,
-      categoria: form.categoria,
-      precio: Number(form.precio),
-      stock: Number(form.stock),
-      fechaActualizacion: serverTimestamp(),
-      destacado: editando?.destacado || false,
-      mensajeDestacado: editando?.mensajeDestacado || "",
-    };
-
-    try {
-      if (editando) {
-        await updateDoc(doc(db, "productos", editando.id), payload);
-      } else {
-        await addDoc(collection(db, "productos"), payload);
-      }
-      Swal.fire("✅", "Producto guardado correctamente", "success");
-      setShowModal(false);
-      setEditando(null);
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Error al guardar producto", "error");
-    }
-  };
-
+  // 🗑️ Eliminar producto e imagen asociada
   const eliminarProducto = async (id) => {
     if (!window.confirm("¿Eliminar producto del inventario?")) return;
     try {
@@ -149,19 +69,150 @@ export default function Inventario() {
     }
   };
 
+  // 📝 Abrir modal
+  const abrirEditar = (p = null) => {
+    setEditando(p);
+    setForm({
+      nombre: p?.nombre || "",
+      categoria: p?.categoria || "",
+      precio: p?.precio || "",
+      stock: p?.stock || "",
+      porcentajeOferta: p?.porcentajeOferta || 0,
+      file: null,
+    });
+    setPreviewLocal(p?.imagenUrl || null);
+    setShowModal(true);
+  };
+
+  // 💾 Guardar producto (con imagen por defecto si no sube ninguna)
+  const guardarProducto = async (e) => {
+    e.preventDefault();
+
+    if (!form.nombre || !form.categoria)
+      return Swal.fire("⚠️", "Completa todos los campos", "warning");
+
+    const payload = {
+      nombre: form.nombre,
+      categoria: form.categoria,
+      precio: Number(form.precio),
+      stock: Number(form.stock),
+      fechaActualizacion: serverTimestamp(),
+      destacado: editando?.destacado || false,
+      mensajeDestacado: editando?.mensajeDestacado || "",
+      enOferta: form.porcentajeOferta > 0,
+      porcentajeOferta: Number(form.porcentajeOferta) || 0,
+      mensajeOferta: editando?.mensajeOferta || "",
+    };
+
+    try {
+      let idProducto;
+
+      // 🔹 Crear o actualizar documento base
+      if (editando) {
+        idProducto = editando.id;
+        await updateDoc(doc(db, "productos", idProducto), payload);
+      } else {
+        const nuevoDoc = await addDoc(collection(db, "productos"), payload);
+        idProducto = nuevoDoc.id;
+      }
+
+      // 📸 Subir imagen o usar la predeterminada
+      let urlFinal = imagenDefault;
+      let pathFinal = "";
+
+      if (form.file) {
+        const file = form.file;
+        const path = `productos/${idProducto}_${Date.now()}_${file.name}`;
+        const storageRef = ref(storage, path);
+        await uploadBytes(storageRef, file);
+        urlFinal = await getDownloadURL(storageRef);
+        pathFinal = path;
+      }
+
+      // 🔁 Actualizar Firestore con imagen (subida o por defecto)
+      await updateDoc(doc(db, "productos", idProducto), {
+        imagenUrl: urlFinal,
+        imagenPath: pathFinal || "imagenes/default_image.jpeg",
+      });
+
+      Swal.fire("✅", "Producto guardado correctamente", "success");
+      setShowModal(false);
+      setEditando(null);
+      setPreviewLocal(null);
+      setForm({
+        nombre: "",
+        categoria: "",
+        precio: "",
+        stock: "",
+        porcentajeOferta: 0,
+        file: null,
+      });
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Error al guardar producto", "error");
+    }
+  };
+
+  // 🔥 Ofertas
+  const toggleOferta = async (producto) => {
+    try {
+      if (!producto.enOferta) {
+        const { value: descuento } = await Swal.fire({
+          title: "🔥 Activar oferta",
+          input: "number",
+          inputLabel: "Porcentaje de descuento (0-100)",
+          inputAttributes: { min: 1, max: 100, step: 1 },
+          showCancelButton: true,
+          confirmButtonText: "Siguiente ➡️",
+        });
+        if (!descuento) return;
+
+        const { value: mensajeOferta } = await Swal.fire({
+          title: "📝 Mensaje de oferta",
+          input: "text",
+          inputLabel: "Texto promocional del producto",
+          inputPlaceholder:
+            "Ejemplo: ¡Aprovecha esta oferta por tiempo limitado!",
+          showCancelButton: true,
+          confirmButtonText: "Aplicar oferta",
+        });
+
+        await updateDoc(doc(db, "productos", producto.id), {
+          enOferta: true,
+          porcentajeOferta: Number(descuento),
+          mensajeOferta:
+            mensajeOferta ||
+            "🔥 ¡Aprovecha esta oferta especial por tiempo limitado! 🔥",
+        });
+
+        Swal.fire("✅", "Oferta activada correctamente", "success");
+      } else {
+        await updateDoc(doc(db, "productos", producto.id), {
+          enOferta: false,
+          porcentajeOferta: 0,
+          mensajeOferta: "",
+        });
+        Swal.fire("❌", "Oferta desactivada", "info");
+      }
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "No se pudo actualizar la oferta", "error");
+    }
+  };
+
+  // ⭐ Destacado
   const toggleDestacado = async (producto) => {
     try {
       if (!producto.destacado) {
         const { value: mensaje } = await Swal.fire({
           title: "⭐ Marcar como destacado",
           input: "text",
-          inputLabel: "Escribe un mensaje para este producto",
+          inputLabel: "Mensaje para producto destacado",
           inputPlaceholder:
             "Este producto es más importante y se ha agregado a destacados.",
           showCancelButton: true,
           confirmButtonText: "Guardar",
         });
-
         if (mensaje !== undefined) {
           await updateDoc(doc(db, "productos", producto.id), {
             destacado: true,
@@ -169,11 +220,7 @@ export default function Inventario() {
               mensaje ||
               "Este producto es más importante y se ha agregado a destacados.",
           });
-          Swal.fire(
-            "✅ ¡Producto destacado!",
-            "💫 Mensaje agregado correctamente.",
-            "success"
-          );
+          Swal.fire("✅ ¡Producto destacado!", "", "success");
         }
       } else {
         await updateDoc(doc(db, "productos", producto.id), {
@@ -188,6 +235,7 @@ export default function Inventario() {
     }
   };
 
+  // 🔍 Filtros
   const productosFiltrados = productos
     .filter(
       (p) =>
@@ -197,256 +245,134 @@ export default function Inventario() {
     )
     .sort((a, b) => (b.destacado === true) - (a.destacado === true));
 
-  const copiarTodo = () => {
-    const texto = productos
-      .map((p) => {
-        let info = `📦 ${p.nombre}\nCategoría: ${p.categoria}\nPrecio: $${p.precio}\nStock: ${p.stock}`;
-        if (p.destacado && p.mensajeDestacado) {
-          info += `\n⭐ ${p.mensajeDestacado}`;
-        }
-        return info;
-      })
-      .join("\n----------------------\n");
-    navigator.clipboard.writeText(texto);
-    Swal.fire(
-      "📋 Copiado",
-      "Información copiada con los mensajes destacados incluidos.",
-      "success"
-    );
-  };
-
-  const duplicarProducto = async (producto) => {
-    try {
-      const nuevo = { ...producto };
-      delete nuevo.id;
-      nuevo.nombre = `${producto.nombre} (copia)`;
-      nuevo.fechaActualizacion = serverTimestamp();
-      await addDoc(collection(db, "productos"), nuevo);
-      Swal.fire("✅", "Producto duplicado correctamente", "success");
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "No se pudo duplicar el producto", "error");
-    }
-  };
-
   return (
     <div className="inventario-root" style={{ padding: 20 }}>
-      
-      {/* 📦 Inventario General */}
-      {activeTab === "inventario" && (
-        <>
-          <h1>📦 Inventario General</h1>
-          <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-            <input
-              type="text"
-              placeholder="Buscar producto..."
-              value={filtroBusqueda}
-              onChange={(e) => setFiltroBusqueda(e.target.value)}
-              style={{ padding: 8 }}
-            />
-            <select
-              value={filtroCategoria}
-              onChange={(e) => setFiltroCategoria(e.target.value)}
-              style={{ padding: 8 }}
+      <h1>📦 Inventario General</h1>
+
+      <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
+        <input
+          type="text"
+          placeholder="Buscar producto..."
+          value={filtroBusqueda}
+          onChange={(e) => setFiltroBusqueda(e.target.value)}
+          style={{ padding: 8 }}
+        />
+        <select
+          value={filtroCategoria}
+          onChange={(e) => setFiltroCategoria(e.target.value)}
+          style={{ padding: 8 }}
+        >
+          <option value="">Todas las categorías</option>
+          {categoriasData.map((c, i) => (
+            <option key={i} value={c.nombre}>
+              {c.nombre}
+            </option>
+          ))}
+        </select>
+        <button onClick={() => abrirEditar()} className="btn-agregar">
+          ➕ Nuevo Producto
+        </button>
+      </div>
+
+      {/* 🧱 Lista de productos */}
+      <div className="inventario-grid">
+        {productosFiltrados.map((p) => {
+          const precioFinal = p.enOferta
+            ? p.precio - (p.precio * p.porcentajeOferta) / 100
+            : p.precio;
+
+          return (
+            <div
+              key={p.id}
+              className={`producto-card ${p.destacado ? "destacado" : ""}`}
             >
-              <option value="">Todas las categorías</option>
-              {categoriasData.map((c, i) => (
-                <option key={i} value={c.nombre}>
-                  {c.nombre}
-                </option>
-              ))}
-            </select>
-            <button onClick={() => abrirEditar()} className="btn-agregar">
-              ➕ Nuevo Producto
-            </button>
-          </div>
+              {/* 🖼️ Imagen o predeterminada */}
+              <img
+                src={p.imagenUrl || imagenDefault}
+                alt={p.nombre}
+                className="producto-imagen"
+              />
 
-          <div className="inventario-grid">
-            {productosFiltrados.map((p) => (
-              <div
-                key={p.id}
-                className={`producto-card ${p.destacado ? "destacado" : ""}`}
-              >
-                {p.imagenUrl ? (
-                  <img
-                    src={p.imagenUrl}
-                    alt={p.nombre}
-                    className="producto-imagen"
-                  />
-                ) : (
-                  <div className="producto-imagen placeholder">Sin imagen</div>
-                )}
-                <div className="producto-body">
-                  <h3>
-                    {p.nombre}{" "}
-                    {p.destacado && <span style={{ color: "gold" }}>⭐</span>}
-                  </h3>
-
-                  {p.destacado && p.mensajeDestacado && (
-                    <div
-                      style={{
-                        backgroundColor: "#fff8dc",
-                        border: "2px solid gold",
-                        borderRadius: "8px",
-                        padding: "6px",
-                        marginTop: "6px",
-                        color: "#b8860b",
-                        fontStyle: "italic",
-                        fontWeight: "500",
-                        boxShadow: "0 0 6px rgba(255, 215, 0, 0.4)",
-                      }}
-                    >
-                      💬 {p.mensajeDestacado}
-                    </div>
-                  )}
-
-                  <p>Categoría: {p.categoria}</p>
-                  <p>Precio: ${p.precio?.toLocaleString()}</p>
-                  <p>Stock: {p.stock}</p>
-                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) =>
-                        uploadImageForSku(p.id, e.target.files[0])
-                      }
-                    />
-                    {p.imagenUrl && (
-                      <button
-                        className="btn-eliminar"
-                        onClick={() => deleteImageForSku(p.id)}
-                      >
-                        Eliminar imagen
-                      </button>
-                    )}
-                    <button
-                      className="btn-editar"
-                      onClick={() => abrirEditar(p)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn-eliminar"
-                      onClick={() => eliminarProducto(p.id)}
-                    >
-                      Eliminar
-                    </button>
-                    <button
-                      className="btn-destacar"
-                      style={{
-                        backgroundColor: p.destacado ? "gold" : "#555",
-                        color: p.destacado ? "black" : "white",
-                      }}
-                      onClick={() => toggleDestacado(p)}
-                    >
-                      {p.destacado ? "⭐ Quitar Destacado" : "⭐ Destacar"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-
-      {/* 📋 Pestaña Copiar Información */}
-      {activeTab === "copiar" && (
-        <div style={{ marginTop: 20 }}>
-          <h2>📋 Copiar Información</h2>
-          <p>
-            Aquí puedes copiar toda la información de los productos o duplicar
-            uno existente.
-          </p>
-          <button
-            onClick={copiarTodo}
-            style={{
-              background: "#007bff",
-              color: "white",
-              padding: "10px 15px",
-              border: "none",
-              borderRadius: "6px",
-              cursor: "pointer",
-              marginBottom: "10px",
-            }}
-          >
-            📑 Copiar Todo
-          </button>
-
-          <div className="inventario-grid">
-            {productos.map((p) => (
-              <div
-                key={p.id}
-                className={`producto-card ${p.destacado ? "destacado" : ""}`}
-              >
+              <div className="producto-body">
                 <h3>
                   {p.nombre}{" "}
                   {p.destacado && <span style={{ color: "gold" }}>⭐</span>}
+                  {p.enOferta && (
+                    <span style={{ color: "red", marginLeft: "8px" }}>🔥</span>
+                  )}
                 </h3>
-                <p>Categoría: {p.categoria}</p>
-                <p>Precio: ${p.precio}</p>
-                <p>Stock: {p.stock}</p>
 
-                {p.destacado && p.mensajeDestacado && (
-                  <div
-                    style={{
-                      backgroundColor: "#fff8dc",
-                      border: "2px solid gold",
-                      borderRadius: "8px",
-                      padding: "6px",
-                      marginTop: "6px",
-                      color: "#b8860b",
-                      fontStyle: "italic",
-                      fontWeight: "500",
-                    }}
-                  >
-                    💬 {p.mensajeDestacado}
-                  </div>
+                <p>Categoría: {p.categoria}</p>
+
+                {p.enOferta ? (
+                  <>
+                    <p>
+                      Precio original:{" "}
+                      <span style={{ textDecoration: "line-through" }}>
+                        ${p.precio?.toLocaleString()}
+                      </span>
+                    </p>
+                    <p>
+                      🔥 {p.porcentajeOferta}% OFF →{" "}
+                      <b>${precioFinal.toLocaleString()}</b>
+                    </p>
+                    {p.mensajeOferta && (
+                      <p style={{ fontStyle: "italic", color: "#d63384" }}>
+                        {p.mensajeOferta}
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <p>Precio: ${p.precio?.toLocaleString()}</p>
                 )}
 
-                <button
-                  onClick={() => duplicarProducto(p)}
-                  className="btn-editar"
-                  style={{ marginTop: "10px" }}
-                >
-                  📄 Duplicar Producto
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+                <p>Stock: {p.stock}</p>
 
-      {/* 📝 Modal de creación/edición */}
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  <button className="btn-editar" onClick={() => abrirEditar(p)}>
+                    Editar
+                  </button>
+                  <button
+                    className="btn-eliminar"
+                    onClick={() => eliminarProducto(p.id)}
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    className="btn-destacar"
+                    style={{
+                      backgroundColor: p.destacado ? "gold" : "#555",
+                      color: p.destacado ? "black" : "white",
+                    }}
+                    onClick={() => toggleDestacado(p)}
+                  >
+                    {p.destacado ? "⭐ Quitar Destacado" : "⭐ Destacar"}
+                  </button>
+                  <button
+                    className="btn-oferta"
+                    style={{
+                      backgroundColor: p.enOferta ? "red" : "#007bff",
+                      color: "white",
+                    }}
+                    onClick={() => toggleOferta(p)}
+                  >
+                    {p.enOferta ? "❌ Quitar Oferta" : "🔥 Activar Oferta"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 🧭 Modal */}
       {showModal && (
-        <div
-          className="modal-overlay"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            zIndex: 1000,
-          }}
-        >
-          <div
-            className="modal-content"
-            style={{
-              backgroundColor: "white",
-              padding: "20px",
-              borderRadius: "10px",
-              width: "420px",
-              maxWidth: "90%",
-              boxShadow: "0 0 15px rgba(0,0,0,0.3)",
-            }}
-          >
+        <div className="modal-overlay">
+          <div className="modal-content">
             <h2 style={{ textAlign: "center", marginBottom: "10px" }}>
               {editando ? "✏️ Editar Producto" : "➕ Nuevo Producto"}
             </h2>
+
             <form onSubmit={guardarProducto}>
               <label>Nombre:</label>
               <input
@@ -454,8 +380,8 @@ export default function Inventario() {
                 value={form.nombre}
                 onChange={(e) => setForm({ ...form, nombre: e.target.value })}
                 required
-                style={{ width: "100%", padding: "8px", marginBottom: "8px" }}
               />
+
               <label>Categoría:</label>
               <select
                 value={form.categoria}
@@ -463,7 +389,6 @@ export default function Inventario() {
                   setForm({ ...form, categoria: e.target.value })
                 }
                 required
-                style={{ width: "100%", padding: "8px", marginBottom: "8px" }}
               >
                 <option value="">Seleccionar categoría</option>
                 {categoriasData.map((c, i) => (
@@ -472,115 +397,72 @@ export default function Inventario() {
                   </option>
                 ))}
               </select>
+
               <label>Precio:</label>
               <input
                 type="number"
                 value={form.precio}
                 onChange={(e) => setForm({ ...form, precio: e.target.value })}
                 required
-                min="0"
-                style={{ width: "100%", padding: "8px", marginBottom: "8px" }}
               />
+
               <label>Stock:</label>
               <input
                 type="number"
                 value={form.stock}
                 onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 required
-                min="0"
-                style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
               />
 
-              <label>Imagen:</label>
+              <label>Porcentaje de oferta (%):</label>
+              <input
+                type="number"
+                value={form.porcentajeOferta}
+                onChange={(e) =>
+                  setForm({ ...form, porcentajeOferta: e.target.value })
+                }
+              />
+
+              {/* 📸 Imagen */}
+              <label>Imagen del producto:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setPreviewLocal(URL.createObjectURL(file));
+                    setForm({ ...form, file });
+                  }
+                }}
+              />
+
               {previewLocal && (
-                <div
-                  style={{
-                    textAlign: "center",
-                    marginBottom: "10px",
-                    position: "relative",
-                  }}
-                >
+                <div style={{ textAlign: "center", marginTop: "10px" }}>
                   <img
                     src={previewLocal}
                     alt="Vista previa"
                     style={{
-                      width: "100px",
-                      height: "100px",
+                      width: "200px",
+                      borderRadius: "10px",
+                      marginBottom: "10px",
                       objectFit: "cover",
-                      borderRadius: "8px",
-                      border: "2px solid #ccc",
                     }}
                   />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setPreviewLocal(null);
-                      if (editando?.id) deleteImageForSku(editando.id);
-                    }}
-                    style={{
-                      position: "absolute",
-                      top: "-6px",
-                      right: "35%",
-                      background: "red",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "50%",
-                      width: "25px",
-                      height: "25px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    ✖
-                  </button>
                 </div>
               )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files[0];
-                  if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (ev) => setPreviewLocal(ev.target.result);
-                    reader.readAsDataURL(file);
-                    if (editando?.id) {
-                      await uploadImageForSku(editando.id, file);
-                      Swal.fire(
-                        "✅",
-                        "Imagen actualizada correctamente",
-                        "success"
-                      );
-                    }
-                  }
-                }}
-                style={{ width: "100%", marginBottom: "10px" }}
-              />
 
               <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <button
-                  type="submit"
-                  style={{
-                    backgroundColor: "#28a745",
-                    color: "white",
-                    padding: "8px 16px",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                  }}
-                >
+                <button type="submit" className="btn-guardar">
                   💾 Guardar
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowModal(false)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    padding: "8px 16px",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
+                  onClick={() => {
+                    setShowModal(false);
+                    setPreviewLocal(null);
                   }}
+                  className="btn-cancelar"
                 >
                   ❌ Cancelar
                 </button>

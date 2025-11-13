@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart,

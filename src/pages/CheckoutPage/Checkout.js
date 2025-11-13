@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import "./Checkout.css";
-import nequiQR from "../image/nequi/WhatsApp Image 2025-10-30 at 8.06.06 PM.jpeg";
-import bancolombiaQR from "../image/bancolombia/WhatsApp Image 2025-10-30 at 8.06.06 PM.jpeg";
+import nequiQR from "../../assets/WhatsApp Image 2025-10-30 at 8.06.06 PM.jpeg";
 
-import { db } from "../../firebase";
+
+import { db } from "../../firebaseConfig";
 import {
   collection,
   addDoc,

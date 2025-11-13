@@ -5,12 +5,13 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebaseConfig";
 import "./CategoriasAdmin.css";
 import { Navbar, Nav, Container, Badge, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaShoppingCart, FaCheck } from "react-icons/fa";
 import logo from "../../assets/Explosión de color y energía.png";
+import userPhoto from "../../assets/Explosión de color y energía.png";
 
 export default function CategoriasAdmin() {
   const [productos, setProductos] = useState([]);
@@ -124,60 +125,82 @@ export default function CategoriasAdmin() {
   };
 
   return (
-    <div className="catalogo-root">
-      {/* 🔹 NAVBAR */}
+    <>
+      {/* 🌑 NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
+          {/* 🔥 Logo y nombre */}
           <Navbar.Brand
             onClick={() => navigate("/dashboard")}
-            className="brand-logo"
+            className="brand-logo d-flex align-items-center"
+            style={{ cursor: "pointer" }}
           >
-            <img src={logo} alt="logo" height="40" />
+            <img src={logo} alt="logo" height="45" />
             <span className="ms-2 fw-bold text-warning">PyroShop</span>
           </Navbar.Brand>
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-center">
-              <Nav.Link onClick={() => navigate("/Dashboard")}>Inicio</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>
+            {/* 🔗 Enlaces */}
+            <Nav className="mx-auto align-items-center">
+              <Nav.Link
+                onClick={() => navigate("/dashboard")}
+                className="active-link"
+              >
+                Inicio
+              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/categorias")}>
                 Categorías
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>
                 Ofertas
               </Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>
+              <Nav.Link onClick={() => navigate("/seguridad")}>
                 Seguridad
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
               <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Admin")}className="text-warning"><i className="bi bi-shield-lock"></i> Admin</Nav.Link>
+              <Nav.Link
+                onClick={() => navigate("/admin")}
+                className="text-warning"
+              >
+                <i className="bi bi-shield-lock"></i> Admin
+              </Nav.Link>
+            </Nav>
 
-             
-
+            {/* 🔹 Usuario y Carrito */}
+            <Nav className="align-items-center gap-3">
               {user ? (
-                <Nav.Item onClick={handleLogout}>
-                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
+                <Nav.Item
+                  className="logout-container"
+                  onClick={handleLogout}
+                  style={{ cursor: "pointer" }}
+                >
+                  <Nav.Link className="logout-link d-flex align-items-center gap-2">
                     <FaSignOutAlt /> Cerrar Sesión
+                    <img
+                      src={userPhoto}
+                      alt="Foto de usuario"
+                      className="user-photo-nav"
+                    />
                   </Nav.Link>
                 </Nav.Item>
               ) : (
-                <Nav.Link
-                  onClick={() => navigate("/login")}
-                  className="d-flex align-items-center gap-2 fw-bold text-light"
-                >
-                  <FaUser /> Acceder
+                <Nav.Link onClick={() => navigate("/login")}>
+                  <FaUser size={18} className="me-2" />
+                  Iniciar Sesión
                 </Nav.Link>
               )}
 
+              {/* 🛒 CARRITO */}
               <Nav.Link
-                onClick={() => navigate("/Carrito")}
-                className="position-relative text-light"
+                onClick={() => navigate("/carrito")}
+                className="position-relative"
               >
-                <FaShoppingCart size={22} />
+                <FaShoppingCart size={20} />
                 {carrito.length > 0 && (
-                  <Badge bg="warning" className="cart-badge">
-                    {carrito.reduce((acc, p) => acc + p.cantidad, 0)}
+                  <Badge bg="warning" text="dark" pill className="cart-badge">
+                    {carrito.length}
                   </Badge>
                 )}
               </Nav.Link>
@@ -246,9 +269,7 @@ export default function CategoriasAdmin() {
               </section>
             )
         )}
-
-    
       </div>
-    </div>
+    </>
   );
 }
