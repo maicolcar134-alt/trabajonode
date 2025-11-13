@@ -6,6 +6,7 @@ import "./Events.css";
 import logo from "../../assets/Explosión de color y energía.png"; // cambia la ruta si tu logo está en otro lugar
 import userDefault from "../../assets/Explosión de color y energía.png"; // imagen por defecto
 
+
 export default function EventsPage() {
   const navigate = useNavigate();
   const user = true; // simula usuario logueado (cámbialo según tu auth)
@@ -129,8 +130,14 @@ export default function EventsPage() {
         <h1>Espectáculos Pirotécnicos para Eventos</h1>
         <p>Convierte tu evento en una experiencia inolvidable con nuestros shows profesionales.</p>
         <div className="hero-buttons">
-          <button className="btn-primary">Solicitar Cotización</button>
-          <button className="btn-secondary">Ver Portafolio</button>
+        <a
+          href="https://wa.me/573213148729?text=¡Hola!%20Estoy%20interesado%20en%20una%20cotización%20de%20espectáculos%20pirotécnicos."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-primary"
+        >
+          Solicitar Cotización
+        </a>
         </div>
       </section>
 
@@ -189,7 +196,7 @@ export default function EventsPage() {
       <section className="cta">
         <h2>¿Listo para un evento memorable?</h2>
         <p>Contáctanos hoy para recibir una propuesta personalizada.</p>
-        <button className="btn-light">+57 3213148729</button>
+       {/* <button className="btn-light">+57 3213148729 </button> */}
         <p className="small-text">Horario: Lunes a Viernes 7:00 - 18:00 | WhatsApp 24/7</p>
       </section>
     </div>
