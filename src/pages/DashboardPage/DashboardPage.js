@@ -19,7 +19,6 @@ import "react-bootstrap";
 function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
-  const userPhoto = user?.photoURL || userDefault;
   const [productos, setProductos] = useState([]);
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [carrito, setCarrito] = useState([]);
@@ -195,9 +194,12 @@ function DashboardPage() {
   return (
     <>
 
-       <>
-      <DashboardNavbar />
-    </>
+ <DashboardNavbar
+  user={user}
+  userPhoto={user?.photoURL}
+  handleLogout={handleLogout}
+  carrito={carrito}
+/>
 
 
       {/* contenido principal*/}
