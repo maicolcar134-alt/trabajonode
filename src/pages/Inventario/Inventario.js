@@ -31,6 +31,7 @@ export default function Inventario() {
   const [productos, setProductos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState(null);
+
   const [form, setForm] = useState({
     nombre: "",
     categoria: "",
@@ -38,11 +39,15 @@ export default function Inventario() {
     stock: "",
     porcentajeOferta: 0,
     file: null,
+    width: 300, // ancho por defecto (px)
+    height: 300, // alto por defecto (px)
   });
+
   const [previewLocal, setPreviewLocal] = useState(null);
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
 
+  // Cargar productos en tiempo real
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "productos"), (snap) => {
       const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -51,6 +56,7 @@ export default function Inventario() {
     return () => unsub();
   }, []);
 
+  // Eliminar producto e imagen asociada
   const eliminarProducto = async (id) => {
     if (!window.confirm("¿Eliminar producto del inventario?")) return;
     try {
@@ -66,6 +72,7 @@ export default function Inventario() {
     }
   };
 
+  // Abrir modal para nuevo/editar
   const abrirEditar = (p = null) => {
     setEditando(p);
     setForm({
@@ -75,11 +82,14 @@ export default function Inventario() {
       stock: p?.stock || "",
       porcentajeOferta: p?.porcentajeOferta || 0,
       file: null,
+      width: p?.width ?? 300,
+      height: p?.height ?? 300,
     });
     setPreviewLocal(p?.imagenUrl || null);
     setShowModal(true);
   };
 
+  // Guardar (crear o actualizar) producto — maneja imagen y tamaño
   const guardarProducto = async (e) => {
     e.preventDefault();
 
@@ -89,19 +99,22 @@ export default function Inventario() {
     const payload = {
       nombre: form.nombre,
       categoria: form.categoria,
-      precio: Number(form.precio),
-      stock: Number(form.stock),
+      precio: Number(form.precio) || 0,
+      stock: Number(form.stock) || 0,
       fechaActualizacion: serverTimestamp(),
       destacado: editando?.destacado || false,
       mensajeDestacado: editando?.mensajeDestacado || "",
-      enOferta: form.porcentajeOferta > 0,
+      enOferta: Number(form.porcentajeOferta) > 0,
       porcentajeOferta: Number(form.porcentajeOferta) || 0,
       mensajeOferta: editando?.mensajeOferta || "",
+      width: Number(form.width) || 300,
+      height: Number(form.height) || 300,
     };
 
     try {
       let idProducto;
 
+      // crear o actualizar documento base primero (sin imagen)
       if (editando) {
         idProducto = editando.id;
         await updateDoc(doc(db, "productos", idProducto), payload);
@@ -110,10 +123,23 @@ export default function Inventario() {
         idProducto = nuevoDoc.id;
       }
 
-      let urlFinal = imagenDefault;
-      let pathFinal = "";
+      // Manejo de imagen (subir si hay file)
+      let urlFinal = editando?.imagenUrl || imagenDefault;
+      let pathFinal = editando?.imagenPath || "";
 
       if (form.file) {
+        // Si editando y había imagen anterior, eliminarla
+        if (editando?.imagenPath) {
+          try {
+            await deleteObject(ref(storage, editando.imagenPath)).catch(
+              () => {}
+            );
+          } catch (err) {
+            // no bloqueamos la operación si falla el delete
+            console.warn("No se pudo eliminar imagen anterior:", err);
+          }
+        }
+
         const file = form.file;
         const path = `productos/${idProducto}_${Date.now()}_${file.name}`;
         const storageRef = ref(storage, path);
@@ -122,12 +148,17 @@ export default function Inventario() {
         pathFinal = path;
       }
 
+      // Actualizar documento con datos de imagen y path seguro (no ruta falsa)
       await updateDoc(doc(db, "productos", idProducto), {
         imagenUrl: urlFinal,
-        imagenPath: pathFinal || "imagenes/default_image.jpeg",
+        imagenPath: pathFinal || "", // <-- CORREGIDO: ruta vacía si no existe
+        width: Number(form.width) || 300,
+        height: Number(form.height) || 300,
       });
 
       Swal.fire("✅", "Producto guardado correctamente", "success");
+
+      // Reset y cerrar modal
       setShowModal(false);
       setEditando(null);
       setPreviewLocal(null);
@@ -138,6 +169,8 @@ export default function Inventario() {
         stock: "",
         porcentajeOferta: 0,
         file: null,
+        width: 300,
+        height: 300,
       });
     } catch (err) {
       console.error(err);
@@ -145,6 +178,7 @@ export default function Inventario() {
     }
   };
 
+  // Toggle oferta (igual que antes)
   const toggleOferta = async (producto) => {
     try {
       if (!producto.enOferta) {
@@ -191,6 +225,7 @@ export default function Inventario() {
     }
   };
 
+  // Toggle destacado (igual que antes)
   const toggleDestacado = async (producto) => {
     try {
       if (!producto.destacado) {
@@ -225,6 +260,7 @@ export default function Inventario() {
     }
   };
 
+  // Filtros y orden
   const productosFiltrados = productos
     .filter(
       (p) =>
@@ -263,8 +299,8 @@ export default function Inventario() {
         </button>
       </div>
 
-      {/* 🧱 Lista de productos */}
-      <div className="inventario-grid">
+      {/* Lista de productos */}
+      <div className="inventario-grid" style={{ marginTop: 16 }}>
         {productosFiltrados.map((p) => {
           const precioFinal = p.enOferta
             ? p.precio - (p.precio * p.porcentajeOferta) / 100
@@ -275,14 +311,14 @@ export default function Inventario() {
               key={p.id}
               className={`producto-card ${p.destacado ? "destacado" : ""}`}
             >
-              {/* 🖼️ Imagen con auto-resize */}
+              {/* Imagen con tamaño personalizado */}
               <img
                 src={p.imagenUrl || imagenDefault}
                 alt={p.nombre}
                 className="producto-imagen"
                 style={{
-                  width: "100%",
-                  height: "250px",
+                  width: `${p.width || 300}px`,
+                  height: `${p.height || 300}px`,
                   objectFit: "contain",
                   backgroundColor: "#fff",
                   borderRadius: "10px",
@@ -419,8 +455,34 @@ export default function Inventario() {
                 }
               />
 
+              {/* NUEVOS CAMPOS: ancho / alto */}
+              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                <div style={{ flex: 1 }}>
+                  <label>Ancho imagen (px):</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.width}
+                    onChange={(e) =>
+                      setForm({ ...form, width: Number(e.target.value) })
+                    }
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label>Alto imagen (px):</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={form.height}
+                    onChange={(e) =>
+                      setForm({ ...form, height: Number(e.target.value) })
+                    }
+                  />
+                </div>
+              </div>
+
               {/* Vista previa con auto-size */}
-              <label>Imagen del producto:</label>
+              <label style={{ marginTop: 10 }}>Imagen del producto:</label>
               <input
                 type="file"
                 accept="image/*"
@@ -456,7 +518,13 @@ export default function Inventario() {
                 </div>
               )}
 
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: 12,
+                }}
+              >
                 <button type="submit" className="btn-guardar">
                   💾 Guardar
                 </button>
@@ -465,6 +533,17 @@ export default function Inventario() {
                   onClick={() => {
                     setShowModal(false);
                     setPreviewLocal(null);
+                    setEditando(null);
+                    setForm({
+                      nombre: "",
+                      categoria: "",
+                      precio: "",
+                      stock: "",
+                      porcentajeOferta: 0,
+                      file: null,
+                      width: 300,
+                      height: 300,
+                    });
                   }}
                   className="btn-cancelar"
                 >
