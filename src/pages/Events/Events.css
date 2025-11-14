@@ -21,8 +21,24 @@ body {
 .events-page {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
+  padding: 40px 16px;
 }
+
+/* wrapper centrado y con max-width */
+.events-page .inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* grid de eventos dentro del wrapper */
+.events-page .events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
 
 .hero {
   text-align: center;
@@ -357,52 +373,6 @@ body {
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
-
-/*boton de wpp
-
-.btn-whpp {
-  background-color: #25D366;
-  color: #fff;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 50px;
-  padding: 14px 28px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-decoration: none;
-  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.3);
-}
-
-.btn-whpp:hover {
-  background-color: #1ebe5d;
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(37, 211, 102, 0.5);
-}
-
-.btn-whpp:active {
-  transform: scale(0.97);
-}
-
-.btn-whpp::before {
-  content: "💬";
-  font-size: 1.3rem;
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-.btn-whpp:hover::before {
-  transform: scale(1.2) rotate(-10deg);
-}
-
-*/
-
-
 .cta::before {
   content: "";
   position: absolute;
