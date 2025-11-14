@@ -266,7 +266,7 @@ function DashboardPage() {
               </button>
             </div>
 
-            <div class="contenedor"></div>
+            <div className="contenedor"></div>
             <div className="contenedor">
               <div>
                 <div className="numero">500+</div>

@@ -87,7 +87,7 @@ export default function HelpCenter() {
           </p>
 <a 
   href="https://mail.google.com/mail/?view=cm&fs=1&to=pyroshopmc@gmail.com"
-  class="btn-soporte"
+  className="btn-soporte"
 >
   💬 Abrir Chat de Soporte
 </a>      
