@@ -1,5 +1,5 @@
 /* =========================================================
-   🎇 ESTILOS GENERALES - SEGURIDAD ADMIN
+    ESTILOS GENERALES - SEGURIDAD ADMIN
    ========================================================= */
 
 /* 🔹 Contenedor general */
@@ -145,7 +145,7 @@
 }
 
 /* =========================================================
-   🧨 ENCABEZADO PRINCIPAL
+    ENCABEZADO PRINCIPAL
    ========================================================= */
 .header {
   text-align: center;
@@ -170,7 +170,7 @@
 }
 
 /* =========================================================
-   🔹 BLOQUES DE CONTENIDO
+    BLOQUES DE CONTENIDO
    ========================================================= */
 .bloque {
   background: rgb(30, 26, 52);
@@ -205,7 +205,7 @@
 }
 
 /* =========================================================
-   🎨 COLORES TEMÁTICOS POR SECCIÓN
+    COLORES TEMÁTICOS POR SECCIÓN
    ========================================================= */
 .advertencia {
   border-left: 6px solid #ff4b4b;
@@ -228,7 +228,7 @@
 }
 
 /* =========================================================
-   🚀 GRID DE PASOS
+    GRID DE PASOS
    ========================================================= */
 .pasos-grid {
   display: grid;
@@ -251,12 +251,9 @@
   margin-bottom: 8px;
 }
 
-/* =========================================================
-   🔘 BOTONES
-   ========================================================= */
-.btn-protocolo,
-.btn-descarga {
-  background-color: #0d6efd;
+/* 🔹 Botones */
+.btn-protocolo {
+  background-color: #fd6d0d;
   color: white;
   padding: 10px 18px;
   border: none;
@@ -266,14 +263,33 @@
   transition: background 0.3s ease;
 }
 
-.btn-protocolo:hover,
-.btn-descarga:hover {
-  background-color: #0b5ed7;
+.btn-protocolo:hover {
+  background-color: #d7c30b;
 }
 
-/* =========================================================
-   ❓ FAQ (Preguntas Frecuentes)
-   ========================================================= */
+
+.btn-descarga {
+  background-color: #fd6d0d;
+  color: white;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  max-width: 250px;     /* tamaño máximo del botón */
+  margin: 0 auto;        /* lo centra */
+  display: block;
+}
+
+.btn-descarga:hover {
+  background-color: #d7c30b;
+}
+
+
+
+
+/* 🔹 FAQ (preguntas frecuentes) */
 .faq details {
   margin: 10px 0;
   background: #1d1a36;
@@ -292,7 +308,7 @@
 }
 
 /* =========================================================
-   📄 FOOTER
+    FOOTER
    ========================================================= */
 .footer {
   background: #212529;

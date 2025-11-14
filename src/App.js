@@ -27,7 +27,7 @@ import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
 import Categorias from "./pages/CategoriasAdmin/CategoriasAdmin";
 import Seguridad from "./pages/Seguridad/SeguridadAdmin";
-import Pedidos from "./pages/pedidos/pedidos";
+import Pedidos from "./pages/pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
 
