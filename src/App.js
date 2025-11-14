@@ -42,11 +42,19 @@ import Gracias from "./pages/Gracias/Gracias";
 // Layout admin persistente
 import Admin from "./pages/Admin/Admin";
 
+import PoliticasVenta from "./pages/PoliticasVenta/PoliticasVenta";
+import TerminosCondiciones from "./pages/Terminos Y Condiciones/terminoscondiciones";
+import PoliticasPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
+import NormativaRegulacion from "./pages/NormativaRegulacion/NormativaRegulacion";
+
 
 
 function App() {
   return (
     <BrowserRouter>
+
+
+    
       <Routes>
         {/* ✅ RUTAS PÚBLICAS */}
         <Route path="/" element={<DashboardPage />} />
@@ -72,6 +80,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/PoliticasVenta" element={<PoliticasVenta />} />
+        <Route path="/TerminosCondiciones" element={<TerminosCondiciones />} />
+        <Route path="/PoliticasPrivacidad" element={<PoliticasPrivacidad />} />
+        <Route path="/NormativaRegulacion" element={<NormativaRegulacion />} />
 
         {/* ✅✅✅ PANEL ADMIN CON SIDEBAR FIJO ✅✅✅ */}
         <Route

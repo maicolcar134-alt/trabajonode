@@ -24,7 +24,6 @@ const categoriasData = [
   { nombre: "Uso Profesional" },
 ];
 
-// 🆕 Imagen por defecto (enlace válido o público)
 const imagenDefault =
   "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTeo-HU5cWit5l0RBtsCZ8dNJxan73EBnXLzcXkLM0wnegrW4bgq";
 
@@ -44,7 +43,6 @@ export default function Inventario() {
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
 
-  // 🔄 Cargar productos en tiempo real
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "productos"), (snap) => {
       const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -53,7 +51,6 @@ export default function Inventario() {
     return () => unsub();
   }, []);
 
-  // 🗑️ Eliminar producto e imagen asociada
   const eliminarProducto = async (id) => {
     if (!window.confirm("¿Eliminar producto del inventario?")) return;
     try {
@@ -69,7 +66,6 @@ export default function Inventario() {
     }
   };
 
-  // 📝 Abrir modal
   const abrirEditar = (p = null) => {
     setEditando(p);
     setForm({
@@ -84,7 +80,6 @@ export default function Inventario() {
     setShowModal(true);
   };
 
-  // 💾 Guardar producto (con imagen por defecto si no sube ninguna)
   const guardarProducto = async (e) => {
     e.preventDefault();
 
@@ -107,7 +102,6 @@ export default function Inventario() {
     try {
       let idProducto;
 
-      // 🔹 Crear o actualizar documento base
       if (editando) {
         idProducto = editando.id;
         await updateDoc(doc(db, "productos", idProducto), payload);
@@ -116,7 +110,6 @@ export default function Inventario() {
         idProducto = nuevoDoc.id;
       }
 
-      // 📸 Subir imagen o usar la predeterminada
       let urlFinal = imagenDefault;
       let pathFinal = "";
 
@@ -129,7 +122,6 @@ export default function Inventario() {
         pathFinal = path;
       }
 
-      // 🔁 Actualizar Firestore con imagen (subida o por defecto)
       await updateDoc(doc(db, "productos", idProducto), {
         imagenUrl: urlFinal,
         imagenPath: pathFinal || "imagenes/default_image.jpeg",
@@ -153,7 +145,6 @@ export default function Inventario() {
     }
   };
 
-  // 🔥 Ofertas
   const toggleOferta = async (producto) => {
     try {
       if (!producto.enOferta) {
@@ -200,7 +191,6 @@ export default function Inventario() {
     }
   };
 
-  // ⭐ Destacado
   const toggleDestacado = async (producto) => {
     try {
       if (!producto.destacado) {
@@ -235,7 +225,6 @@ export default function Inventario() {
     }
   };
 
-  // 🔍 Filtros
   const productosFiltrados = productos
     .filter(
       (p) =>
@@ -286,11 +275,18 @@ export default function Inventario() {
               key={p.id}
               className={`producto-card ${p.destacado ? "destacado" : ""}`}
             >
-              {/* 🖼️ Imagen o predeterminada */}
+              {/* 🖼️ Imagen con auto-resize */}
               <img
                 src={p.imagenUrl || imagenDefault}
                 alt={p.nombre}
                 className="producto-imagen"
+                style={{
+                  width: "100%",
+                  height: "250px",
+                  objectFit: "contain",
+                  backgroundColor: "#fff",
+                  borderRadius: "10px",
+                }}
               />
 
               <div className="producto-body">
@@ -365,7 +361,7 @@ export default function Inventario() {
         })}
       </div>
 
-      {/* 🧭 Modal */}
+      {/* Modal */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -423,7 +419,7 @@ export default function Inventario() {
                 }
               />
 
-              {/* 📸 Imagen */}
+              {/* Vista previa con auto-size */}
               <label>Imagen del producto:</label>
               <input
                 type="file"
@@ -438,15 +434,23 @@ export default function Inventario() {
               />
 
               {previewLocal && (
-                <div style={{ textAlign: "center", marginTop: "10px" }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                    marginTop: "10px",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
                   <img
                     src={previewLocal}
                     alt="Vista previa"
                     style={{
-                      width: "200px",
-                      borderRadius: "10px",
-                      marginBottom: "10px",
-                      objectFit: "cover",
+                      maxWidth: "100%",
+                      maxHeight: "400px",
+                      borderRadius: "15px",
+                      objectFit: "contain",
+                      boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
                     }}
                   />
                 </div>

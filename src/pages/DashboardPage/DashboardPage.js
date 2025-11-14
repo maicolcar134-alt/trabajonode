@@ -61,7 +61,6 @@ function DashboardPage() {
   // ✅ Estado para productos destacados
   const [destacados, setDestacados] = useState([]);
 
-
   // ✅ Cargar productos destacados
   useEffect(() => {
     const q = query(
@@ -547,7 +546,7 @@ function DashboardPage() {
               <ul className="space-y-2 list-none p-0 m-0">
                 <li>
                   <a
-                    href="#"
+                    href="/politicasventa"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Política de Venta Responsable
@@ -555,7 +554,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/terminoscondiciones"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Términos y Condiciones
@@ -563,7 +562,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/PoliticasPrivacidad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Política de Privacidad
@@ -571,7 +570,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/normativaregulacion"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Normativa y Regulación
@@ -585,14 +584,6 @@ function DashboardPage() {
               <ul className="space-y-2 list-none p-0 m-0">
                 <li>
                   <a
-                    href="#"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
-                  >
-                    Preguntas Frecuentes
-                  </a>
-                </li>
-                <li>
-                  <a
                     href="/Seguridad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
@@ -601,18 +592,10 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/HelpCenter"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
-                    Devoluciones y Cambios
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href=""
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
-                  >
-                    Envíos y Entregas
+                    Ayuda al Usuario
                   </a>
                 </li>
               </ul>
@@ -654,10 +637,7 @@ function DashboardPage() {
               © 2025 PyroShop. Todos los derechos reservados.
             </p>
             <div className="flex gap-4">
-              <a
-                href="#"
-                className="hover:text-[var(--brand-warm)] no-underline"
-              ></a>
+              
             </div>
           </div>
         </div>
