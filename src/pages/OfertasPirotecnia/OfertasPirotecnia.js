@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import userDefault from "../../assets/Explosión de color y energía.png";
 import "./OfertasPirotecnia.css";
 
- import DashboardNavbar from "../components/Navbar";
+
 
 const DURATION_HOURS = 3;
 const SALE_END_TIMESTAMP = null;
@@ -133,11 +133,6 @@ export default function OfertasPirotecnia() {
   return (
     <div className="ofertas-page">
 
-
-             <>
-      <DashboardNavbar />
-    </>
-     
       {/* CONTENIDO DE OFERTAS */}
       <div className="ofertas-wrap">
         {/* Banner Venta Flash */}

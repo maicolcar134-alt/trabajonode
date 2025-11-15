@@ -4,8 +4,6 @@ import "./Events.css";
 import userDefault from "../../assets/Explosión de color y energía.png"; 
 
 
- import DashboardNavbar from "../components/Navbar";
-
 export default function EventsPage() {
   const navigate = useNavigate();
   const user = true; // simula usuario logueado (cámbialo según tu auth)
@@ -76,9 +74,6 @@ export default function EventsPage() {
   return (
     <div className="events-page">
    
-        <>
-      <DashboardNavbar />
-    </>
 
       {/* HERO */}
       <section className="hero">

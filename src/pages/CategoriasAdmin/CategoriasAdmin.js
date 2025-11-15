@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 
 
- import DashboardNavbar from "../components/Navbar";
 
 export default function CategoriasAdmin() {
   const [productos, setProductos] = useState([]);
@@ -128,9 +127,7 @@ export default function CategoriasAdmin() {
   return (
     <div className="catalogo-root">
 
-         <>
-      <DashboardNavbar />
-    </>
+ 
 
       {/* 🔹 CATÁLOGO */}
       <div className="catalogo-contenedor">

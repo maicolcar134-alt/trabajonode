@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./SeguridadAdmin.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
- import DashboardNavbar from "../components/Navbar";
-
 
 function SeguridadAdmin() {
   const navigate = useNavigate();
@@ -27,10 +25,6 @@ function SeguridadAdmin() {
     <div className="seguridad-container">
 
 
-
-      <>
-      <DashboardNavbar />
-    </>
 
       {/* 🧨 CONTENIDO PRINCIPAL */}
       <header className="header">

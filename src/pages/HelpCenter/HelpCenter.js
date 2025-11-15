@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import "./HelpCenter.css";
 
 
- import DashboardNavbar from "../components/Navbar";
-
 export default function HelpCenter() {
   const navigate = useNavigate();
   const user = false; // 🔸 cambia esto por tu lógica de autenticación real
@@ -20,9 +18,7 @@ export default function HelpCenter() {
     <div className="helpcenter">
     
 
-     <>
-      <DashboardNavbar />
-    </>
+    
 
       {/* 🔹 CONTENIDO PRINCIPAL */}
       <div className="header">

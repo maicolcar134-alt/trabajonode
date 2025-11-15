@@ -12,8 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 
 
- import DashboardNavbar from "../components/Navbar";
-
 import "react-bootstrap";
 
 function DashboardPage() {
@@ -193,13 +191,6 @@ function DashboardPage() {
 
   return (
     <>
-
- <DashboardNavbar
-  user={user}
-  userPhoto={user?.photoURL}
-  handleLogout={handleLogout}
-  carrito={carrito}
-/>
 
 
       {/* contenido principal*/}
