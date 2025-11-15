@@ -24,30 +24,66 @@ const categoriasData = [
   { nombre: "Uso Profesional" },
 ];
 
+// Imagen por defecto pública
 const imagenDefault =
   "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTeo-HU5cWit5l0RBtsCZ8dNJxan73EBnXLzcXkLM0wnegrW4bgq";
+
+// --- Helper: redimensionar y comprimir imagen en cliente ---
+// Recibe File, maxWidth, maxHeight, quality (0..1)
+// Devuelve Blob listo para subir
+async function resizeAndCompressImage(
+  file,
+  maxWidth = 1200,
+  maxHeight = 1200,
+  quality = 0.8
+) {
+  // crear ImageBitmap (más rápido)
+  const imageBitmap = await createImageBitmap(file);
+
+  // calcular tamaño objetivo manteniendo proporción
+  let { width, height } = imageBitmap;
+  const ratio = Math.min(maxWidth / width, maxHeight / height, 1); // no agrandar
+  const targetWidth = Math.round(width * ratio);
+  const targetHeight = Math.round(height * ratio);
+
+  // canvas
+  const canvas = document.createElement("canvas");
+  canvas.width = targetWidth;
+  canvas.height = targetHeight;
+  const ctx = canvas.getContext("2d");
+  // dibujar
+  ctx.drawImage(imageBitmap, 0, 0, targetWidth, targetHeight);
+
+  // convertir a blob jpeg (si file.type es png y quieres mantener transparencia, podrías usar png; aquí preferimos jpeg para compresión)
+  // si la imagen original tiene transparencia y es PNG, aún así la convertimos a jpeg para reducir peso (si quieres mantener transparencia, cambia a 'image/png' y quality no aplicará)
+  const mime = "image/jpeg";
+  const blob = await new Promise((resolve) =>
+    canvas.toBlob((b) => resolve(b), mime, quality)
+  );
+
+  // liberar ImageBitmap
+  imageBitmap.close();
+
+  return blob;
+}
 
 export default function Inventario() {
   const [productos, setProductos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editando, setEditando] = useState(null);
-
   const [form, setForm] = useState({
     nombre: "",
     categoria: "",
     precio: "",
     stock: "",
     porcentajeOferta: 0,
-    file: null,
-    width: 300, // ancho por defecto (px)
-    height: 300, // alto por defecto (px)
+    file: null, // File original (no el blob comprimido)
   });
-
   const [previewLocal, setPreviewLocal] = useState(null);
   const [filtroBusqueda, setFiltroBusqueda] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
 
-  // Cargar productos en tiempo real
+  // Cargar productos en tiempo real (incluye imagenUrl si ya existe en Firestore)
   useEffect(() => {
     const unsub = onSnapshot(collection(db, "productos"), (snap) => {
       const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -82,83 +118,140 @@ export default function Inventario() {
       stock: p?.stock || "",
       porcentajeOferta: p?.porcentajeOferta || 0,
       file: null,
-      width: p?.width ?? 300,
-      height: p?.height ?? 300,
     });
     setPreviewLocal(p?.imagenUrl || null);
     setShowModal(true);
   };
 
-  // Guardar (crear o actualizar) producto — maneja imagen y tamaño
+  // Guardar producto (con manejo completo de imagen y compresión)
   const guardarProducto = async (e) => {
     e.preventDefault();
 
     if (!form.nombre || !form.categoria)
       return Swal.fire("⚠️", "Completa todos los campos", "warning");
 
-    const payload = {
-      nombre: form.nombre,
-      categoria: form.categoria,
-      precio: Number(form.precio) || 0,
-      stock: Number(form.stock) || 0,
-      fechaActualizacion: serverTimestamp(),
-      destacado: editando?.destacado || false,
-      mensajeDestacado: editando?.mensajeDestacado || "",
-      enOferta: Number(form.porcentajeOferta) > 0,
-      porcentajeOferta: Number(form.porcentajeOferta) || 0,
-      mensajeOferta: editando?.mensajeOferta || "",
-      width: Number(form.width) || 300,
-      height: Number(form.height) || 300,
-    };
-
     try {
-      let idProducto;
+      let idProducto = editando ? editando.id : null;
 
-      // crear o actualizar documento base primero (sin imagen)
+      // Datos base del producto
+      const payload = {
+        nombre: form.nombre,
+        categoria: form.categoria,
+        precio: Number(form.precio) || 0,
+        stock: Number(form.stock) || 0,
+        fechaActualizacion: serverTimestamp(),
+        destacado: editando?.destacado || false,
+        mensajeDestacado: editando?.mensajeDestacado || "",
+        enOferta: form.porcentajeOferta > 0,
+        porcentajeOferta: Number(form.porcentajeOferta) || 0,
+        mensajeOferta: editando?.mensajeOferta || "",
+      };
+
+      // Crear o actualizar documento base (sin imagen aún)
       if (editando) {
-        idProducto = editando.id;
         await updateDoc(doc(db, "productos", idProducto), payload);
       } else {
-        const nuevoDoc = await addDoc(collection(db, "productos"), payload);
-        idProducto = nuevoDoc.id;
+        const nuevo = await addDoc(collection(db, "productos"), payload);
+        idProducto = nuevo.id;
       }
 
-      // Manejo de imagen (subir si hay file)
+      // Manejo de imagen
       let urlFinal = editando?.imagenUrl || imagenDefault;
       let pathFinal = editando?.imagenPath || "";
 
+      // Si se seleccionó archivo nuevo
       if (form.file) {
-        // Si editando y había imagen anterior, eliminarla
-        if (editando?.imagenPath) {
-          try {
-            await deleteObject(ref(storage, editando.imagenPath)).catch(
-              () => {}
-            );
-          } catch (err) {
-            // no bloqueamos la operación si falla el delete
-            console.warn("No se pudo eliminar imagen anterior:", err);
-          }
+        // Validaciones del archivo
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+        if (!allowedTypes.includes(form.file.type)) {
+          return Swal.fire(
+            "Formato no permitido",
+            "Sube JPEG/PNG/WEBP",
+            "warning"
+          );
         }
 
-        const file = form.file;
-        const path = `productos/${idProducto}_${Date.now()}_${file.name}`;
-        const storageRef = ref(storage, path);
-        await uploadBytes(storageRef, file);
-        urlFinal = await getDownloadURL(storageRef);
-        pathFinal = path;
+        // Intentar comprimir/resizar
+        try {
+          // Ajustes de compresión
+          const MAX_DIMENSION = 1600; // px
+          const QUALITY = 0.8; // 0..1
+
+          const compressedBlob = await resizeAndCompressImage(
+            form.file,
+            MAX_DIMENSION,
+            MAX_DIMENSION,
+            QUALITY
+          );
+
+          // Compruebo tamaño y si sigue muy grande, intento bajar calidad
+          let finalBlob = compressedBlob;
+          const MAX_BYTES = 1_500_000; // 1.5 MB
+          if (finalBlob.size > MAX_BYTES) {
+            // recalcular con calidad menor
+            const lowerQuality = 0.6;
+            finalBlob = await resizeAndCompressImage(
+              form.file,
+              MAX_DIMENSION,
+              MAX_DIMENSION,
+              lowerQuality
+            );
+          }
+
+          // Si existía path anterior, eliminarla
+          if (pathFinal) {
+            await deleteObject(ref(storage, pathFinal)).catch(() => {});
+          }
+
+          // Subir Blob (convertir a File para mantener nombre)
+          const archivo = new File(
+            [finalBlob],
+            form.file.name.replace(/\s+/g, "_"),
+            {
+              type: finalBlob.type || "image/jpeg",
+            }
+          );
+
+          const newPath = `productos/${idProducto}_${Date.now()}_${
+            archivo.name
+          }`;
+          const storageRef = ref(storage, newPath);
+
+          await uploadBytes(storageRef, archivo);
+
+          urlFinal = await getDownloadURL(storageRef);
+          pathFinal = newPath;
+        } catch (imgErr) {
+          console.warn("Error comprimiendo/subiendo imagen:", imgErr);
+          // Como fallback intenta subir el file original
+          try {
+            if (pathFinal) {
+              await deleteObject(ref(storage, pathFinal)).catch(() => {});
+            }
+            const archivoOriginal = form.file;
+            const newPath = `productos/${idProducto}_${Date.now()}_${
+              archivoOriginal.name
+            }`;
+            const storageRef = ref(storage, newPath);
+            await uploadBytes(storageRef, archivoOriginal);
+            urlFinal = await getDownloadURL(storageRef);
+            pathFinal = newPath;
+          } catch (subErr) {
+            console.error("No se pudo subir la imagen:", subErr);
+            // seguimos, pero mantenemos imagenDefault o la anterior
+          }
+        }
       }
 
-      // Actualizar documento con datos de imagen y path seguro (no ruta falsa)
+      // Actualizar Firestore con la imagen final
       await updateDoc(doc(db, "productos", idProducto), {
         imagenUrl: urlFinal,
-        imagenPath: pathFinal || "", // <-- CORREGIDO: ruta vacía si no existe
-        width: Number(form.width) || 300,
-        height: Number(form.height) || 300,
+        imagenPath: pathFinal || "imagenes/default_image.jpeg",
       });
 
       Swal.fire("✅", "Producto guardado correctamente", "success");
 
-      // Reset y cerrar modal
+      // Reiniciar estado y formulario
       setShowModal(false);
       setEditando(null);
       setPreviewLocal(null);
@@ -169,16 +262,14 @@ export default function Inventario() {
         stock: "",
         porcentajeOferta: 0,
         file: null,
-        width: 300,
-        height: 300,
       });
-    } catch (err) {
-      console.error(err);
-      Swal.fire("Error", "Error al guardar producto", "error");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("❌ Error", "No se pudo guardar el producto", "error");
     }
   };
 
-  // Toggle oferta (igual que antes)
+  // Activar/desactivar oferta
   const toggleOferta = async (producto) => {
     try {
       if (!producto.enOferta) {
@@ -225,7 +316,7 @@ export default function Inventario() {
     }
   };
 
-  // Toggle destacado (igual que antes)
+  // Toggle destacado
   const toggleDestacado = async (producto) => {
     try {
       if (!producto.destacado) {
@@ -260,7 +351,6 @@ export default function Inventario() {
     }
   };
 
-  // Filtros y orden
   const productosFiltrados = productos
     .filter(
       (p) =>
@@ -311,14 +401,14 @@ export default function Inventario() {
               key={p.id}
               className={`producto-card ${p.destacado ? "destacado" : ""}`}
             >
-              {/* Imagen con tamaño personalizado */}
+              {/* Imagen con auto-resize */}
               <img
                 src={p.imagenUrl || imagenDefault}
                 alt={p.nombre}
                 className="producto-imagen"
                 style={{
-                  width: `${p.width || 300}px`,
-                  height: `${p.height || 300}px`,
+                  width: "100%",
+                  height: "250px",
                   objectFit: "contain",
                   backgroundColor: "#fff",
                   borderRadius: "10px",
@@ -455,40 +545,35 @@ export default function Inventario() {
                 }
               />
 
-              {/* NUEVOS CAMPOS: ancho / alto */}
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                <div style={{ flex: 1 }}>
-                  <label>Ancho imagen (px):</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={form.width}
-                    onChange={(e) =>
-                      setForm({ ...form, width: Number(e.target.value) })
-                    }
-                  />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <label>Alto imagen (px):</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={form.height}
-                    onChange={(e) =>
-                      setForm({ ...form, height: Number(e.target.value) })
-                    }
-                  />
-                </div>
-              </div>
-
               {/* Vista previa con auto-size */}
-              <label style={{ marginTop: 10 }}>Imagen del producto:</label>
+              <label>Imagen del producto:</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files[0];
                   if (file) {
+                    // Validación rápida de tipo y tamaño bruto (antes de comprimir)
+                    const allowed = ["image/jpeg", "image/png", "image/webp"];
+                    if (!allowed.includes(file.type)) {
+                      Swal.fire(
+                        "Formato no permitido",
+                        "Usa .jpg, .png o .webp",
+                        "warning"
+                      );
+                      return;
+                    }
+                    // opcional: límite bruto (por ejemplo 8MB)
+                    const MAX_RAW_MB = 8;
+                    if (file.size > MAX_RAW_MB * 1024 * 1024) {
+                      Swal.fire(
+                        "Archivo demasiado grande",
+                        `Máx ${MAX_RAW_MB} MB`,
+                        "warning"
+                      );
+                      return;
+                    }
+
                     setPreviewLocal(URL.createObjectURL(file));
                     setForm({ ...form, file });
                   }
@@ -518,13 +603,7 @@ export default function Inventario() {
                 </div>
               )}
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: 12,
-                }}
-              >
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <button type="submit" className="btn-guardar">
                   💾 Guardar
                 </button>
@@ -533,7 +612,6 @@ export default function Inventario() {
                   onClick={() => {
                     setShowModal(false);
                     setPreviewLocal(null);
-                    setEditando(null);
                     setForm({
                       nombre: "",
                       categoria: "",
@@ -541,8 +619,6 @@ export default function Inventario() {
                       stock: "",
                       porcentajeOferta: 0,
                       file: null,
-                      width: 300,
-                      height: 300,
                     });
                   }}
                   className="btn-cancelar"
