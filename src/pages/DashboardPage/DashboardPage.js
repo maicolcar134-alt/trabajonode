@@ -52,7 +52,7 @@ function DashboardPage() {
       icon: "success",
       title: `${producto.nombre} añadido al carrito 🛒`,
       showConfirmButton: false,
-      timer: 2000,
+      timer: 0,
       background: "#111",
       color: "#fff",
     });
@@ -172,7 +172,7 @@ function DashboardPage() {
           icon: "success",
           title: "Sesión cerrada",
           text: "¡Has cerrado sesión exitosamente!",
-          timer: 2000,
+          timer: 0,
           showConfirmButton: false,
         }).then(() => {
           navigate("/");

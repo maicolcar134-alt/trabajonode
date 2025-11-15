@@ -4,13 +4,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import NotFoundPage from "./pages/components/NotFoundPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
-import LoginPage from "./pages/LoginPage/LoginPage";
+import LoginPage from "./pages/loginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 
 // Playground hooks
-import UseEffectPlay from "./pages/Playground/UseEffectPlay";
-import UseRefPlay from "./pages/Playground/UseRefPlay";
-import UseStatePlay from "./pages/Playground/UseStatePlay";
+import UseEffectPlay from "./pages/playground/UseEffectPlay";
+import UseRefPlay from "./pages/playground/UseRefPlay";
+import UseStatePlay from "./pages/playground/UseStatePlay";
 
 import "./App.css";
 
@@ -27,7 +27,7 @@ import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
 import Categorias from "./pages/CategoriasAdmin/CategoriasAdmin";
 import Seguridad from "./pages/Seguridad/SeguridadAdmin";
-import Pedidos from "./pages/pedidos/Pedidos";
+import Pedidos from "./pages/Pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
 
