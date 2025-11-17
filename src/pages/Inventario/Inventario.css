@@ -169,3 +169,7 @@
   justify-content: space-between;
   margin-top: 16px;
 }
+.producto-card.destacado {
+  border: 2px solid gold;
+  box-shadow: 0 0 10px gold;
+}

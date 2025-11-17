@@ -1,61 +1,73 @@
+/* ===========================================
+   ✅ LAYOUT GENERAL
+=========================================== */
 .admin-container {
   display: flex;
   height: 100vh;
   background-color: #0f172a;
   color: white;
   font-family: "Poppins", sans-serif;
+  overflow: hidden;
 }
 
-/* === SIDEBAR === */
+/* ===========================================
+   ✅ SIDEBAR
+=========================================== */
 .sidebar {
-  width: 250px;
+  width: 260px;
   background-color: #0b1120;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.35s ease-in-out;
+  z-index: 30;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 2rem;
+  gap: 12px;
+  margin-bottom: 2.2rem;
 }
 
 .logo-icon {
   background-color: #f97316;
-  padding: 8px;
-  border-radius: 10px;
-  font-size: 20px;
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 22px;
 }
 
 .logo-title {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.25rem;
+  font-weight: 700;
   color: white;
 }
 
 .logo-subtitle {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #94a3b8;
 }
 
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
+/* ✅ BOTONES DE MENÚ */
 .menu-item {
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
   align-items: center;
-  padding: 8px 12px;
-  border-radius: 8px;
-  text-decoration: none;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
   color: #cbd5e1;
-  transition: background 0.3s, color 0.3s;
+  text-decoration: none;
+  transition: 0.25s ease;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
 .menu-item:hover {
@@ -66,38 +78,33 @@
 .menu-item.active {
   background-color: #1e293b;
   color: white;
-  border-left: 3px solid #f97316;
-}
-
-.menu-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  border-left: 4px solid #f97316;
+  padding-left: 12px;
 }
 
 .badge {
   background-color: #f97316;
   color: white;
   font-size: 12px;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 999px;
 }
 
-/* Botón Volver */
+/* ✅ BOTÓN VOLVER */
 .btn-volver {
   margin-top: 2rem;
   background-color: #f97316;
   color: white;
   border: none;
-  padding: 10px;
+  padding: 12px;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: 0.25s;
 }
 
 .btn-volver:hover {
@@ -106,60 +113,61 @@
 
 .footer {
   margin-top: auto;
-  font-size: 12px;
+  font-size: 0.75rem;
   text-align: center;
   color: #64748b;
   border-top: 1px solid #1e293b;
-  padding-top: 10px;
+  padding-top: 12px;
 }
 
-/* === CONTENIDO PRINCIPAL === */
-.main-content {
+/* ===========================================
+   ✅ ÁREA DEL CONTENIDO PRINCIPAL
+=========================================== */
+.admin-content {
   flex: 1;
   background-color: #111827;
-  display: flex;
-  flex-direction: column;
+  padding: 1.5rem;
+  overflow-y: auto;
+  animation: fadeIn 0.4s ease-out;
 }
 
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1e293b;
-  padding: 15px 25px;
-  border-bottom: 1px solid #334155;
+/* ✅ Animación suave de entrada */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.search-input {
-  width: 350px;
-  padding: 8px 12px;
-  background-color: #0f172a;
-  border: 1px solid #334155;
-  color: white;
-  border-radius: 6px;
+/* ===========================================
+   ✅ MODO RESPONSIVO
+=========================================== */
+
+/* 📌 Móviles: el sidebar se oculta */
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    transform: translateX(-100%);
+    height: 100vh;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
 }
 
-.btn-nuevo {
-  background-color: #f97316;
-  border: none;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s;
-}
-
-.btn-nuevo:hover {
-  background-color: #ea580c;
-}
-
-.content-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #e2e8f0;
-  text-align: center;
+/* 📌 Tablets: sidebar más pequeño */
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 220px;
+  }
 }

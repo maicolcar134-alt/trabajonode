@@ -1,77 +1,32 @@
-import React from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import "./SeguridadAdmin.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import logo from "../../assets/Explosión de color y energía.png"; // cambia la ruta si tu logo está en otro lugar
-import userPhoto from "../../assets/Explosión de color y energía.png"; // imagen por defecto
-
-
 
 
 function SeguridadAdmin() {
   const navigate = useNavigate();
-  const user = false; // cambia a tu lógica real de autenticación
 
+  // 🧠 Estado simulado de usuario y carrito
+  const [user, setUser] = useState(true);
+  const [cart, setCart] = useState([]);
+
+  // 🔒 Cierre de sesión
   const handleLogout = () => {
     console.log("Cerrar sesión");
-    // Aquí puedes agregar tu lógica real para cerrar sesión (Firebase, etc.)
+    alert("Sesión cerrada correctamente");
+    // Aquí puedes agregar lógica real de logout con Firebase:
+    // signOut(auth).then(() => navigate("/login"));
+    setUser(false);
+    navigate("/dashboard");
   };
 
-  return(
-     <div className="seguridad-container">
-         {/* NAVBAR */}
-      <Navbar expand="lg" variant="dark" className="dashboard-navbar">
-        <Container>
-          <Navbar.Brand onClick={() => navigate("/dashboard")} className="brand-logo">
-            <img src={logo} alt="logo" height="40" />
-            <span className="ms-2 fw-bold text-warning">PyroShop</span>
-          </Navbar.Brand>
-          
-
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-center">
-              <Nav.Link onClick={() => navigate("/Dashboard")} className="active-link">Inicio</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>Categorias</Nav.Link>
-
-              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>Ofertas</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>seguridad</Nav.Link>
-              
-              <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link> 
-              <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
-                <i className="bi bi-shield-lock"></i> Admin
-              </Nav.Link>
-           
-
-              {/* Botón de usuario o iniciar sesión */}
-              {user ? (
-                <Nav.Item className="logout-container" onClick={handleLogout}>
-                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
-                    <FaSignOutAlt /> Cerrar Sesión
-                    <img src={userPhoto} alt="Foto de usuario" className="user-photo-nav" />
-                  </Nav.Link>
-                </Nav.Item>
-              ) : (
-                <Nav.Link onClick={() => navigate("/login")} className="d-flex align-items-center gap-2 fw-bold text-light">
-                  <FaUser /> Acceder
-                </Nav.Link>
-              )}
-
-              {/* Ícono carrito */}
-              <Nav.Link onClick={() => navigate("/productos")} className="cart-icon">
-                <FaShoppingCart />
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+  return (
+    <div className="seguridad-container">
 
 
 
-      {/* 🔹 CONTENIDO PRINCIPAL */}
+      {/* 🧨 CONTENIDO PRINCIPAL */}
       <header className="header">
         <h1 className="titulo-principal">Guía de Seguridad Pirotécnica</h1>
         <p className="subtitulo">
@@ -80,16 +35,18 @@ function SeguridadAdmin() {
         </p>
       </header>
 
+      {/* ⚠️ ADVERTENCIA */}
       <section className="bloque advertencia">
         <h2>⚠️ Advertencia Legal</h2>
         <p>
           El uso de artículos pirotécnicos está regulado por la ley. Solo deben
-          ser manipulados por adultos responsables y en espacios autorizados.
-          El incumplimiento puede acarrear sanciones legales y riesgos graves de
+          ser manipulados por adultos responsables y en espacios autorizados. El
+          incumplimiento puede acarrear sanciones legales y riesgos graves de
           salud.
         </p>
       </section>
 
+      {/* 🧯 INFORMACIÓN VITAL */}
       <section className="bloque vital">
         <h2>🧯 Información Vital</h2>
         <ul>
@@ -99,6 +56,7 @@ function SeguridadAdmin() {
         </ul>
       </section>
 
+      {/* 🚀 PASOS */}
       <section className="bloque pasos">
         <h2>🚀 Antes, Durante y Después del Uso</h2>
         <div className="pasos-grid">
@@ -126,6 +84,7 @@ function SeguridadAdmin() {
         </div>
       </section>
 
+      {/* 🚫 PROHIBICIONES */}
       <section className="bloque prohibiciones">
         <h2>🚫 Prohibiciones Éticas</h2>
         <ul>
@@ -135,6 +94,7 @@ function SeguridadAdmin() {
         </ul>
       </section>
 
+      {/* 🚨 EMERGENCIA */}
       <section className="bloque emergencia">
         <h2>🚨 Protocolos de Emergencia</h2>
         <p>
@@ -145,6 +105,7 @@ function SeguridadAdmin() {
         <button className="btn-protocolo">Ver Guía de Emergencia</button>
       </section>
 
+      {/* ❓ FAQ */}
       <section className="bloque faq">
         <h2>❓ Preguntas Frecuentes</h2>
         <details>
@@ -166,6 +127,7 @@ function SeguridadAdmin() {
         </details>
       </section>
 
+      {/* 📄 FOOTER */}
       <footer className="footer">
         <h3>📄 Documentación y Recursos</h3>
         <p>

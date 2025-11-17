@@ -1,239 +1,374 @@
 import React, { useState, useEffect } from "react";
-import "./Pedidos.css";
-import { db } from "../../firebase";
 import {
   collection,
-  getDocs,
-  addDoc,
+  query,
+  where,
+  onSnapshot,
   updateDoc,
-  deleteDoc,
   doc,
+  addDoc,
+  deleteDoc,
+  serverTimestamp,
+  getDocs,
 } from "firebase/firestore";
-import { Loader2, Plus, Edit, Trash2, Home, Download } from "lucide-react";
-import Swal from "sweetalert2";
+import { db } from "../../firebase";
+import {
+  Container,
+  Spinner,
+  Table,
+  Badge,
+  Button,
+  Form,
+} from "react-bootstrap";
+import { FaBoxOpen, FaTrashAlt, FaSyncAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./Pedidos.css";
 
 export default function Pedidos() {
   const [pedidos, setPedidos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [telefono, setTelefono] = useState("");
+  const [cargando, setCargando] = useState(false);
+  const [listenerActivo, setListenerActivo] = useState(null);
+  const [seleccionados, setSeleccionados] = useState([]);
   const navigate = useNavigate();
 
-  // 🟡 Cargar pedidos desde Firestore
-  useEffect(() => {
-    const fetchPedidos = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "pedidos"));
-        const data = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setPedidos(data);
-      } catch (error) {
-        console.error("Error al obtener pedidos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchPedidos();
-  }, []);
-
-  // 🟢 Agregar nuevo pedido
-  const handleNuevoPedido = async () => {
-    const { value: formValues } = await Swal.fire({
-      title: "Nuevo Pedido",
-      html: `
-        <input id="cliente" class="swal2-input" placeholder="Nombre del cliente">
-        <input id="email" class="swal2-input" placeholder="Correo">
-        <input id="monto" type="number" class="swal2-input" placeholder="Monto">
-        <input id="items" type="number" class="swal2-input" placeholder="Cantidad de ítems">
-      `,
-      confirmButtonText: "Guardar",
-      focusConfirm: false,
-      preConfirm: () => {
-        return {
-          cliente: document.getElementById("cliente").value,
-          email: document.getElementById("email").value,
-          monto: Number(document.getElementById("monto").value),
-          items: Number(document.getElementById("items").value),
-        };
-      },
-    });
-
-    if (formValues) {
-      const nuevo = {
-        ...formValues,
-        estado: "Pendiente",
-        fecha: new Date().toLocaleDateString(),
-        kyc: false,
-      };
-      try {
-        const docRef = await addDoc(collection(db, "pedidos"), nuevo);
-        setPedidos([...pedidos, { id: docRef.id, ...nuevo }]);
-        Swal.fire("✅ Pedido agregado", "", "success");
-      } catch (error) {
-        console.error("Error al agregar pedido:", error);
-      }
-    }
-  };
-
-  // 🟠 Editar estado del pedido
-  const handleEditarEstado = async (id, estadoActual) => {
-    const opciones = ["Pendiente", "Procesando", "Enviado", "Completado"];
-    const { value: nuevoEstado } = await Swal.fire({
-      title: "Cambiar estado",
-      input: "select",
-      inputOptions: opciones.reduce((acc, op) => ({ ...acc, [op]: op }), {}),
-      inputValue: estadoActual,
-      confirmButtonText: "Actualizar",
-    });
-
-    if (nuevoEstado) {
-      try {
-        const pedidoRef = doc(db, "pedidos", id);
-        await updateDoc(pedidoRef, { estado: nuevoEstado });
-        setPedidos(
-          pedidos.map((p) => (p.id === id ? { ...p, estado: nuevoEstado } : p))
-        );
-        Swal.fire("✅ Estado actualizado", "", "success");
-      } catch (error) {
-        console.error("Error al actualizar estado:", error);
-      }
-    }
-  };
-
-  // 🔴 Eliminar pedido
-  const handleEliminar = async (id) => {
-    const confirm = await Swal.fire({
-      title: "¿Eliminar pedido?",
-      text: "Esta acción no se puede deshacer.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Sí, eliminar",
-      cancelButtonText: "Cancelar",
-    });
-    if (confirm.isConfirmed) {
-      try {
-        await deleteDoc(doc(db, "pedidos", id));
-        setPedidos(pedidos.filter((p) => p.id !== id));
-        Swal.fire("🗑️ Pedido eliminado", "", "success");
-      } catch (error) {
-        console.error("Error al eliminar pedido:", error);
-      }
-    }
-  };
-
-  // 🔙 Volver al Admin
-  const handleVolverAdmin = () => {
-    navigate("/admin");
-  };
-
-  // 📥 Descargar pedidos en CSV
-  const handleDescargarCSV = () => {
-    if (pedidos.length === 0) {
-      Swal.fire("⚠️ No hay pedidos para exportar", "", "warning");
+  // 🔍 Buscar pedidos por teléfono
+  const buscarPedidos = () => {
+    if (!telefono.trim()) {
+      alert("Por favor ingresa un número de teléfono.");
       return;
     }
+    setCargando(true);
+    if (listenerActivo) listenerActivo();
 
-    const encabezados = [
-      "Cliente",
-      "Email",
-      "Monto",
-      "Estado",
-      "Fecha",
-      "Items",
-    ];
-    const filas = pedidos.map((p) => [
-      p.cliente,
-      p.email,
-      p.monto,
-      p.estado,
-      p.fecha,
-      p.items,
-    ]);
+    const q = query(
+      collection(db, "pedidos"),
+      where("cliente.telefono", "==", telefono)
+    );
+    const unsub = onSnapshot(q, (snapshot) => {
+      setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setCargando(false);
+    });
 
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [encabezados, ...filas].map((e) => e.join(",")).join("\n");
-
-    const link = document.createElement("a");
-    link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", "pedidos.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    setListenerActivo(() => unsub);
   };
 
-  // 🧾 Renderizar
-  return (
-    <div className="pedidos-page">
-      <div className="pedidos-header">
-        <h2>Gestión de Pedidos</h2>
+  // 📋 Mostrar todos los pedidos
+  const mostrarTodos = () => {
+    setCargando(true);
+    if (listenerActivo) listenerActivo();
 
-        <div className="header-buttons">
-          <button className="btn-volver" onClick={handleVolverAdmin}>
-            <Home size={16} /> Volver Admin
-          </button>
-          <button className="btn-nuevo" onClick={handleNuevoPedido}>
-            <Plus size={16} /> Nuevo Pedido
-          </button>
-          <button className="btn-descargar" onClick={handleDescargarCSV}>
-            <Download size={16} /> Descargar CSV
-          </button>
-        </div>
+    const q = query(collection(db, "pedidos"));
+    const unsub = onSnapshot(q, (snapshot) => {
+      setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+      setCargando(false);
+    });
+
+    setListenerActivo(() => unsub);
+  };
+
+  // 🔁 Actualizar pedidos manualmente
+  const actualizarPedidos = async () => {
+    setCargando(true);
+    const snapshot = await getDocs(collection(db, "pedidos"));
+    setPedidos(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
+    setCargando(false);
+  };
+
+  // 🧹 Limpieza
+  useEffect(() => {
+    mostrarTodos();
+    return () => {
+      if (listenerActivo) listenerActivo();
+    };
+  }, []);
+
+  // 🎨 Colores del estado
+  const colorEstado = (estado) => {
+    switch (estado) {
+      case "En proceso":
+        return "warning";
+      case "Enviado":
+        return "primary";
+      case "Entregado":
+        return "success";
+      default:
+        return "secondary";
+    }
+  };
+
+  // 🧾 Registrar acción en auditoría
+  const registrarAuditoria = async (accion, idPedido, detalles = {}) => {
+    try {
+      await addDoc(collection(db, "auditoria_logs"), {
+        accion,
+        idPedido,
+        detalles,
+        fecha: serverTimestamp(),
+        usuario: "Administrador",
+      });
+    } catch (error) {
+      console.error("Error registrando auditoría:", error);
+    }
+  };
+
+  // ✅ Actualizar estado
+  const actualizarEstado = async (idPedido, nuevoEstado) => {
+    try {
+      const ref = doc(db, "pedidos", idPedido);
+      await updateDoc(ref, { estado: nuevoEstado });
+      await registrarAuditoria("Cambio de estado", idPedido, { nuevoEstado });
+    } catch (error) {
+      alert("Error al actualizar el estado del pedido.");
+    }
+  };
+
+  // 💳 Actualizar pago
+  const actualizarPago = async (idPedido, nuevoPago) => {
+    try {
+      const ref = doc(db, "pedidos", idPedido);
+      await updateDoc(ref, { pago: nuevoPago });
+      await registrarAuditoria("Actualización de pago", idPedido, {
+        nuevoPago,
+      });
+    } catch (error) {
+      alert("Error al actualizar el estado del pago.");
+    }
+  };
+
+  // 🗑️ Eliminar un pedido individual
+  const eliminarPedido = async (idPedido) => {
+    const confirmar = window.confirm(
+      "¿Seguro que deseas eliminar este pedido?"
+    );
+    if (!confirmar) return;
+    try {
+      await deleteDoc(doc(db, "pedidos", idPedido));
+      await registrarAuditoria("Eliminación de pedido", idPedido);
+      setPedidos((prev) => prev.filter((p) => p.id !== idPedido));
+      alert("Pedido eliminado correctamente ✅");
+    } catch (error) {
+      alert("Error al eliminar el pedido.");
+    }
+  };
+
+  // ✅ Seleccionar/desmarcar pedido
+  const toggleSeleccion = (id) => {
+    setSeleccionados((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  // ✅ Seleccionar todos
+  const seleccionarTodos = () => {
+    if (seleccionados.length === pedidos.length) {
+      setSeleccionados([]);
+    } else {
+      setSeleccionados(pedidos.map((p) => p.id));
+    }
+  };
+
+  // 🗑️ Eliminar pedidos seleccionados
+  const eliminarSeleccionados = async () => {
+    if (seleccionados.length === 0) {
+      alert("⚠️ No hay pedidos seleccionados.");
+      return;
+    }
+    const confirmar = window.confirm(
+      `¿Eliminar ${seleccionados.length} pedidos seleccionados?`
+    );
+    if (!confirmar) return;
+    try {
+      for (const id of seleccionados) {
+        await deleteDoc(doc(db, "pedidos", id));
+        await registrarAuditoria("Eliminación múltiple de pedido", id);
+      }
+
+      setPedidos((prev) => prev.filter((p) => !seleccionados.includes(p.id)));
+      setSeleccionados([]);
+      alert("✅ Pedidos eliminados correctamente.");
+    } catch (error) {
+      alert("❌ Error al eliminar pedidos seleccionados.");
+    }
+  };
+
+  return (
+    <Container className="mt-5 mb-5 text-white">
+      <h2 className="text-center mb-4 fw-bold">
+        <FaBoxOpen className="me-2" /> Gestión de Pedidos
+      </h2>
+
+      {/* 🔍 BUSCADOR */}
+      <div className="d-flex justify-content-center mb-4">
+        <input
+          type="text"
+          placeholder="Ingresa el número de teléfono del cliente"
+          className="form-control w-50 me-2 bg-dark text-white border-secondary"
+          value={telefono}
+          onChange={(e) => setTelefono(e.target.value)}
+        />
+        <button
+          className="btn btn-warning fw-bold me-2"
+          onClick={buscarPedidos}
+        >
+          Buscar
+        </button>
+        <button
+          className="btn btn-secondary fw-bold me-2"
+          onClick={mostrarTodos}
+        >
+          Mostrar todos
+        </button>
+        <button
+          className="btn btn-info fw-bold text-white"
+          onClick={actualizarPedidos}
+        >
+          <FaSyncAlt className="me-1" /> Actualizar
+        </button>
       </div>
 
-      {loading ? (
-        <div className="loading">
-          <Loader2 className="spinner" /> Cargando pedidos...
+      {/* 🔘 ELIMINAR SELECCIONADOS */}
+      {pedidos.length > 0 && (
+        <div className="text-center mb-3">
+          <Button
+            variant="danger"
+            onClick={eliminarSeleccionados}
+            disabled={seleccionados.length === 0}
+          >
+            <FaTrashAlt className="me-2" /> Eliminar seleccionados (
+            {seleccionados.length})
+          </Button>
         </div>
-      ) : pedidos.length === 0 ? (
-        <p className="no-data">No hay pedidos registrados.</p>
-      ) : (
-        <table className="tabla-pedidos">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Email</th>
-              <th>Monto</th>
-              <th>Estado</th>
-              <th>Fecha</th>
-              <th>Items</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pedidos.map((p) => (
-              <tr key={p.id}>
-                <td>{p.cliente}</td>
-                <td>{p.email}</td>
-                <td>${p.monto.toLocaleString()}</td>
-                <td>
-                  <span className={`badge estado-${p.estado?.toLowerCase()}`}>
-                    {p.estado}
-                  </span>
-                </td>
-                <td>{p.fecha}</td>
-                <td>{p.items}</td>
-                <td>
-                  <button
-                    className="btn-accion edit"
-                    onClick={() => handleEditarEstado(p.id, p.estado)}
-                  >
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    className="btn-accion delete"
-                    onClick={() => handleEliminar(p.id)}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       )}
-    </div>
+
+      {/* ⏳ CARGANDO */}
+      {cargando && (
+        <div className="text-center my-5">
+          <Spinner animation="border" />
+          <p>Cargando pedidos...</p>
+        </div>
+      )}
+
+      {/* ⚠️ SIN RESULTADOS */}
+      {!cargando && pedidos.length === 0 && (
+        <p className="text-center text-muted">No se encontraron pedidos.</p>
+      )}
+
+      {/* 📦 TABLA DE PEDIDOS */}
+      {pedidos.length > 0 && (
+        <div className="table-responsive shadow-sm mt-4">
+          <Table striped bordered hover variant="dark">
+            <thead className="text-center align-middle">
+              <tr>
+                <th>
+                  <Form.Check
+                    type="checkbox"
+                    checked={seleccionados.length === pedidos.length}
+                    onChange={seleccionarTodos}
+                  />
+                </th>
+                <th>ID Pedido</th>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Pago</th>
+                <th>Estado envío</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pedidos.map((pedido) => (
+                <tr key={pedido.id}>
+                  <td className="text-center">
+                    <Form.Check
+                      type="checkbox"
+                      checked={seleccionados.includes(pedido.id)}
+                      onChange={() => toggleSeleccion(pedido.id)}
+                    />
+                  </td>
+                  <td className="text-center fw-semibold">{pedido.id}</td>
+                  <td>{pedido.cliente?.nombre || "Sin nombre"}</td>
+                  <td>{pedido.cliente?.telefono || "N/A"}</td>
+                  <td>
+                    {Array.isArray(pedido.items) ? (
+                      pedido.items.map((item, idx) => (
+                        <div key={idx}>
+                          • {item.nombre} × {item.cantidad} — $
+                          {(item.precio * item.cantidad).toLocaleString()}
+                        </div>
+                      ))
+                    ) : (
+                      <span className="text-muted">Sin productos</span>
+                    )}
+                  </td>
+                  <td className="fw-bold text-end">
+                    ${pedido.total?.toLocaleString() || "0"}
+                  </td>
+
+                  {/* 💳 PAGO */}
+                  <td className="text-center">
+                    <select
+                      className="form-select form-select-sm bg-dark text-white border-secondary"
+                      value={pedido.pago || "Pendiente"}
+                      onChange={(e) => {
+                        const nuevoPago = e.target.value;
+                        actualizarPago(pedido.id, nuevoPago);
+                        setPedidos((prev) =>
+                          prev.map((p) =>
+                            p.id === pedido.id ? { ...p, pago: nuevoPago } : p
+                          )
+                        );
+                      }}
+                    >
+                      <option value="Pendiente">Pendiente</option>
+                      <option value="Pagado">Pagado</option>
+                      <option value="Rechazado">Rechazado</option>
+                    </select>
+                  </td>
+
+                  {/* 🚚 ESTADO */}
+                  <td className="text-center">
+                    <Badge bg={colorEstado(pedido.estado)} className="me-2">
+                      {pedido.estado || "Pendiente"}
+                    </Badge>
+                    <select
+                      className="form-select form-select-sm bg-dark text-white border-secondary"
+                      value={pedido.estado || "En proceso"}
+                      onChange={(e) => {
+                        const nuevoEstado = e.target.value;
+                        actualizarEstado(pedido.id, nuevoEstado);
+                        setPedidos((prev) =>
+                          prev.map((p) =>
+                            p.id === pedido.id
+                              ? { ...p, estado: nuevoEstado }
+                              : p
+                          )
+                        );
+                      }}
+                    >
+                      <option value="En proceso">En proceso</option>
+                      <option value="Enviado">Enviado</option>
+                      <option value="Entregado">Entregado</option>
+                    </select>
+                  </td>
+
+                  {/* 🗑️ ELIMINAR */}
+                  <td className="text-center">
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => eliminarPedido(pedido.id)}
+                    >
+                      <FaTrashAlt /> Eliminar
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </div>
+      )}
+    </Container>
   );
 }

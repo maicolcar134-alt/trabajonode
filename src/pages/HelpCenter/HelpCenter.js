@@ -1,10 +1,8 @@
 import React from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
+
 import { useNavigate } from "react-router-dom";
-import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
+
 import "./HelpCenter.css";
-import logo from "../../assets/Explosión de color y energía.png";
-import user from "../../assets/Explosión de color y energía.png";
 
 
 export default function HelpCenter() {
@@ -18,103 +16,18 @@ export default function HelpCenter() {
 
   return (
     <div className="helpcenter">
-                 {/* NAVBAR */}
-      <Navbar expand="lg" variant="dark" className="dashboard-navbar">
-        <Container>
-          <Navbar.Brand onClick={() => navigate("/dashboard")} className="brand-logo">
-            <img src={logo} alt="logo" height="40" />
-            <span className="ms-2 fw-bold text-warning">PyroShop</span>
-          </Navbar.Brand>
-          
+    
 
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-center">
-              <Nav.Link onClick={() => navigate("/Dashboard")} className="active-link">Inicio</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>Categorias</Nav.Link>
-
-              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>Ofertas</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>seguridad</Nav.Link>
-              
-              <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link> 
-              <Nav.Link onClick={() => navigate("/Admin")} className="text-warning">
-                <i className="bi bi-shield-lock"></i> Admin
-              </Nav.Link>
-           
-
-              {/* Botón de usuario o iniciar sesión */}
-              {user ? (
-                <Nav.Item className="logout-container" onClick={handleLogout}>
-                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
-                    <FaSignOutAlt /> Cerrar Sesión
-                    <img src={user} alt="Foto de usuario" className="user-photo-nav" />
-                  </Nav.Link>
-                </Nav.Item>
-              ) : (
-                <Nav.Link onClick={() => navigate("/login")} className="d-flex align-items-center gap-2 fw-bold text-light">
-                  <FaUser /> Acceder
-                </Nav.Link>
-              )}
-
-              {/* Ícono carrito */}
-              <Nav.Link onClick={() => navigate("/Carrito")} className="cart-icon">
-                <FaShoppingCart />
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-
-
+    
 
       {/* 🔹 CONTENIDO PRINCIPAL */}
       <div className="header">
-        <button className="btn-center">Centro de Ayuda</button>
+      <h2>Centro De Ayuda</h2>
+      <br></br>
         <h2>¿En qué podemos ayudarte?</h2>
         <p>
           Encuentra respuestas rápidas o contacta con nuestro equipo de soporte.
         </p>
-
-        <div className="search-bar">
-          <input
-            type="text"
-            placeholder="🔍 Buscar en preguntas frecuentes..."
-          />
-        </div>
-      </div>
-
-      {/* 🔹 Tarjetas de contacto */}
-      <div className="contact-section">
-        <div className="card green">
-          <h3>📞 Teléfono</h3>
-          <p className="main">+57 3213148729</p>
-          <p>🕒 L-V: 8:00–18:00, S: 9:00–13:00</p>
-          <button>Contactar</button>
-        </div>
-
-        <div className="card blue">
-          <h3>📧 Email</h3>
-          <p className="main">soporte@pyroshop.co</p>
-          <p>📬 Respuesta en 24h</p>
-          <button>Contactar</button>
-        </div>
-
-        <div className="card orange">
-          <h3>💬 WhatsApp</h3>
-          <p className="main">+57 3213148729</p>
-          <p>🕓 L-V: 7:00–21:00</p>
-          <button>Contactar</button>
-        </div>
-      </div>
-
-      {/* 🔹 Secciones de categorías */}
-      <div className="categories">
-        <button className="active">📦 Pedidos y Compras</button>
-        <button>🚚 Envíos y Entregas</button>
-        <button>🔁 Devoluciones y Cambios</button>
-        <button>🔒 Seguridad y Legal</button>
-        <button>👤 Cuenta y Perfil</button>
       </div>
 
       {/* 🔹 Preguntas frecuentes */}
@@ -168,10 +81,68 @@ export default function HelpCenter() {
             Nuestro equipo está disponible para ayudarte con cualquier consulta
             específica.
           </p>
-          <button>💬 Abrir Chat de Soporte</button>
+<a 
+  href="https://mail.google.com/mail/?view=cm&fs=1&to=pyroshopmc@gmail.com"
+  className="btn-soporte"
+>
+  💬 Abrir Chat de Soporte
+</a>      
           <small>Tiempo medio de respuesta: 5 minutos</small>
         </div>
       </div>
+
+
+      
+<div className="contact-section">
+
+  {/* Teléfono */}
+  <div className="card green">
+    <h3>📞 Teléfono</h3>
+    <p className="main">+57 3213148729</p>
+    <p>🕒 L-V: 8:00–18:00, S: 9:00–13:00</p>
+
+    <a
+      href="tel:+573213148729"
+      className="btn-contact"
+    >
+      Contactar
+    </a>
+  </div>
+
+  {/* Email */}
+  <div className="card blue">
+    <h3>📧 Email</h3>
+    <p className="main">pyroshopmc@gmail.com</p>
+    <p>📬 Respuesta en 24h</p>
+
+    <a
+      href="https://mail.google.com/mail/?view=cm&fs=1&to=pyroshopmc@gmail.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-contact"
+    >
+      Contactar
+    </a>
+  </div>
+
+  {/* WhatsApp */}
+  <div className="card orange">
+    <h3>💬 WhatsApp</h3>
+    <p className="main">+57 3213148729</p>
+    <p>🕓 L-V: 7:00–21:00</p>
+
+    <a
+      href="https://wa.me/573213148729"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-contact"
+    >
+      Contactar
+    </a>
+  </div>
+
+</div>
+
     </div>
   );
 }

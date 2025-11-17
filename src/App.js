@@ -1,104 +1,148 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
 
-
+// Layout global con Navbar
+import MainLayout from "./layouts/MainLayout";
 
 // Rutas públicas
-import 'bootstrap/dist/css/bootstrap.min.css';
-import NotFoundPage from './pages/components/NotFoundPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage';
-import LoginPage from './pages/loginPage/LoginPage';
-import RegisterPage from './pages/RegisterPage/RegisterPage';
+import NotFoundPage from "./pages/components/NotFoundPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
+import LoginPage from "./pages/loginPage/LoginPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 
+// Autenticación
+import ProtectedRoute from "./pages/components/ProtectedRoute";
 
+// Playground hooks
+import UseEffectPlay from "./pages/playground/UseEffectPlay";
+import UseRefPlay from "./pages/playground/UseRefPlay";
+import UseStatePlay from "./pages/playground/UseStatePlay";
 
-
-// Rutas para hooks
-
-import UseEffectPlay from './pages/playground/UseEffectPlay';
-import UseRefPlay from './pages/playground/UseRefPlay';
-import UseStatePlay from './pages/playground/UseStatePlay';
-import './App.css';
-
-
-// Protege rutas con autenticación Firebase
-import ProtectedRoute from './pages/components/ProtectedRoute';
-import DashboardPage from './pages/DashboardPage/DashboardPage'; 
-import AuxiliaresPage from './pages/AuxiliaresPage/AuxiliaresPage';
-import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
-import DashboardaAdmin from './pages/DashboardaAdmin/DashboardaAdmin';
-import Inventario from './pages/Inventario/Inventario';
-import CategoriasAdmin from './pages/CategoriasAdmin/CategoriasAdmin';
-import SeguridadAdmin from './pages/Seguridad/SeguridadAdmin';
-import HelpCenter from './pages/HelpCenter/HelpCenter';
-import OfertasPirotecnia from './pages/OfertasPirotecnia/OfertasPirotecnia';
-import EventsPage from './pages/Events/Events';
-import Pedidos from './pages/Pedidos/Pedidos';
-import Auditoria from './pages/Auditoria/Auditoria';
-import ZonasEnvioPro from './pages/ZonasEnvio/ZonasEnvio';
+// Tienda / clientes
+import DashboardPage from "./pages/DashboardPage/DashboardPage";
+import AuxiliaresPage from "./pages/AuxiliaresPage/AuxiliaresPage";
+import HelpCenter from "./pages/HelpCenter/HelpCenter";
+import OfertasPirotecnia from "./pages/OfertasPirotecnia/OfertasPirotecnia";
+import EventsPage from "./pages/Events/Events";
 import Carrito from "./pages/CarritoPage/Carrito";
+import Checkout from "./pages/CheckoutPage/Checkout";
+import Gracias from "./pages/Gracias/Gracias";
+import Categorias from "./pages/CategoriasAdmin/CategoriasAdmin"; 
+import Seguridad from "./pages/Seguridad/SeguridadAdmin";
 
-
-
-import Admin from './pages/Admin/Admin';
-
-
-
-
+// Panel admin
+import Admin from "./pages/Admin/Admin";
+import DashboardAdmin from "./pages/DashboardaAdmin/DashboardaAdmin";
+import Inventario from "./pages/Inventario/Inventario";
+import Pedidos from "./pages/Pedidos/Pedidos";
+import Auditoria from "./pages/Auditoria/Auditoria";
+import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        {/* Rutas públicas */}
 
+        {/* 🌐 RUTAS SIN NAVBAR */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-      
 
-       
-      
 
-        {/* Rutas protegidas con Firebase Auth */}
-        <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute> } />
-        <Route path="/usuarios" element={<ProtectedRoute> <AuxiliaresPage /> </ProtectedRoute> } />
-        <Route path="/dashboarda" element={<ProtectedRoute> <DashboardaAdmin /> </ProtectedRoute> } />
-      <Route path="/inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
-      <Route path="/Categorias" element={ <CategoriasAdmin />  } />
-      <Route path="/Seguridad" element={<ProtectedRoute> <SeguridadAdmin /> </ProtectedRoute> } />
-       <Route path="/DashboardaAdmin" element={<ProtectedRoute> <DashboardaAdmin /> </ProtectedRoute> } /> 
-       <Route path="/Inventario" element={<ProtectedRoute> <Inventario /> </ProtectedRoute> } />
-        <Route path="/categorias" element={<ProtectedRoute> <CategoriasAdmin /> </ProtectedRoute> } />
-        <Route path="/seguridad" element={ <SeguridadAdmin />  } />  
-        <Route path="/pedidos" element={<ProtectedRoute> <Pedidos /> </ProtectedRoute> } /> 
-        <Route path="/helpcenter" element={ <HelpCenter />  } />
-        <Route path="/ofertaspirotecnia" element={ <OfertasPirotecnia />  } /> 
-        <Route path="/events" element={<EventsPage />  } /> 
-        <Route path="/auditoria" element={<ProtectedRoute> <Auditoria /> </ProtectedRoute> } /> 
-        <Route path="/ZonasEnvio" element={<ProtectedRoute> <ZonasEnvioPro /> </ProtectedRoute> } />
-       <Route path="/Carrito" element={<ProtectedRoute> <Carrito /> </ProtectedRoute> } />
-          
-     
-        <Route path="/Admin" element={<ProtectedRoute> <Admin /> </ProtectedRoute> } />
-        {/* Ruta genérica para páginas no encontradas */}
-        <Route path="" element={<NotFoundPage />} />
-        
-        
-        
+        {/* 🌐 TODA LA APLICACIÓN CON NAVBAR GLOBAL */}
+        <Route element={<MainLayout />}>
 
-        {/* Rutas para prácticas de hooks */}
-        <Route path="/usestate" element={<UseStatePlay />} />
-        <Route path="/useeffect" element={<UseEffectPlay />} />
-        <Route path="/useref" element={<UseRefPlay />} />
+          {/* Página inicial */}
+          <Route path="/" element={<DashboardPage />} />
+
+          {/* RUTAS PROTEGIDAS */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/usuarios"
+            element={
+              <ProtectedRoute>
+                <AuxiliaresPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* CLIENTES / TIENDA */}
+          <Route path="/helpcenter" element={<HelpCenter />} />
+          <Route path="/ofertaspirotecnia" element={<OfertasPirotecnia />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/categorias" element={<Categorias />} />
+          <Route path="/seguridad" element={<Seguridad />} />
+
+          {/* COMPRA */}
+          <Route
+            path="/carrito"
+            element={
+              <ProtectedRoute>
+                <Carrito />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gracias"
+            element={
+              <ProtectedRoute>
+                <Gracias />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* PLAYGROUND */}
+          <Route path="/usestate" element={<UseStatePlay />} />
+          <Route path="/useeffect" element={<UseEffectPlay />} />
+          <Route path="/useref" element={<UseRefPlay />} />
+
+        </Route>
         
-        
+        {/* PANEL ADMIN (NO USA EL NAVBAR DE CLIENTES) */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute rol="admin">
+              <Admin />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="dashboard" element={<DashboardAdmin />} />
+          <Route path="inventario" element={<Inventario />} />
+          <Route path="pedidos" element={<Pedidos />} />
+          <Route path="usuarios" element={<AuxiliaresPage />} />
+          <Route path="auditoria" element={<Auditoria />} />
+          <Route path="zonas" element={<ZonasEnvioPro />} />
+        </Route>
+
+        {/* 404 */}
+        <Route path="*" element={<NotFoundPage />} />
+
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+

@@ -22,6 +22,17 @@ export default function Carrito() {
     actualizarCarrito(nuevoCarrito);
   };
 
+  const cambiarCantidad = (id, cantidad) => {
+    const nuevoCarrito = carrito.map((item) => {
+      if (item.id === id) {
+        const nuevaCantidad = Math.max(1, item.cantidad + cantidad);
+        return { ...item, cantidad: nuevaCantidad };
+      }
+      return item;
+    });
+    actualizarCarrito(nuevoCarrito);
+  };
+
   const vaciarCarrito = () => {
     localStorage.removeItem("carrito");
     setCarrito([]);
@@ -59,7 +70,24 @@ export default function Carrito() {
                 <tr key={item.id}>
                   <td>{item.nombre}</td>
                   <td>${item.precio.toLocaleString()}</td>
-                  <td>{item.cantidad}</td>
+
+                  {/* Controles de cantidad */}
+                  <td>
+                    <button
+                      className="btn-cantidad"
+                      onClick={() => cambiarCantidad(item.id, -1)}
+                    >
+                      -
+                    </button>
+                    <span className="cantidad-num">{item.cantidad}</span>
+                    <button
+                      className="btn-cantidad"
+                      onClick={() => cambiarCantidad(item.id, 1)}
+                    >
+                      +
+                    </button>
+                  </td>
+
                   <td>${(item.precio * item.cantidad).toLocaleString()}</td>
                   <td>
                     <button
@@ -88,3 +116,4 @@ export default function Carrito() {
     </div>
   );
 }
+
