@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './DashboardaAdmin.css';
 import { Line, Pie } from 'react-chartjs-2';
 import { useNavigate } from 'react-router-dom';
 import { Home } from 'lucide-react';
+import { registrarLog } from "../../utils/auditoriaService"; // ✅ importar el servicio de auditoría
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -20,9 +22,18 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const DashboardaAdmin = () => {
   const navigate = useNavigate();
 
+  // 🟢 Registrar acceso al panel
+  useEffect(() => {
+    const registrarAcceso = async () => {
+      await registrarLog("Acceso al panel administrativo", "Éxito");
+    };
+    registrarAcceso();
+  }, []);
+
   // 🔹 Acción del botón Volver
-  const handleVolver = () => {
-    navigate('/Admin'); // Cambia esta ruta si deseas que regrese, por ejemplo, a "/tienda" o "/admin"
+  const handleVolver = async () => {
+    await registrarLog("Salida del panel administrativo", "Éxito");
+    navigate('/Admin'); // Ruta de retorno
   };
 
   // Datos vacíos para los gráficos
@@ -58,7 +69,7 @@ const DashboardaAdmin = () => {
         {/* 🔙 Botón Volver al Inicio */}
         <button className="btn-volver" onClick={handleVolver}>
           <Home size={16} />
-          <span>Volver  Admin </span>
+          <span>Volver Admin</span>
         </button>
       </div>
 
@@ -126,3 +137,4 @@ const DashboardaAdmin = () => {
 };
 
 export default DashboardaAdmin;
+

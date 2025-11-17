@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { auth, db } from '../../firebase';
+import { registrarLog } from "../../utils/auditoriaService";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import './LoginPage.css';
@@ -20,9 +21,11 @@ function LoginPage() {
     }
 
     try {
+      // Intento de inicio de sesión
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
+      // Verificar si el usuario está registrado y activo
       const userDocRef = doc(db, 'usuarios', user.uid);
       const userSnap = await getDoc(userDocRef);
 
@@ -30,12 +33,19 @@ function LoginPage() {
         const data = userSnap.data();
         if (data.estado === "Inactivo") {
           Swal.fire("Acceso denegado", "Tu cuenta está inactiva. Contacta al administrador.", "error");
+          // 🟠 Registrar intento de acceso con cuenta inactiva
+          await registrarLog("Intento de inicio de sesión (cuenta inactiva)", "Fallido");
           return;
         }
       } else {
         Swal.fire("Acceso denegado", "Tu cuenta no está registrada.", "error");
+        // 🔴 Registrar intento de acceso con cuenta inexistente
+        await registrarLog("Intento de inicio de sesión (usuario no registrado)", "Fallido");
         return;
       }
+
+      // 🟢 Registrar inicio de sesión exitoso
+      await registrarLog("Inicio de sesión", "Éxito");
 
       Swal.fire({
         title: "¡Bienvenido!",
@@ -49,6 +59,10 @@ function LoginPage() {
 
     } catch (error) {
       console.error(error);
+
+      // 🔴 Registrar intento de inicio de sesión fallido
+      await registrarLog("Intento de inicio de sesión (credenciales incorrectas)", "Fallido");
+
       Swal.fire("Error", "Credenciales incorrectas o usuario no existe.", "error");
     }
   };
@@ -106,4 +120,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-
