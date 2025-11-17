@@ -35,7 +35,7 @@ import Seguridad from "./pages/Seguridad/SeguridadAdmin";
 
 // Panel admin
 import Admin from "./pages/Admin/Admin";
-import DashboardAdmin from "./pages/DashboardaAdmin/DashboardaAdmin";
+import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
 import Pedidos from "./pages/Pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
