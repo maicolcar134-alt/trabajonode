@@ -52,7 +52,7 @@ function DashboardPage() {
       icon: "success",
       title: `${producto.nombre} añadido al carrito 🛒`,
       showConfirmButton: false,
-      timer: 2000,
+      timer: 0,
       background: "#111",
       color: "#fff",
     });
@@ -173,7 +173,7 @@ function DashboardPage() {
           icon: "success",
           title: "Sesión cerrada",
           text: "¡Has cerrado sesión exitosamente!",
-          timer: 2000,
+          timer: 0,
           showConfirmButton: false,
         }).then(() => {
           navigate("/");
@@ -371,9 +371,8 @@ function DashboardPage() {
           style={{ justifyContent: "center" }}
         >
           <button
-            className={`btn ${
-              filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
-            }`}
+            className={`btn ${filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
+              }`}
             onClick={() => setFiltroCategoria("")}
           >
             Todos
@@ -381,9 +380,8 @@ function DashboardPage() {
           {categorias.map((c, i) => (
             <button
               key={i}
-              className={`btn ${
-                filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
-              }`}
+              className={`btn ${filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
+                }`}
               onClick={() => setFiltroCategoria(c)}
             >
               {c}
@@ -558,11 +556,9 @@ function DashboardPage() {
           <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/30 rounded-lg p-4 mb-6">
             <p className="text-sm text-white/90 m-0">
               <strong>Aviso Legal:</strong> La venta de artículos pirotécnicos
-              está sujeta a la normativa vigente. Está prohibida la venta a
-              menores de 18 años. El comprador se compromete a usar los
+              está sujeta a la normativa vigente. El comprador se compromete a usar los
               productos de forma responsable y siguiendo todas las instrucciones
-              de seguridad. PyroShop no se hace responsable del uso inadecuado
-              de los productos.
+              de seguridad. 
             </p>
           </div>
 
