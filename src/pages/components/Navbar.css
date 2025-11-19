@@ -1,0 +1,6 @@
+.navbar .nav-link.active-item {
+  border: 2px solid gold !important;
+  border-radius: 6px;
+  padding: 4px 12px !important;
+  color: gold !important;
+}
