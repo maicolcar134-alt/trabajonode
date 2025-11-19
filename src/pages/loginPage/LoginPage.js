@@ -5,6 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import "./LoginPage.css";
 import logo from "../../assets/Explosión de color y energía.png";
+import { registrarLog } from "../../utils/auditoriaService";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -37,6 +38,8 @@ function LoginPage() {
 
       if (!userSnap.exists()) {
         Swal.fire("Acceso denegado", "Tu cuenta no está registrada.", "error");
+        // 🔴 Registrar intento de acceso con cuenta inexistente
+        await registrarLog("Intento de inicio de sesión (usuario no registrado)", "Fallido");
         return;
       }
 

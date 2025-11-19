@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Navbar, Nav, Container } from "react-bootstrap";
-import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/Explosión de color y energía.png";
+
 import userDefault from "../../assets/Explosión de color y energía.png";
 import "./OfertasPirotecnia.css";
+
+
 
 const DURATION_HOURS = 3;
 const SALE_END_TIMESTAMP = null;
@@ -132,79 +132,6 @@ export default function OfertasPirotecnia() {
 
   return (
     <div className="ofertas-page">
-      {/* NAVBAR */}
-      <Navbar expand="lg" variant="dark" className="dashboard-navbar">
-        <Container>
-          <Navbar.Brand
-            onClick={() => navigate("/dashboard")}
-            className="brand-logo"
-          >
-            <img src={logo} alt="logo" height="40" />
-            <span className="ms-2 fw-bold text-warning">PyroShop</span>
-          </Navbar.Brand>
-
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-center">
-              <Nav.Link
-                onClick={() => navigate("/Dashboard")}
-                className="active-link"
-              >
-                Inicio
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>
-                Categorias
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>
-                Ofertas
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>
-                Seguridad
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
-              <Nav.Link
-                onClick={() => navigate("/Admin")}
-                className="text-warning"
-              >
-                <i className="bi bi-shield-lock"></i> Admin
-              </Nav.Link>
-
-              {/* Botón de usuario o iniciar sesión */}
-              {user ? (
-                <Nav.Item className="logout-container" onClick={handleLogout}>
-                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
-                    <FaSignOutAlt /> Cerrar Sesión
-                    <img
-                      src={userPhoto}
-                      alt="Foto de usuario"
-                      className="user-photo-nav"
-                    />
-                  </Nav.Link>
-                </Nav.Item>
-              ) : (
-                <Nav.Link
-                  onClick={() => navigate("/login")}
-                  className="d-flex align-items-center gap-2 fw-bold text-light"
-                >
-                  <FaUser /> Acceder
-                </Nav.Link>
-              )}
-
-              {/* Ícono carrito */}
-              <Nav.Link
-                onClick={() => navigate("/Carrito")}
-                className="cart-icon position-relative"
-              >
-                <FaShoppingCart />
-                {cart.length > 0 && (
-                  <span className="cart-badge">{cart.length}</span> // 🔥 cantidad en el icono
-                )}
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
 
       {/* CONTENIDO DE OFERTAS */}
       <div className="ofertas-wrap">
@@ -325,6 +252,124 @@ export default function OfertasPirotecnia() {
           </div>
         </div>
       </div>
+            <footer className="footer mt-auto">
+        <div className="max-w-7xl mx-auto px-4 py-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-[var(--brand-accent)] to-[var(--brand-warm)] rounded-lg flex items-center justify-center">
+                  <span className="text-white text-xl">🎆</span>
+                </div>
+                <div>
+                  <h3 className="m-0">PyroShop</h3>
+                  <p className="text-sm text-white/70 m-0">Pirotecnia Legal</p>
+                </div>
+              </div>
+              <p className="text-sm text-white/80">
+                Venta legal y responsable de pirotecnia certificada.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="mb-4">Legal y Seguridad</h4>
+              <ul className="space-y-2 list-none p-0 m-0">
+                <li>
+                  <a
+                    href="/politicasventa"
+                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
+                  >
+                    Política de Venta Responsable
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/terminoscondiciones"
+                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
+                  >
+                    Términos y Condiciones
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/PoliticasPrivacidad"
+                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
+                  >
+                    Política de Privacidad
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/normativaregulacion"
+                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
+                  >
+                    Normativa y Regulación
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4">Atención al Cliente</h4>
+              <ul className="space-y-2 list-none p-0 m-0">
+                <li>
+                  <a
+                    href="/Seguridad"
+                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
+                  >
+                    Guía de Seguridad
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/HelpCenter"
+                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
+                  >
+                    Ayuda al Usuario
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="mb-4">Contacto</h4>
+              <ul className="space-y-3 list-none p-0 m-0">
+                <li className="flex items-start gap-2 text-sm text-white/80">
+                  <span>+573213148729</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-white/80">
+                  <span>info@pyroshop.co</span>
+                </li>
+                <li className="flex items-start gap-2 text-sm text-white/80">
+                  <span>
+                    Calle 12 # 45-67
+                    <br />
+                    Ocaña, Norte de Santander
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/30 rounded-lg p-4 mb-6">
+            <p className="text-sm text-white/90 m-0">
+              <strong>Aviso Legal:</strong> La venta de artículos pirotécnicos
+              está sujeta a la normativa vigente. El comprador se compromete a usar los
+              productos de forma responsable y siguiendo todas las instrucciones
+              de seguridad. 
+            </p>
+          </div>
+
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
+            <p className="m-0">
+              © 2025 PyroShop. Todos los derechos reservados.
+            </p>
+            <div className="flex gap-4">
+              
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
+    
   );
 }

@@ -3,20 +3,20 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-import logo from "../../assets/Explosión de color y energía.png";
+
 import userDefault from "../../assets/Explosión de color y energía.png";
 import "./DashboardPage.css";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { Navbar, Nav, Badge, Container } from "react-bootstrap";
-import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
+
+
+
 
 import "react-bootstrap";
 
 function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
-  const userPhoto = user?.photoURL || userDefault;
   const [productos, setProductos] = useState([]);
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [carrito, setCarrito] = useState([]);
@@ -52,7 +52,7 @@ function DashboardPage() {
       icon: "success",
       title: `${producto.nombre} añadido al carrito 🛒`,
       showConfirmButton: false,
-      timer: 2000,
+      timer: 0,
       background: "#111",
       color: "#fff",
     });
@@ -173,7 +173,7 @@ function DashboardPage() {
           icon: "success",
           title: "Sesión cerrada",
           text: "¡Has cerrado sesión exitosamente!",
-          timer: 2000,
+          timer: 0,
           showConfirmButton: false,
         }).then(() => {
           navigate("/");
@@ -191,90 +191,7 @@ function DashboardPage() {
 
   return (
     <>
-      {/* NAVBAR */}
-      <Navbar expand="lg" variant="dark" className="dashboard-navbar">
-        <Container>
-          <Navbar.Brand
-            onClick={() => navigate("/dashboard")}
-            className="brand-logo"
-          >
-            <img src={logo} alt="logo" height="40" />
-            <span className="ms-2 fw-bold text-warning">PyroShop</span>
-          </Navbar.Brand>
 
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-center">
-              <Nav.Link
-                onClick={() => navigate("/Dashboard")}
-                className="active-link"
-              >
-                Inicio
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/categorias")}>
-                Categorias
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>
-                Ofertas
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>
-                Seguridad
-              </Nav.Link>
-              <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
-              <Nav.Link
-                onClick={() => navigate("/Admin")}
-                className="text-warning"
-              >
-                <i className="bi bi-shield-lock"></i> Admin
-              </Nav.Link>
-
-              {user ? (
-                <Nav.Item className="logout-container" onClick={handleLogout}>
-                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
-                    <FaSignOutAlt /> Cerrar Sesión
-                    <img
-                      src={userPhoto}
-                      alt="Foto de usuario"
-                      className="user-photo-nav"
-                    />
-                  </Nav.Link>
-                </Nav.Item>
-              ) : (
-                <Nav.Link
-                  onClick={() => navigate("/login")}
-                  className="d-flex align-items-center gap-2 fw-bold text-light"
-                >
-                  <FaUser /> Acceder
-                </Nav.Link>
-              )}
-
-              {/* 🛒 CARRITO CON CONTADOR */}
-              <Nav.Link
-                onClick={() => navigate("/Carrito")}
-                className="position-relative"
-              >
-                <FaShoppingCart size={20} />
-                {carrito.length > 0 && (
-                  <Badge
-                    bg="warning"
-                    text="dark"
-                    pill
-                    style={{
-                      position: "absolute",
-                      top: "0px",
-                      right: "0px",
-                      fontSize: "0.7rem",
-                    }}
-                  >
-                    {carrito.length}
-                  </Badge>
-                )}
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
 
       {/* contenido principal*/}
       <main
@@ -340,7 +257,7 @@ function DashboardPage() {
               </button>
             </div>
 
-            <div class="contenedor"></div>
+            <div className="contenedor"></div>
             <div className="contenedor">
               <div>
                 <div className="numero">500+</div>
@@ -454,9 +371,8 @@ function DashboardPage() {
           style={{ justifyContent: "center" }}
         >
           <button
-            className={`btn ${
-              filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
-            }`}
+            className={`btn ${filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
+              }`}
             onClick={() => setFiltroCategoria("")}
           >
             Todos
@@ -464,9 +380,8 @@ function DashboardPage() {
           {categorias.map((c, i) => (
             <button
               key={i}
-              className={`btn ${
-                filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
-              }`}
+              className={`btn ${filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
+                }`}
               onClick={() => setFiltroCategoria(c)}
             >
               {c}
@@ -641,11 +556,9 @@ function DashboardPage() {
           <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/30 rounded-lg p-4 mb-6">
             <p className="text-sm text-white/90 m-0">
               <strong>Aviso Legal:</strong> La venta de artículos pirotécnicos
-              está sujeta a la normativa vigente. Está prohibida la venta a
-              menores de 18 años. El comprador se compromete a usar los
+              está sujeta a la normativa vigente. El comprador se compromete a usar los
               productos de forma responsable y siguiendo todas las instrucciones
-              de seguridad. PyroShop no se hace responsable del uso inadecuado
-              de los productos.
+              de seguridad. 
             </p>
           </div>
 
