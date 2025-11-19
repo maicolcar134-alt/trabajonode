@@ -5,8 +5,26 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-      
-      
+    ],
+    "headers": [
+      {
+        "source": "/src/assets/placeholder.png",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|jpeg|png|webp|svg|gif)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000"
+          }
+        ]
+      }
     ],
     "rewrites": [
       {
@@ -14,5 +32,8 @@
         "destination": "/index.html"
       }
     ]
+  },
+  "storage": {
+    "rules": "y"
   }
 }

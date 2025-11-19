@@ -1,15 +1,11 @@
+// src/components/CategoriasAdmin.js
 import React, { useEffect, useState } from "react";
-import {
-  collection,
-  addDoc,
-  onSnapshot,
-  serverTimestamp,
-} from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import "./CategoriasAdmin.css";
-import { Navbar, Nav, Container, Badge, Button } from "react-bootstrap";
+import { Navbar, Nav, Container, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { FaSignOutAlt, FaUser, FaShoppingCart, FaCheck } from "react-icons/fa";
+import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import logo from "../../assets/Explosión de color y energía.png";
 import userPhoto from "../../assets/Explosión de color y energía.png";
 
@@ -25,9 +21,9 @@ export default function CategoriasAdmin() {
 
   const navigate = useNavigate();
 
-  // 🔹 Cargar productos desde Firestore
+  // 🔹 Cargar productos desde INVENTARIO
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "productos"), (snap) => {
+    const unsub = onSnapshot(collection(db, "inventario"), (snap) => {
       const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
       setProductos(data);
     });
@@ -40,15 +36,15 @@ export default function CategoriasAdmin() {
     setCarrito(carritoGuardado);
   }, []);
 
-  // 🔹 Guardar cambios del carrito
   const actualizarCarrito = (nuevoCarrito) => {
     setCarrito(nuevoCarrito);
     localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
   };
 
-  // 🛒 Agregar producto al carrito
+  // 🛒 Agregar al carrito
   const agregarAlCarrito = (producto) => {
     const existe = carrito.find((item) => item.id === producto.id);
+
     let nuevoCarrito;
     if (existe) {
       nuevoCarrito = carrito.map((item) =>
@@ -59,6 +55,7 @@ export default function CategoriasAdmin() {
     } else {
       nuevoCarrito = [...carrito, { ...producto, cantidad: 1 }];
     }
+
     actualizarCarrito(nuevoCarrito);
 
     const notificacion = document.createElement("div");
@@ -68,45 +65,12 @@ export default function CategoriasAdmin() {
     setTimeout(() => notificacion.remove(), 2500);
   };
 
-  // 🧾 Finalizar compra (guardar pedido en Firestore)
-  const finalizarCompra = async () => {
-    if (carrito.length === 0) {
-      alert("Tu carrito está vacío.");
-      return;
-    }
-
-    const total = carrito.reduce(
-      (sum, item) => sum + item.precio * item.cantidad,
-      0
-    );
-
-    try {
-      await addDoc(collection(db, "pedidos"), {
-        cliente: {
-          nombre: user.nombre,
-          email: user.email,
-        },
-        items: carrito,
-        total,
-        estado: "Pendiente",
-        fecha: serverTimestamp(),
-      });
-
-      // Vaciar carrito
-      actualizarCarrito([]);
-
-      alert("✅ ¡Compra realizada con éxito!");
-      navigate("/"); // Redirigir a la página de pedidos del usuario
-    } catch (err) {
-      console.error(err);
-      alert("❌ Error al guardar el pedido");
-    }
-  };
-
+  // 🔥 Crear lista dinámica de categorías
   const categorias = [...new Set(productos.map((p) => p.categoria))].filter(
     Boolean
   );
 
+  // 🔥 Filtro general
   const productosFiltrados = productos.filter(
     (p) =>
       (!filtroCategoria || p.categoria === filtroCategoria) &&
@@ -114,6 +78,7 @@ export default function CategoriasAdmin() {
         p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
   );
 
+  // 🔥 Ordenar productos por categoría
   const productosPorCategoria = categorias.map((cat) => ({
     nombre: cat,
     productos: productosFiltrados.filter((p) => p.categoria === cat),
@@ -129,7 +94,6 @@ export default function CategoriasAdmin() {
       {/* 🌑 NAVBAR */}
       <Navbar expand="lg" variant="dark" className="dashboard-navbar">
         <Container>
-          {/* 🔥 Logo y nombre */}
           <Navbar.Brand
             onClick={() => navigate("/dashboard")}
             className="brand-logo d-flex align-items-center"
@@ -141,14 +105,8 @@ export default function CategoriasAdmin() {
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            {/* 🔗 Enlaces */}
             <Nav className="mx-auto align-items-center">
-              <Nav.Link
-                onClick={() => navigate("/dashboard")}
-                className="active-link"
-              >
-                Inicio
-              </Nav.Link>
+              <Nav.Link onClick={() => navigate("/dashboard")}>Inicio</Nav.Link>
               <Nav.Link onClick={() => navigate("/categorias")}>
                 Categorías
               </Nav.Link>
@@ -160,15 +118,8 @@ export default function CategoriasAdmin() {
               </Nav.Link>
               <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
               <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
-              <Nav.Link
-                onClick={() => navigate("/admin")}
-                className="text-warning"
-              >
-                <i className="bi bi-shield-lock"></i> Admin
-              </Nav.Link>
             </Nav>
 
-            {/* 🔹 Usuario y Carrito */}
             <Nav className="align-items-center gap-3">
               {user ? (
                 <Nav.Item
@@ -180,7 +131,7 @@ export default function CategoriasAdmin() {
                     <FaSignOutAlt /> Cerrar Sesión
                     <img
                       src={userPhoto}
-                      alt="Foto de usuario"
+                      alt="user"
                       className="user-photo-nav"
                     />
                   </Nav.Link>
@@ -209,7 +160,7 @@ export default function CategoriasAdmin() {
         </Container>
       </Navbar>
 
-      {/* 🔹 CATÁLOGO */}
+      {/* 🎇 CATÁLOGO */}
       <div className="catalogo-contenedor">
         <h1 className="titulo-catalogo">🎆 Catálogo de Productos</h1>
 
@@ -240,22 +191,37 @@ export default function CategoriasAdmin() {
             cat.productos.length > 0 && (
               <section key={cat.nombre} className="seccion-categoria">
                 <h2 className="categoria-titulo">{cat.nombre}</h2>
+
                 <div className="productos-grid">
                   {cat.productos.map((p) => (
                     <div key={p.id} className="producto-card">
                       <div className="producto-imagen-wrapper">
                         {p.imagenUrl ? (
-                          <img src={p.imagenUrl} alt={p.nombre} />
+                          <img
+                            src={p.imagenUrl}
+                            alt={p.nombre}
+                            className="producto-imagen"
+                          />
                         ) : (
                           <div className="no-imagen">Sin imagen</div>
                         )}
                       </div>
+
                       <div className="producto-info">
                         <h3>{p.nombre}</h3>
+
                         <p className="precio">
-                          💰 ${p.precio?.toLocaleString()}
+                          💰 ${Number(p.precio)?.toLocaleString()}
                         </p>
-                        <p className="stock">📦 Stock: {p.stock}</p>
+
+                        {p.oferta && (
+                          <p className="oferta-tag">🔥 Producto en oferta</p>
+                        )}
+
+                        {p.destacado && (
+                          <p className="destacado-tag">⭐ Destacado</p>
+                        )}
+
                         <button
                           onClick={() => agregarAlCarrito(p)}
                           className="btn-agregar"

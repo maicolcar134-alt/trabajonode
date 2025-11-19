@@ -359,7 +359,6 @@ function DashboardPage() {
           </div>
         </section>
       </main>
-
       {/* 🔥 PRODUCTOS DESTACADOS */}
       <section
         className="productos-destacados px-5 py-20"
@@ -372,69 +371,84 @@ function DashboardPage() {
           Productos Destacados
         </h2>
 
-        {destacados.length === 0 ? (
+        {/* Si no hay destacados */}
+        {productos.filter((p) => p.destacado).length === 0 ? (
           <p className="text-center text-muted">
-            Cargando productos destacados...
+            No hay productos destacados disponibles...
           </p>
         ) : (
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            {destacados.map((p) => (
-              <div key={p.id} className="col">
-                <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-                  {/* Imagen del producto */}
-                  <img
-                    src={p.imagen} // 👈 si no hay imagen en Firestore, usa la importada
-                    className="card-img-top"
-                    alt={p.nombre}
-                    style={{ height: "220px", objectFit: "cover" }}
-                  />
-
-                  <div className="card-body">
-                    <span className="badge bg-warning text-dark mb-2">
-                      {p.categoria || "Pirotecnia"}
-                    </span>
-                    <h5 className="card-title">{p.nombre}</h5>
-
-                    {p.mensajeDestacado && (
+            {productos
+              .filter((p) => p.destacado) // 👈 SOLO productos con destacado=true
+              .map((p) => (
+                <div key={p.id} className="col">
+                  <div className="card h-100 bg-dark text-light border-0 shadow-lg">
+                    {/* Imagen */}
+                    {p.imagenUrl ? (
+                      <img
+                        src={p.imagenUrl}
+                        className="card-img-top"
+                        alt={p.nombre}
+                        style={{ height: "220px", objectFit: "cover" }}
+                      />
+                    ) : (
                       <div
-                        className="mensaje-destacado my-2 p-2 rounded"
-                        style={{
-                          backgroundColor: "#fff8dc",
-                          color: "#b8860b",
-                          fontStyle: "italic",
-                          fontWeight: "500",
-                          border: "1px solid gold",
-                          boxShadow: "0 0 8px rgba(255, 215, 0, 0.4)",
-                        }}
+                        className="d-flex align-items-center justify-content-center bg-secondary text-light"
+                        style={{ height: "220px" }}
                       >
-                        💫 {p.mensajeDestacado}
+                        Sin imagen
                       </div>
                     )}
 
-                    <p className="card-text text-muted">{p.descripcion}</p>
-                    <p className="fw-bold text-warning">
-                      💰 ${Number(p.precio).toLocaleString()}
-                    </p>
-                    <p
-                      className="text-light mb-3"
-                      style={{ fontSize: "0.9rem", opacity: 0.8 }}
-                    >
-                      📦 Stock: <span className="fw-bold">{p.stock || 0}</span>
-                    </p>
-                    <button
-                      className="btn btn-warning w-100 fw-semibold"
-                      onClick={() => agregarAlCarrito(p)}
-                    >
-                      Añadir
-                    </button>
+                    <div className="card-body text-center">
+                      {/* Etiqueta Destacado */}
+                      <span className="badge bg-warning text-dark mb-2">
+                        ⭐ Destacado
+                      </span>
+
+                      {/* Categoría */}
+                      <span className="badge bg-info text-dark mb-2 ms-2">
+                        {p.categoria || "Pirotecnia"}
+                      </span>
+
+                      {/* Nombre */}
+                      <h5 className="fw-bold text-uppercase mt-2">
+                        {p.nombre}
+                      </h5>
+
+                      {/* Descripción */}
+                      <p className="text-muted" style={{ minHeight: "40px" }}>
+                        {p.descripcion || "Sin descripción"}
+                      </p>
+
+                      {/* Precio */}
+                      <p className="fw-bold text-warning mb-1">
+                        💰 ${Number(p.precio).toLocaleString()}
+                      </p>
+
+                      {/* Stock */}
+                      <p
+                        className="text-light mb-3"
+                        style={{ fontSize: "0.9rem", opacity: 0.8 }}
+                      >
+                        📦 Stock:{" "}
+                        <span className="fw-bold">{p.stock || 0}</span>
+                      </p>
+
+                      {/* Botón */}
+                      <button
+                        className="btn btn-warning w-100 fw-semibold"
+                        onClick={() => agregarAlCarrito(p)}
+                      >
+                        Añadir al carrito 🛒
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </section>
-
       {/* 🔥 CATÁLOGO COMPLETO */}
       <section
         className="catalogo-completo px-5 py-20"
@@ -444,10 +458,10 @@ function DashboardPage() {
           className="text-3xl fw-bold mb-5 pb-2 border-bottom border-warning"
           style={{ borderColor: "#f97316" }}
         >
-          Catálogo Completo
+          Categorías
         </h2>
 
-        {/* 🔹 Filtros */}
+        {/* 🔹 Filtros por categorías */}
         <div
           className="filtros-catalogo d-flex gap-3 mb-4"
           style={{ justifyContent: "center" }}
@@ -460,6 +474,7 @@ function DashboardPage() {
           >
             Todos
           </button>
+
           {categorias.map((c, i) => (
             <button
               key={i}
@@ -473,6 +488,7 @@ function DashboardPage() {
           ))}
         </div>
 
+        {/* 🔹 Sin productos */}
         {productosFiltrados.length === 0 ? (
           <p className="text-center text-muted">
             No se encontraron productos en esta categoría.
@@ -482,6 +498,7 @@ function DashboardPage() {
             {productosFiltrados.map((p) => (
               <div key={p.id} className="col">
                 <div className="card h-100 bg-dark text-light border-0 shadow-lg">
+                  {/* 🔥 Imagen correcta desde Firestore */}
                   {p.imagenUrl ? (
                     <img
                       src={p.imagenUrl}
@@ -497,17 +514,47 @@ function DashboardPage() {
                       Sin imagen
                     </div>
                   )}
+
                   <div className="card-body text-center">
                     <h5 className="fw-bold text-uppercase">{p.nombre}</h5>
-                    <p className="fw-bold text-success mb-1">
-                      💰 ${Number(p.precio).toLocaleString()}
-                    </p>
+
+                    {/* 🔥 OFERTA */}
+                    {p.oferta ? (
+                      <>
+                        <p className="fw-bold text-danger mb-1">
+                          🔥 Oferta {p.ofertaValor}% OFF
+                        </p>
+
+                        <p className="fw-bold text-success mb-1">
+                          💰 $
+                          {(
+                            Number(p.precio) *
+                            (1 - p.ofertaValor / 100)
+                          ).toLocaleString()}
+                        </p>
+
+                        <p
+                          className="text-muted"
+                          style={{ fontSize: "0.8rem" }}
+                        >
+                          Antes: ${Number(p.precio).toLocaleString()}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="fw-bold text-success mb-1">
+                        💰 ${Number(p.precio).toLocaleString()}
+                      </p>
+                    )}
+
+                    {/* 🔥 STOCK */}
                     <p
                       className="text-light mb-3"
                       style={{ fontSize: "0.9rem", opacity: 0.8 }}
                     >
                       📦 Stock: <span className="fw-bold">{p.stock || 0}</span>
                     </p>
+
+                    {/* 🛒 BOTÓN */}
                     <button
                       className="btn btn-warning w-100 fw-semibold"
                       onClick={() => agregarAlCarrito(p)}
@@ -636,9 +683,7 @@ function DashboardPage() {
             <p className="m-0">
               © 2025 PyroShop. Todos los derechos reservados.
             </p>
-            <div className="flex gap-4">
-              
-            </div>
+            <div className="flex gap-4"></div>
           </div>
         </div>
       </footer>

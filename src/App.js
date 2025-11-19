@@ -1,5 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+// 🔥 Importar Firebase para inicializarlo antes de usar auth, db o storage
+import "./firebaseConfig";
+
 // Rutas públicas
 import "bootstrap/dist/css/bootstrap.min.css";
 import NotFoundPage from "./pages/components/NotFoundPage";
@@ -47,23 +50,18 @@ import TerminosCondiciones from "./pages/Terminos Y Condiciones/terminoscondicio
 import PoliticasPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
 import NormativaRegulacion from "./pages/NormativaRegulacion/NormativaRegulacion";
 
-
-
 function App() {
   return (
     <BrowserRouter>
-
-
-    
       <Routes>
-        {/* ✅ RUTAS PÚBLICAS */}
+        {/* RUTAS PÚBLICAS */}
         <Route path="/" element={<DashboardPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-        {/* ✅ RUTAS PROTEGIDAS GENERALES */}
+        {/* RUTAS PROTEGIDAS */}
         <Route
           path="/dashboard"
           element={
@@ -72,6 +70,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/usuarios"
           element={
@@ -80,12 +79,13 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         <Route path="/PoliticasVenta" element={<PoliticasVenta />} />
         <Route path="/TerminosCondiciones" element={<TerminosCondiciones />} />
         <Route path="/PoliticasPrivacidad" element={<PoliticasPrivacidad />} />
         <Route path="/NormativaRegulacion" element={<NormativaRegulacion />} />
 
-        {/* ✅✅✅ PANEL ADMIN CON SIDEBAR FIJO ✅✅✅ */}
+        {/* PANEL ADMIN */}
         <Route
           path="/admin"
           element={
@@ -96,21 +96,20 @@ function App() {
         >
           <Route path="dashboard" element={<DashboardAdmin />} />
           <Route path="inventario" element={<Inventario />} />
-
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="usuarios" element={<AuxiliaresPage />} />
           <Route path="auditoria" element={<Auditoria />} />
           <Route path="zonas" element={<ZonasEnvioPro />} />
         </Route>
 
-        {/* ✅ TIENDA (PÚBLICO / CLIENTES) */}
+        {/* CLIENTES */}
         <Route path="/helpcenter" element={<HelpCenter />} />
         <Route path="/ofertaspirotecnia" element={<OfertasPirotecnia />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/categorias" element={<Categorias />} />
         <Route path="/seguridad" element={<Seguridad />} />
 
-        {/* ✅ COMPRA */}
+        {/* COMPRA */}
         <Route
           path="/carrito"
           element={
@@ -136,12 +135,12 @@ function App() {
           }
         />
 
-        {/* ✅ PLAYGROUND */}
+        {/* PLAYGROUND */}
         <Route path="/usestate" element={<UseStatePlay />} />
         <Route path="/useeffect" element={<UseEffectPlay />} />
         <Route path="/useref" element={<UseRefPlay />} />
 
-        {/* ✅ 404 */}
+        {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
