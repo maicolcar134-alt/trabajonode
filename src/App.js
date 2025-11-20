@@ -6,6 +6,9 @@ import "./App.css";
 // Layout global con Navbar
 import MainLayout from "./layouts/MainLayout";
 
+//  IMPORTAMOS EL FOOTER
+import Footer from "./pages/components/Footer/Footer";
+
 // Rutas públicas
 import NotFoundPage from "./pages/components/NotFoundPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
@@ -46,16 +49,23 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* 🌐 RUTAS SIN NAVBAR */}
+        {/*  RUTAS SIN NAVBAR */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
+        {/*  TODA LA APLICACIÓN CON NAVBAR GLOBAL */}
+        <Route
+          element={
+            <>
+              <MainLayout />
 
-
-        {/* 🌐 TODA LA APLICACIÓN CON NAVBAR GLOBAL */}
-        <Route element={<MainLayout />}>
+              {/*FOOTER SE MOSTRARÁ EN TODAS LAS VISTAS DE CLIENTES */}
+              <Footer />
+            </>
+          }
+        >
 
           {/* Página inicial */}
           <Route path="/" element={<DashboardPage />} />
@@ -118,8 +128,8 @@ function App() {
           <Route path="/useref" element={<UseRefPlay />} />
 
         </Route>
-        
-        {/* PANEL ADMIN (NO USA EL NAVBAR DE CLIENTES) */}
+
+        {/* PANEL ADMIN (NO USA EL NAVBAR DE CLIENTES NI FOOTER) */}
         <Route
           path="/admin"
           element={
@@ -145,4 +155,3 @@ function App() {
 }
 
 export default App;
-

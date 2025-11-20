@@ -8,7 +8,7 @@ import "./Navbar.css";
 
 const DashboardNavbar = ({ user, userPhoto, handleLogout, carrito }) => {
   const navigate = useNavigate();
-  const location = useLocation(); // 👈 Detectar ruta actual
+  const location = useLocation(); 
 
   // Función para determinar si un link está activo
   const isActive = (path) => location.pathname === path;
