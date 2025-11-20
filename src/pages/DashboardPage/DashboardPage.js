@@ -218,62 +218,66 @@ function DashboardPage() {
           <div className="absolute inset-0 bg-black/50"></div>
 
           {/* Contenido */}
-          <div
-            className="relative z-10 flex flex-col justify-center h-full text-left"
-            style={{
-              paddingLeft: "3vw", // margen desde la izquierda
-              maxWidth: "800px", // ancho del bloque
-            }}
-          >
-            <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 px-4 py-2 rounded-full mb-6 w-fit">
-              <span className="text-sm">Ofertas especiales de temporada</span>
-            </div>
-
-            <h1 className="text-5xl text-white mb-4 leading-tight">
-              PyroShop - Ilumina Tus Celebraciones
-            </h1>
-
-            <p className="text-xl text-white/90 mb-8">
-              Pirotecnia legal y certificada. Calidad profesional, uso
-              responsable. Todo lo que necesitas para crear momentos
-              inolvidables.
-            </p>
-
-            {/* Botones */}
-            <div className="button-group">
-              <button
-                className="btn btn-orange"
-                onClick={() => (window.location.href = "/Categorias")}
-              >
-                Explorar catálogo
-              </button>
-
-              <button
-                className="btn-black"
-                onClick={() => (window.location.href = "/Seguridad")}
-              >
-                Guía de Seguridad
-              </button>
-            </div>
-
-            <div className="contenedor"></div>
-            <div className="contenedor">
-              <div>
-                <div className="numero">500+</div>
-                <div className="etiqueta">Productos</div>
+          <div className="relative flex justify-start items-start min-h-screen">
+            <div
+              className="relative z-10 flex flex-col text-left"
+              style={{
+                paddingLeft: "4vw", // margen desde la izquierda
+                maxWidth: "800px", // ancho del bloque
+                marginTop: "20vh", // empuja el bloque más abajo
+              }}
+            >
+              <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 px-4 py-2 rounded-full mb-6 w-fit">
+                <span className="text-sm">Ofertas especiales de temporada</span>
               </div>
 
-              <div>
-                <div className="numero">100%</div>
-                <div className="etiqueta">Certificados</div>
+              <h1 className="text-5xl text-white mb-4 leading-tight">
+                PyroShop - Ilumina Tus Celebraciones
+              </h1>
+
+              <p className="text-xl text-white/90 mb-8">
+                Pirotecnia legal y certificada. Calidad profesional, uso
+                responsable. Todo lo que necesitas para crear momentos
+                inolvidables.
+              </p>
+
+              {/* Botones */}
+              <div className="button-group">
+                <button
+                  className="btn btn-orange"
+                  onClick={() => (window.location.href = "/Categorias")}
+                >
+                  Explorar catálogo
+                </button>
+
+                <button
+                  className="btn-black"
+                  onClick={() => (window.location.href = "/Seguridad")}
+                >
+                  Guía de Seguridad
+                </button>
               </div>
 
-              <div>
-                <div className="numero">24/7</div>
-                <div className="etiqueta">Soporte</div>
+              <div className="contenedor"></div>
+              <div className="contenedor">
+                <div>
+                  <div className="numero">500+</div>
+                  <div className="etiqueta">Productos</div>
+                </div>
+
+                <div>
+                  <div className="numero">100%</div>
+                  <div className="etiqueta">Certificados</div>
+                </div>
+
+                <div>
+                  <div className="numero">24/7</div>
+                  <div className="etiqueta">Soporte</div>
+                </div>
               </div>
             </div>
           </div>
+
         </section>
       </main>
       {/* 🔥 PRODUCTOS DESTACADOS */}
@@ -524,7 +528,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="/PoliticasPrivacidad"
+                    href="/politicaprivacidad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Política de Privacidad
@@ -532,7 +536,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="/normativaregulacion"
+                    href="/normativa"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Normativa y Regulación
@@ -546,18 +550,18 @@ function DashboardPage() {
               <ul className="space-y-2 list-none p-0 m-0">
                 <li>
                   <a
-                    href="/Seguridad"
+                    href="/helpcenter"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
-                    Guía de Seguridad
+                    Ayuda al cliente
                   </a>
                 </li>
                 <li>
                   <a
-                    href="/HelpCenter"
+                    href="/Seguridad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
-                    Ayuda al Usuario
+                    Guía de Seguridad
                   </a>
                 </li>
               </ul>
@@ -588,7 +592,7 @@ function DashboardPage() {
               <strong>Aviso Legal:</strong> La venta de artículos pirotécnicos
               está sujeta a la normativa vigente. El comprador se compromete a usar los
               productos de forma responsable y siguiendo todas las instrucciones
-              de seguridad. 
+              de seguridad.
             </p>
           </div>
 

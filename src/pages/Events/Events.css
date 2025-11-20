@@ -193,10 +193,12 @@ body {
 
 /* SECCIONES GENERALES */
 .section {
-  padding: 80px 40px;
   width: 100%;
-  max-width: 1400px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;    /* CENTRA todo el contenido horizontalmente */
+  text-align: center;     /* Opcional: centra títulos y texto */
+  margin: 60px auto;
 }
 
 .section h2 {
@@ -211,11 +213,11 @@ body {
 
 /* === PAQUETES === */
 .cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 10px;
-  /* 🔸 Más juntos */
-  margin-top: 40px;
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
 }
 
 .card {
@@ -272,11 +274,12 @@ body {
   margin-top: 40px;
 }
 
-.step {
-  background: var(--surface);
-  padding: 25px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.steps {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
 }
 
 .step-number {
@@ -475,7 +478,12 @@ body {
 }
 
 .footer p {
-  line-height: 0.1;
+  line-height: 1.6!important; 
+  margin-bottom: 1rem;
+}
+
+.footer .legal-box {
+  margin-bottom: 2rem;
 }
 
 .footer .grid {

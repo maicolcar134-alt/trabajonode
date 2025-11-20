@@ -235,7 +235,8 @@ export default function OfertasPirotecnia() {
           </div>
         )}
       </div>
-            <footer className="footer mt-auto">
+            {/* FOOTER */}
+      <footer className="footer">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -274,7 +275,7 @@ export default function OfertasPirotecnia() {
                 </li>
                 <li>
                   <a
-                    href="/PoliticasPrivacidad"
+                    href="/politicaprivacidad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Política de Privacidad
@@ -282,7 +283,7 @@ export default function OfertasPirotecnia() {
                 </li>
                 <li>
                   <a
-                    href="/normativaregulacion"
+                    href="/normativa"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Normativa y Regulación
@@ -296,18 +297,18 @@ export default function OfertasPirotecnia() {
               <ul className="space-y-2 list-none p-0 m-0">
                 <li>
                   <a
-                    href="/Seguridad"
+                    href="/helpcenter"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
-                    Guía de Seguridad
+                    Ayuda al cliente
                   </a>
                 </li>
                 <li>
                   <a
-                    href="/HelpCenter"
+                    href="/Seguridad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
-                    Ayuda al Usuario
+                    Guía de Seguridad
                   </a>
                 </li>
               </ul>
@@ -347,7 +348,10 @@ export default function OfertasPirotecnia() {
               © 2025 PyroShop. Todos los derechos reservados.
             </p>
             <div className="flex gap-4">
-              
+              <a
+                href="#"
+                className="hover:text-[var(--brand-warm)] no-underline"
+              ></a>
             </div>
           </div>
         </div>
