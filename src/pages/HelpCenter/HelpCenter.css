@@ -282,9 +282,10 @@ details p {
 
 /* Footer */
 .footer {
+  width: 100%;
   background-color: #111;
   color: #aaa;
-  padding: 12px;
+  padding: 40px;
   font-size: 0.9rem;
   border-top: 2px solid #ff5722;
 }
