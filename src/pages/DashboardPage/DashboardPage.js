@@ -462,7 +462,7 @@ function DashboardPage() {
               <ul className="space-y-2 list-none p-0 m-0">
                 <li>
                   <a
-                    href="#"
+                    href="/politicasventa"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Política de Venta Responsable
@@ -470,7 +470,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/terminoscondiciones"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Términos y Condiciones
@@ -478,7 +478,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/politicaprivacidad"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Política de Privacidad
@@ -486,7 +486,7 @@ function DashboardPage() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="/normativa"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                   >
                     Normativa y Regulación
@@ -500,10 +500,10 @@ function DashboardPage() {
               <ul className="space-y-2 list-none p-0 m-0">
                 <li>
                   <a
-                    href="#"
+                    href="/helpcenter"
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
-                    Preguntas Frecuentes
+                    Ayuda al cliente
                   </a>
                 </li>
                 <li>
@@ -512,22 +512,6 @@ function DashboardPage() {
                     className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
                   >
                     Guía de Seguridad
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
-                  >
-                    Devoluciones y Cambios
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href=""
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
-                  >
-                    Envíos y Entregas
                   </a>
                 </li>
               </ul>

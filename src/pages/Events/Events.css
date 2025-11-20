@@ -478,7 +478,12 @@ body {
 }
 
 .footer p {
-  line-height: 0.1;
+  line-height: 1.6!important; 
+  margin-bottom: 1rem;
+}
+
+.footer .legal-box {
+  margin-bottom: 2rem;
 }
 
 .footer .grid {

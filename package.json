@@ -12,6 +12,7 @@
     "browser-image-compression": "^2.0.2",
     "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",
+    "compressorjs": "^1.2.1",
     "firebase": "^12.4.0",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.2",

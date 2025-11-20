@@ -32,6 +32,10 @@ import Checkout from "./pages/CheckoutPage/Checkout";
 import Gracias from "./pages/Gracias/Gracias";
 import Categorias from "./pages/CategoriasAdmin/CategoriasAdmin"; 
 import Seguridad from "./pages/Seguridad/SeguridadAdmin";
+import NormativaRegulacion from "./pages/NormativaRegulacion/NormativaRegulacion";
+import PoliticasVenta from "./pages/PoliticasVenta/PoliticasVenta";
+import TerminosCondiciones from "./pages/Terminos Y Condiciones/terminoscondiciones";
+import PoliticaPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
 
 // Panel admin
 import Admin from "./pages/Admin/Admin";
@@ -85,6 +89,11 @@ function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/categorias" element={<Categorias />} />
           <Route path="/seguridad" element={<Seguridad />} />
+          <Route path="/normativa" element={<NormativaRegulacion />} />
+          <Route path="/politicasventa" element={<PoliticasVenta />} />
+          <Route path="/terminoscondiciones" element={<TerminosCondiciones />} />
+          <Route path="/politicaprivacidad" element={<PoliticaPrivacidad />} />
+          
 
           {/* COMPRA */}
           <Route

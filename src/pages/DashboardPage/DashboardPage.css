@@ -285,11 +285,11 @@ body {
 .footer h3,
 .footer h4 {
   color: #fff;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.1rem;
 }
 
 .footer a {
-  transition: color 0.3s ease;
+  transition: color 0.1s ease;
 }
 
 .footer a:hover {
@@ -302,7 +302,12 @@ body {
 }
 
 .footer p {
-  line-height: 1.5;
+  line-height: 1.6!important; 
+  margin-bottom: 1rem;
+}
+
+.footer .legal-box {
+  margin-bottom: 2rem;
 }
 
 .footer .grid {
