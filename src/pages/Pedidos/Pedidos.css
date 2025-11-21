@@ -107,10 +107,7 @@ select.form-select:focus {
   letter-spacing: 0.3px;
 }
 
-/* 🕓 Spinner */
-.spinner-border {
-  color: #ffc107 !important;
-}
+
 
 /* 🧱 Tabla contenedor */
 .table-responsive {

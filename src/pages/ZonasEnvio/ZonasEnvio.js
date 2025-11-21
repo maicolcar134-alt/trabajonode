@@ -36,9 +36,6 @@ export default function ZonasEnvioProFirebase() {
   // notificaciones
   const [notif, setNotif] = useState(null); // { tipo: 'success'|'error'|'info', msg }
 
-  // ---------------------------
-  //  ON-SNAPSHOT: realtime feed
-  // ---------------------------
   useEffect(() => {
     setLoading(true);
     const colRef = collection(db, "zonas");
