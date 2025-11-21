@@ -42,7 +42,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="/PoliticasPrivacidad"
+                  href="/politicaprivacidad"
                   className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
                 >
                   Política de Privacidad
@@ -85,10 +85,10 @@ export default function Footer() {
             <h4 className="mb-4">Contacto</h4>
             <ul className="space-y-3 list-none p-0 m-0">
               <li className="flex items-start gap-2 text-sm text-white/80">
-                <span>+573213148729</span>
+                <span>+57 3213148729</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-white/80">
-                <span>info@pyroshop.co</span>
+                <span>pyroshopmc@gmail.com</span>
               </li>
               <li className="flex items-start gap-2 text-sm text-white/80">
                 <span>
