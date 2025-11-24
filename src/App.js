@@ -9,7 +9,7 @@ import MainLayout from "./layouts/MainLayout";
 // Rutas públicas
 import NotFoundPage from "./pages/components/NotFoundPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
-import LoginPage from "./pages/loginPage/LoginPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 
@@ -17,9 +17,9 @@ import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 import ProtectedRoute from "./pages/components/ProtectedRoute";
 
 // Playground hooks
-import UseEffectPlay from "./pages/playground/UseEffectPlay";
-import UseRefPlay from "./pages/playground/UseRefPlay";
-import UseStatePlay from "./pages/playground/UseStatePlay";
+import UseEffectPlay from "./pages/Playground/UseEffectPlay";
+import UseRefPlay from "./pages/Playground/UseRefPlay";
+import UseStatePlay from "./pages/Playground/UseStatePlay";
 
 // Tienda / clientes
 import DashboardPage from "./pages/DashboardPage/DashboardPage";
@@ -37,7 +37,7 @@ import Seguridad from "./pages/Seguridad/SeguridadAdmin";
 import Admin from "./pages/Admin/Admin";
 import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
-import Pedidos from "./pages/Pedidos/Pedidos";
+import Pedidos from "./pages/pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
 

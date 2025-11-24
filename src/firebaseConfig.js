@@ -10,7 +10,8 @@ const firebaseConfig = {
   authDomain: "fuegos-pirotecnicos.firebaseapp.com",
   databaseURL: "https://fuegos-pirotecnicos-default-rtdb.firebaseio.com",
   projectId: "fuegos-pirotecnicos",
-  storageBucket: "fuegos-pirotecnicos.firebasestorage.app",
+  // <-- corregido: storageBucket estándar de Firebase (appspot.com)
+  storageBucket: "fuegos-pirotecnicos.appspot.com",
   messagingSenderId: "1084392002469",
   appId: "1:1084392002469:web:9581d2b105feefd91a4e4c",
   measurementId: "G-GTRD7SLPES",
@@ -29,3 +30,4 @@ const storage = getStorage(app); // Servicio de Storage para archivos
 // Exportar para usar en toda la app
 export { app, auth, googleProvider, db, storage, signOut };
 export default app;
+

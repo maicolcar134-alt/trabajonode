@@ -124,7 +124,7 @@
   font-size: 2rem;
   font-weight: 600;
   color: #ffa500; /* naranja dorado */
-  transition: transform 0.1s ease, color 0.1s ease;
+  transition: transform 0.0s ease, color 0.0s ease;
 }
 
 .contenedor div .etiqueta {
@@ -151,7 +151,7 @@
 }
 
 .contenedor div {
-  animation: aparecer 0.8s ease forwards;
+  animation: aparecer 0.1s ease forwards;
 }
 
 body {
@@ -199,7 +199,7 @@ body {
   border: none;
   color: #fff !important;
   font-weight: 600;
-  transition: 0.1s;
+  transition: 0.0s;
 }
 
 .btn-warning:hover {

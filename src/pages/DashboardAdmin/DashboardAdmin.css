@@ -1,128 +1,96 @@
-/* 🎨 Estilos generales del Dashboard Admin */
-body {
-  background-color: #f3f4f6;
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #1f2937;
+/* ================================
+     🌙 DASHBOARD ADMIN MODERNO
+   ================================ */
+
+.dashboard-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+  color: #e8e8e8;
+  font-family: "Poppins", sans-serif;
 }
 
-/* 🔝 Header */
-header {
-  animation: fadeInDown 0.6s ease-in-out;
-}
-
-header h1 {
-  color: #111827;
-  font-weight: 600;
-}
-
-header p {
-  color: #6b7280;
-}
-
-/* 🔘 Botones */
-button {
-  transition: all 0.25s ease-in-out;
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-/* 📦 Tarjetas de estadísticas */
-.grid>div {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.grid>div:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-}
-
-/* 📈 Gráficos */
-.recharts-wrapper {
-  overflow: visible !important;
-}
-
-/* 🧁 Fondo de tarjetas */
-.bg-white {
-  background-color: #ffffff;
-}
-
-/* 🧭 Sombras suaves */
-.shadow {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.shadow-lg {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-/* 🟣 Colores principales */
-.text-indigo-600 {
-  color: #4f46e5;
-}
-
-.text-green-600 {
-  color: #10b981;
-}
-
-.text-yellow-500 {
-  color: #f59e0b;
-}
-
-.text-red-600 {
-  color: #dc2626;
-}
-
-/* 💫 Animaciones */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 📊 Animación de carga */
-.loading {
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-
-  0%,
-  100% {
-    opacity: 0.6;
-  }
-
-  50% {
-    opacity: 1;
-  }
-}
-
-/* 🧾 PDF botón */
-button.pdf-export {
-  border: 1px solid #e5e7eb;
-  background: #ffffff;
-  color: #374151;
-}
-
-button.pdf-export:hover {
-  background: #f9fafb;
-}
-
-/* 🚫 Acceso denegado */
-.access-denied {
+/* TITULO */
+.dashboard-title {
   text-align: center;
-  font-weight: bold;
-  color: #dc2626;
-  padding: 2rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #00e676;
+  margin-bottom: 25px;
+  text-shadow: 0 0 6px rgba(0, 230, 118, 0.8);
+}
+
+/* ================================
+      TARJETAS DE MÉTRICAS
+   ================================ */
+
+.metricas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.card-metrica {
+  background: #0d1b2a;
+  padding: 20px;
+  border-radius: 14px;
+  border: 2px solid rgba(0, 255, 140, 0.2);
+  box-shadow: 0 0 12px rgba(0, 255, 140, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card-metrica h3 {
+  color: #4fc3f7;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.card-valor {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #00e676;
+}
+
+.card-metrica:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 18px rgba(0, 255, 140, 0.25);
+}
+
+/* ================================
+        GRAFICAS
+   ================================ */
+
+.grafica-box {
+  background: #102337;
+  padding: 20px;
+  border-radius: 16px;
+  margin: 0 auto;
+  max-width: 900px;
+  /* 👈 hace la gráfica mediana */
+  border: 2px solid rgba(79, 195, 247, 0.2);
+  box-shadow: 0 0 12px rgba(79, 195, 247, 0.25);
+}
+
+.grafica-box h2 {
+  text-align: center;
+  margin-bottom: 14px;
+  color: #4fc3f7;
+  text-shadow: 0 0 6px rgba(79, 195, 247, 0.7);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .grafica-box {
+    max-width: 100%;
+    padding: 15px;
+  }
+
+  .dashboard-title {
+    font-size: 1.6rem;
+  }
+
+  .card-valor {
+    font-size: 1.4rem;
+  }
 }

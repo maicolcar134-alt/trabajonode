@@ -160,8 +160,7 @@ export default function Checkout() {
         setMostrarQR(true);
       } else if (metodoPago === "bancolombia") {
         setMostrarTarjeta(true);
-      } else if (metodoPago === "paypal") {
-        setMostrarPayPal(true);
+      
       } else {
         limpiarCarrito();
         navigate("/gracias", { state: { orderId: id } });
@@ -216,22 +215,7 @@ export default function Checkout() {
     }
   };
 
-  const confirmarPagoPayPal = async () => {
-    try {
-      if (pedidoDocId) {
-        await updateDoc(firestoreDoc(db, "pedidos", pedidoDocId), {
-          pago: "Completado (PayPal)",
-          estado: "Enviado",
-          pagoConfirmadoEn: serverTimestamp(),
-        });
-      }
-      limpiarCarrito();
-      setMostrarPayPal(false);
-      navigate("/gracias", { state: { orderId } });
-    } catch (err) {
-      console.error("Error confirmando pago PayPal:", err);
-    }
-  };
+ 
 
   // --- Render principal ---
   return (
@@ -282,7 +266,6 @@ export default function Checkout() {
             >
               <option value="nequi">Nequi QR</option>
               <option value="bancolombia">Bancolombia (tarjeta)</option>
-              <option value="paypal">PayPal</option>
               <option value="contraentrega">Pago Contra Entrega</option>
             </select>
 
@@ -395,24 +378,6 @@ export default function Checkout() {
         </div>
       )}
 
-      {/* MODAL PAYPAL */}
-      {mostrarPayPal && (
-        <div className="qr-modal">
-          <div className="qr-card">
-            <h3>Pago con PayPal</h3>
-            <p>(Simulación de pago con PayPal)</p>
-            <button className="btn-primary" onClick={confirmarPagoPayPal}>
-              ✅ Confirmar pago
-            </button>
-            <button
-              className="btn-secondary"
-              onClick={() => setMostrarPayPal(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
