@@ -1,0 +1,113 @@
+.footer {
+  background-color: #111;
+  color: #aaa;
+  padding: 12px;
+  font-size: 0.9rem;
+  border-top: 2px solid #ff5722;
+}
+
+:root {
+  --brand-accent: #ff4d4f; /* Rojo principal */
+  --brand-warm: #ffa502; /* Amarillo cálido */
+  --footer-bg: #0a0a0a; /* Fondo oscuro */
+  --text-light: rgba(255, 255, 255, 0.8);
+  --text-muted: rgba(255, 255, 255, 0.6);
+}
+
+.footer {
+  background: var(--footer-bg);
+  color: var(--text-light);
+  padding-top: 3rem;
+  padding-bottom: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer h3,
+.footer h4 {
+  color: #fff;
+  margin-bottom: 0.1rem;
+}
+
+.footer a {
+  transition: color 0.1s ease;
+}
+
+.footer a:hover {
+  color: var(--brand-warm);
+}
+
+.footer ul {
+  padding: 0;
+  list-style: none;
+}
+
+.footer p {
+  line-height: 1.6!important; 
+  margin-bottom: 1rem;
+}
+
+.footer .legal-box {
+  margin-bottom: 2rem;
+}
+
+.footer .grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .footer .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.footer .brand-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--brand-accent), var(--brand-warm));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer .brand-icon span {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.footer .legal-box {
+  background: rgba(221, 211, 211, 0.1);
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  margin: 2rem 0;
+}
+
+.footer .bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+@media (min-width: 768px) {
+  .footer .bottom {
+    flex-direction: row;
+  }
+}
+
+.footer .bottom a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.footer .bottom a:hover {
+  color: var(--brand-warm);
+}
