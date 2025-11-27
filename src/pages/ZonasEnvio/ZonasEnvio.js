@@ -1,5 +1,4 @@
 
-
 import React, { useEffect, useMemo, useState } from "react";
 import { FaArrowLeft, FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +10,7 @@ import {
   doc,
   onSnapshot,
 } from "firebase/firestore";
-import { db } from "../../firebase"; // ajusta la ruta si es necesario
+import { db } from "../../firebaseConfig"; // ajusta la ruta si es necesario
 import "./ZonasEnvio.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -37,9 +36,6 @@ export default function ZonasEnvioProFirebase() {
   // notificaciones
   const [notif, setNotif] = useState(null); // { tipo: 'success'|'error'|'info', msg }
 
-  // ---------------------------
-  //  ON-SNAPSHOT: realtime feed
-  // ---------------------------
   useEffect(() => {
     setLoading(true);
     const colRef = collection(db, "zonas");

@@ -11,10 +11,9 @@ import {
   serverTimestamp,
   getDocs,
 } from "firebase/firestore";
-import { db } from "../../firebase";
+import { db } from "../../firebaseConfig";
 import {
   Container,
-  Spinner,
   Table,
   Badge,
   Button,
@@ -241,13 +240,7 @@ export default function Pedidos() {
         </div>
       )}
 
-      {/* ⏳ CARGANDO */}
-      {cargando && (
-        <div className="text-center my-5">
-          <Spinner animation="border" />
-          <p>Cargando pedidos...</p>
-        </div>
-      )}
+
 
       {/* ⚠️ SIN RESULTADOS */}
       {!cargando && pedidos.length === 0 && (

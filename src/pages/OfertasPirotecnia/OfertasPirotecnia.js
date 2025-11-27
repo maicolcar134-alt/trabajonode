@@ -1,60 +1,26 @@
+// OfertasPirotecnia.js (modificado para usar precioOferta y modal de edición)
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../../firebaseConfig"; // Ajusta la ruta según tu proyecto
 
+import { useNavigate } from "react-router-dom";
 import userDefault from "../../assets/Explosión de color y energía.png";
+import Swal from "sweetalert2";
 import "./OfertasPirotecnia.css";
+
 
 
 
 const DURATION_HOURS = 3;
 const SALE_END_TIMESTAMP = null;
-
-const sampleProducts = [
-  {
-    id: 1,
-    title: "Pack Celebración Familiar",
-    subtitle: "10 bengalas + 3 fuentes + 5 voladores",
-    image: "",
-    price: 291000,
-    oldPrice: 404000,
-    discountPercent: 28,
-    stock: 15,
-    endsInDays: 2,
-  },
-  {
-    id: 2,
-    title: "Combo Nochevieja 2025",
-    subtitle: "Pack especial para fin de año",
-    image: "",
-    price: 538000,
-    oldPrice: 673000,
-    discountPercent: 20,
-    stock: 8,
-    endsInDays: 5,
-  },
-  {
-    id: 3,
-    title: "Bengalas Premium x20",
-    subtitle: "Pack especial de bengalas doradas",
-    image: "",
-    price: 85000,
-    oldPrice: 112000,
-    discountPercent: 24,
-    stock: 35,
-    endsInDays: 7,
-  },
-  {
-    id: 4,
-    title: "Kit Inicio Pirotecnia",
-    subtitle: "Productos básicos + guía de seguridad",
-    image: "",
-    price: 134000,
-    oldPrice: 206000,
-    discountPercent: 35,
-    stock: 22,
-    endsInDays: 3,
-  },
-];
 
 function formatCurrency(num) {
   return "$" + new Intl.NumberFormat("es-CO").format(Math.round(num));
@@ -73,40 +39,44 @@ export default function OfertasPirotecnia() {
     navigate("/dashboard");
   };
 
-  // 🛒 Estado del carrito
   const [cart, setCart] = useState([]);
-
-  // 🔥 Cargar carrito desde localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCart(storedCart);
   }, []);
-
-  // ✅ Guardar carrito en localStorage cuando cambia
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // ✅ Función para añadir producto al carrito
   const addToCart = (product) => {
-    setCart((prev) => [...prev, product]);
-    alert(`🛒 ${product.title} se agregó al carrito`);
+    setCart((prev) => {
+      const nuevo = [...prev, product];
+      localStorage.setItem("cart", JSON.stringify(nuevo));
+      return nuevo;
+    });
+    Swal.fire({
+      toast: true,
+      position: "top-end",
+      icon: "success",
+      title: `${product.nombre || product.title} agregado al carrito`,
+      showConfirmButton: false,
+      timer: 1400,
+      background: "#111",
+      color: "#fff",
+    });
   };
-
-  // ✅ Función para realizar compra directa (banner)
   const buyNow = (product) => {
-    setCart((prev) => [...prev, product]);
-    localStorage.setItem("cart", JSON.stringify([...cart, product]));
-    navigate("/Carrito"); // 🔥 redirige al carrito
+    const nuevo = [...cart, product];
+    setCart(nuevo);
+    localStorage.setItem("cart", JSON.stringify(nuevo));
+    navigate("/Carrito");
   };
 
-  // Tiempo restante venta flash
   const [targetTime] = useState(() => {
     if (SALE_END_TIMESTAMP) return SALE_END_TIMESTAMP;
     const now = Date.now();
     return now + DURATION_HOURS * 60 * 60 * 1000;
   });
-
   const [timeLeft, setTimeLeft] = useState(targetTime - Date.now());
   useEffect(() => {
     const interval = setInterval(() => {
@@ -120,6 +90,7 @@ export default function OfertasPirotecnia() {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
+  // Ejemplo principal (puedes dejarlo o enlazar a una oferta real)
   const mainProduct = {
     id: 100,
     title: "Venta Flash - Batería 50 Disparos",
@@ -130,10 +101,145 @@ export default function OfertasPirotecnia() {
     progressPercent: 50,
   };
 
+  const [ofertas, setOfertas] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 🔥 Traer productos en oferta desde la colección "inventario"
+  useEffect(() => {
+    const q = query(collection(db, "inventario"), where("oferta", "==", true));
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const lista = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setOfertas(lista);
+        setLoading(false);
+      },
+      (err) => {
+        console.error("Error cargando ofertas:", err);
+        Swal.fire("Error", "No se pudieron cargar las ofertas.", "error");
+        setLoading(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
+  // 📝 Copiar mensaje de oferta al portapapeles (con fallbacks)
+  const copiarMensajeOferta = (producto) => {
+    const nombre = producto.nombre ?? producto.title ?? "producto";
+    const porcentaje = producto.ofertaValor ?? producto.porcentajeOferta ?? 0;
+    const precio = Number(producto.precio ?? producto.price ?? 0);
+    const precioFinal = producto.precioOferta
+      ? Number(producto.precioOferta)
+      : Math.max(0, precio - (precio * porcentaje) / 100);
+
+    const texto = `🔥 ${
+      producto.mensajeOferta ?? "¡Aprovecha esta oferta!"
+    } ${porcentaje}% de descuento en ${nombre}. Precio: ${formatCurrency(
+      precioFinal
+    )}`;
+    navigator.clipboard
+      .writeText(texto)
+      .then(() =>
+        Swal.fire(
+          "📋 Copiado",
+          "Texto de la oferta copiado al portapapeles",
+          "success"
+        )
+      )
+      .catch(() =>
+        Swal.fire("❌ Error", "No se pudo copiar el texto", "error")
+      );
+  };
+
+  // ---------- Modal / editar oferta ----------
+  const [modalOfertaVisible, setModalOfertaVisible] = useState(false);
+  const [productoEditando, setProductoEditando] = useState(null);
+  const [campoPrecioOferta, setCampoPrecioOferta] = useState("");
+  const [campoPorcentaje, setCampoPorcentaje] = useState("");
+  const [campoMensaje, setCampoMensaje] = useState("");
+  const [campoOfertaActiva, setCampoOfertaActiva] = useState(true);
+
+  const abrirModalEditarOferta = (p) => {
+    setProductoEditando(p);
+    setCampoPrecioOferta(p.precioOferta ? String(p.precioOferta) : "");
+    setCampoPorcentaje(
+      p.ofertaValor ?? p.porcentajeOferta
+        ? String(p.ofertaValor ?? p.porcentajeOferta)
+        : ""
+    );
+    setCampoMensaje(p.mensajeOferta ?? "");
+    setCampoOfertaActiva(Boolean(p.oferta));
+    setModalOfertaVisible(true);
+  };
+
+  const cerrarModal = () => {
+    setModalOfertaVisible(false);
+    setProductoEditando(null);
+    setCampoPrecioOferta("");
+    setCampoPorcentaje("");
+    setCampoMensaje("");
+    setCampoOfertaActiva(true);
+  };
+
+  const guardarOfertaFirestore = async () => {
+    if (!productoEditando) return;
+
+    // Validaciones básicas
+    let precioOfertaNum = campoPrecioOferta ? Number(campoPrecioOferta) : null;
+    let porcentajeNum = campoPorcentaje ? Number(campoPorcentaje) : null;
+
+    if (campoPrecioOferta && (isNaN(precioOfertaNum) || precioOfertaNum < 0)) {
+      return Swal.fire(
+        "Precio inválido",
+        "Introduce un precio de oferta válido.",
+        "warning"
+      );
+    }
+    if (
+      campoPorcentaje &&
+      (isNaN(porcentajeNum) || porcentajeNum < 0 || porcentajeNum > 100)
+    ) {
+      return Swal.fire(
+        "Porcentaje inválido",
+        "Introduce un porcentaje entre 0 y 100.",
+        "warning"
+      );
+    }
+
+    // Si no provees precio pero sí porcentaje, calculamos el precioOferta desde porcentaje
+    const precioOriginal = Number(
+      productoEditando.precio ?? productoEditando.price ?? 0
+    );
+    if (!campoPrecioOferta && porcentajeNum != null) {
+      precioOfertaNum = Math.round(
+        precioOriginal - (precioOriginal * porcentajeNum) / 100
+      );
+    }
+
+    const updates = {
+      oferta: campoOfertaActiva,
+      fechaActualizacion: serverTimestamp(),
+    };
+
+    if (precioOfertaNum != null) updates.precioOferta = precioOfertaNum;
+    if (porcentajeNum != null) updates.ofertaValor = porcentajeNum;
+    if (campoMensaje !== undefined) updates.mensajeOferta = campoMensaje;
+
+    try {
+      await updateDoc(doc(db, "inventario", productoEditando.id), updates);
+      Swal.fire("Éxito", "Oferta actualizada correctamente.", "success");
+      cerrarModal();
+    } catch (err) {
+      console.error("Error guardando oferta:", err);
+      Swal.fire("Error", "No se pudo guardar la oferta.", "error");
+    }
+  };
+
   return (
     <div className="ofertas-page">
-
-      {/* CONTENIDO DE OFERTAS */}
       <div className="ofertas-wrap">
         {/* Banner Venta Flash */}
         <div className="flash-banner">
@@ -180,200 +286,132 @@ export default function OfertasPirotecnia() {
                 <span className="timer-sub">s</span>
               </div>
             </div>
-
-            {/* ✅ Botón funcional del banner */}
             <button className="btn-primary" onClick={() => buyNow(mainProduct)}>
               Comprar Ahora
             </button>
           </div>
         </div>
 
-        {/* Tarjetas de productos */}
-        <div className="cards-grid">
-          {sampleProducts.map((p) => (
-            <article key={p.id} className="product-card">
-              <div className="card-media">
-                <img src={p.image} alt={p.title} />
-                <div className="badge-left">Destacado</div>
-                <div className="badge-right">-{p.discountPercent}%</div>
-              </div>
+        {/* Productos en oferta desde Firebase */}
+        {loading ? (
+          <div className="text-center mt-4">
+            <p className="text-muted mt-2">Cargando ofertas...</p>
+          </div>
+        ) : ofertas.length === 0 ? (
+          <p className="text-center text-muted mt-4">
+            No hay productos en oferta actualmente.
+          </p>
+        ) : (
+          <div className="cards-grid">
+            {ofertas.map((p) => {
+              const precioRaw = Number(p.precio ?? p.price ?? 0);
 
-              <div className="card-body">
-                <h3 className="card-title">{p.title}</h3>
-                <p className="card-sub">{p.subtitle}</p>
+              // Si existe precioOferta explícito, usarlo como final
+              let precioFinal;
+              let porcentaje;
+              if (p.precioOferta != null && p.precioOferta !== "") {
+                precioFinal = Number(p.precioOferta);
+                porcentaje =
+                  precioRaw > 0
+                    ? Math.round((1 - precioFinal / precioRaw) * 100)
+                    : p.ofertaValor ?? p.porcentajeOferta ?? 0;
+              } else if (p.ofertaValor != null || p.porcentajeOferta != null) {
+                porcentaje = p.ofertaValor ?? p.porcentajeOferta ?? 0;
+                precioFinal = Math.max(
+                  0,
+                  Math.round(precioRaw - (precioRaw * porcentaje) / 100)
+                );
+              } else {
+                // fallback
+                porcentaje = 0;
+                precioFinal = precioRaw;
+              }
 
-                <div className="price-row">
-                  <div className="price-block">
-                    <div className="current">{formatCurrency(p.price)}</div>
-                    <div className="old">{formatCurrency(p.oldPrice)}</div>
-                  </div>
-                  <div className="meta">
-                    <small>Stock: {p.stock}</small>
-                    <small>Termina en {p.endsInDays} días</small>
-                  </div>
-                </div>
+              const imagen = p.imagenUrl ?? p.imagen ?? "";
+              const nombre = p.nombre ?? p.title ?? "Producto";
 
-                <div className="card-progress">
-                  <div className="mini-track">
-                    <div
-                      className="mini-fill"
-                      style={{
-                        width: `${Math.min(90, Math.max(10, 100 - p.stock))}%`,
-                      }}
+              return (
+                <article key={p.id} className="product-card">
+                  <div className="card-media">
+                    <img
+                      src={imagen || ""}
+                      alt={nombre}
+                      onError={(e) => (e.currentTarget.src = userPhoto)}
                     />
+                    <div className="badge-left">Oferta</div>
+                    <div className="badge-right">-{porcentaje}%</div>
                   </div>
-                </div>
 
-                {/* ✅ Botón funcional */}
-                <button className="btn-add" onClick={() => addToCart(p)}>
-                  Añadir al Carrito
-                </button>
-              </div>
-            </article>
-          ))}
-        </div>
+                  <div className="card-body">
+                    <h3 className="card-title">{nombre}</h3>
+                    <p className="card-sub">{p.descripcion || ""}</p>
 
-        {/* Beneficios */}
-        <div className="benefits-grid">
-          <div className="benefit">
-            <div className="benefit-icon">🏷️</div>
-            <h4>Mejor Precio Garantizado</h4>
-            <p>Si encuentras un precio mejor, lo igualamos</p>
+                    <div className="price-row">
+                      <div className="price-block">
+                        <div className="current">
+                          {formatCurrency(precioFinal)}
+                        </div>
+                        <div className="old">{formatCurrency(precioRaw)}</div>
+                      </div>
+                      <div className="meta">
+                        <small>Stock: {p.cantidad ?? p.stock ?? 0}</small>
+                      </div>
+                    </div>
+
+                    
+                    {/* Mostrar mensaje de oferta (si existe) */}
+                    {p.mensajeOferta && (
+                      <div className="offer-message">
+                        <textarea
+                          readOnly
+                          value={`${p.mensajeOferta} (${porcentaje}% OFF)`}
+                          onFocus={(e) => e.target.select()}
+                        />
+                        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+                          <button
+                            className="btn-small"
+                            onClick={() => copiarMensajeOferta(p)}
+                          >
+                            Copiar mensaje
+                          </button>
+                          <button
+                            className="btn-small btn-outline"
+                            onClick={() =>
+                              Swal.fire({
+                                title: "Mensaje de oferta",
+                                html: `<pre style="text-align:left">${
+                                  (p.mensajeOferta ?? "") +
+                                  ` (${porcentaje}% OFF)`
+                                }</pre>`,
+                                icon: "info",
+                              })
+                            }
+                          >
+                            Ver
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                      <button className="btn-add" onClick={() => addToCart(p)}>
+                        Añadir al Carrito
+                      </button>
+                      <button
+                        className="btn-primary-outline"
+                        onClick={() => buyNow(p)}
+                      >
+                        Comprar ahora
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
           </div>
-          <div className="benefit">
-            <div className="benefit-icon">✨</div>
-            <h4>Ofertas Exclusivas</h4>
-            <p>Suscríbete para recibir ofertas especiales</p>
-          </div>
-          <div className="benefit">
-            <div className="benefit-icon">⏳</div>
-            <h4>Ofertas Limitadas</h4>
-            <p>Nuevas promociones cada semana</p>
-          </div>
-        </div>
+        )}
       </div>
-            {/* FOOTER */}
-      <footer className="footer mt-auto">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-[var(--brand-accent)] to-[var(--brand-warm)] rounded-lg flex items-center justify-center">
-                  <span className="text-white text-xl">🎆</span>
-                </div>
-                <div>
-                  <h3 className="m-0">PyroShop</h3>
-                  <p className="text-sm text-white/70 m-0">Pirotecnia Legal</p>
-                </div>
-              </div>
-              <p className="text-sm text-white/80">
-                Venta legal y responsable de pirotecnia certificada.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-4">Legal y Seguridad</h4>
-              <ul className="space-y-2 list-none p-0 m-0">
-                <li>
-                  <a
-                    href="/politicasventa"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
-                  >
-                    Política de Venta Responsable
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/terminoscondiciones"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
-                  >
-                    Términos y Condiciones
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/politicaprivacidad"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
-                  >
-                    Política de Privacidad
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/normativa"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] flex items-center gap-2 no-underline"
-                  >
-                    Normativa y Regulación
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-4">Atención al Cliente</h4>
-              <ul className="space-y-2 list-none p-0 m-0">
-                <li>
-                  <a
-                    href="/helpcenter"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
-                  >
-                    Ayuda al cliente
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/Seguridad"
-                    className="text-sm text-white/80 hover:text-[var(--brand-warm)] no-underline"
-                  >
-                    Guía de Seguridad
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="mb-4">Contacto</h4>
-              <ul className="space-y-3 list-none p-0 m-0">
-                <li className="flex items-start gap-2 text-sm text-white/80">
-                  <span>+573213148729</span>
-                </li>
-                <li className="flex items-start gap-2 text-sm text-white/80">
-                  <span>info@pyroshop.co</span>
-                </li>
-                <li className="flex items-start gap-2 text-sm text-white/80">
-                  <span>
-                    Calle 12 # 45-67
-                    <br />
-                    Ocaña, Norte de Santander
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/30 rounded-lg p-4 mb-6">
-            <p className="text-sm text-white/90 m-0">
-              <strong>Aviso Legal:</strong> La venta de artículos pirotécnicos
-              está sujeta a la normativa vigente. El comprador se compromete a usar los
-              productos de forma responsable y siguiendo todas las instrucciones
-              de seguridad. 
-            </p>
-          </div>
-
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
-            <p className="m-0">
-              © 2025 PyroShop. Todos los derechos reservados.
-            </p>
-            <div className="flex gap-4">
-              <a
-                href="#"
-                className="hover:text-[var(--brand-warm)] no-underline"
-              ></a>
-            </div>
-          </div>
-        </div>
-      </footer>
+           
     </div>
-    
   );
 }

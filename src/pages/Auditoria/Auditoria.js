@@ -10,7 +10,7 @@ import {
   startAfter,
   endBefore,
 } from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { auth, db } from "../../firebaseConfig";
 import {
   Container,
   Table,

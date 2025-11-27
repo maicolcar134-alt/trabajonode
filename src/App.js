@@ -3,8 +3,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
+
 // Layout global con Navbar
 import MainLayout from "./layouts/MainLayout";
+
+//  IMPORTAMOS EL FOOTER
+import Footer from "./pages/components/Footer/Footer";
 
 // Rutas públicas
 import NotFoundPage from "./pages/components/NotFoundPage";
@@ -32,9 +36,9 @@ import Checkout from "./pages/CheckoutPage/Checkout";
 import Gracias from "./pages/Gracias/Gracias";
 import Categorias from "./pages/CategoriasAdmin/CategoriasAdmin"; 
 import Seguridad from "./pages/Seguridad/SeguridadAdmin";
-import NormativaRegulacion from "./pages/NormativaRegulacion/NormativaRegulacion";
-import PoliticasVenta from "./pages/PoliticasVenta/PoliticasVenta";
 import TerminosCondiciones from "./pages/Terminos Y Condiciones/terminoscondiciones";
+import PoliticasVenta from "./pages/PoliticasVenta/PoliticasVenta";
+import NormativaRegulacion from "./pages/NormativaRegulacion/NormativaRegulacion";
 import PoliticaPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
 
 // Panel admin
@@ -50,16 +54,23 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* 🌐 RUTAS SIN NAVBAR */}
+        {/*  RUTAS SIN NAVBAR */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgot" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
 
+        {/*  TODA LA APLICACIÓN CON NAVBAR GLOBAL */}
+        <Route
+          element={
+            <>
+              <MainLayout />
 
-
-        {/* 🌐 TODA LA APLICACIÓN CON NAVBAR GLOBAL */}
-        <Route element={<MainLayout />}>
+              {/*FOOTER SE MOSTRARÁ EN TODAS LAS VISTAS DE CLIENTES */}
+              <Footer />
+            </>
+          }
+        >
 
           {/* Página inicial */}
           <Route path="/" element={<DashboardPage />} />
@@ -89,11 +100,10 @@ function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/categorias" element={<Categorias />} />
           <Route path="/seguridad" element={<Seguridad />} />
-          <Route path="/normativa" element={<NormativaRegulacion />} />
-          <Route path="/politicasventa" element={<PoliticasVenta />} />
           <Route path="/terminoscondiciones" element={<TerminosCondiciones />} />
+          <Route path="/politicasventa" element={<PoliticasVenta />} />
+          <Route path="/normativaregulacion" element={<NormativaRegulacion />} />
           <Route path="/politicaprivacidad" element={<PoliticaPrivacidad />} />
-          
 
           {/* COMPRA */}
           <Route
@@ -127,8 +137,8 @@ function App() {
           <Route path="/useref" element={<UseRefPlay />} />
 
         </Route>
-        
-        {/* PANEL ADMIN (NO USA EL NAVBAR DE CLIENTES) */}
+
+        {/* PANEL ADMIN (NO USA EL NAVBAR DE CLIENTES NI FOOTER) */}
         <Route
           path="/admin"
           element={
@@ -154,4 +164,3 @@ function App() {
 }
 
 export default App;
-

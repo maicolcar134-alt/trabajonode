@@ -1,140 +1,169 @@
-import React, { useEffect } from 'react';
-import './DashboardAdmin.css';
-import { Line, Pie } from 'react-chartjs-2';
-import { useNavigate } from 'react-router-dom';
-import { Home } from 'lucide-react';
-import { registrarLog } from "../../utils/auditoriaService"; // ✅ importar el servicio de auditoría
-
+// src/components/DashboardAdmin.js
+// src/components/DashboardAdmin.js
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebaseConfig";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
+
+// Gráficas
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
   Tooltip,
-  Legend,
-  ArcElement,
-} from 'chart.js';
+  ResponsiveContainer,
+  CartesianGrid,
+  BarChart,
+  Bar,
+} from "recharts";
+import "./DashboardAdmin.css"
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);
+export default function DashboardAdmin() {
+  const [ventas, setVentas] = useState([]);
+  const [ventasHoy, setVentasHoy] = useState(0);
+  const [ventasMes, setVentasMes] = useState(0);
 
-const DashboardaAdmin = () => {
-  const navigate = useNavigate();
+  // FECHAS
+  const hoy = new Date();
+  const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
 
-  // 🟢 Registrar acceso al panel
+  // Cargar ventas desde Firestore
   useEffect(() => {
-    const registrarAcceso = async () => {
-      await registrarLog("Acceso al panel administrativo", "Éxito");
-    };
-    registrarAcceso();
+    const q = query(collection(db, "ventas"), orderBy("fecha", "desc"));
+
+    const unsub = onSnapshot(q, (snap) => {
+      const data = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      setVentas(data);
+      calcularMetricas(data);
+    });
+
+    return () => unsub();
   }, []);
 
-  // 🔹 Acción del botón Volver
-  const handleVolver = async () => {
-    await registrarLog("Salida del panel administrativo", "Éxito");
-    navigate('/Admin'); // Ruta de retorno
+  // Calcular ventas del día y del mes
+  const calcularMetricas = (lista) => {
+    const hoyISO = hoy.toISOString().split("T")[0];
+
+    let totalHoy = 0;
+    let totalMes = 0;
+
+    lista.forEach((v) => {
+      const fecha = v.fecha?.toDate();
+      if (!fecha) return;
+
+      const fechaISO = fecha.toISOString().split("T")[0];
+
+      if (fechaISO === hoyISO) {
+        totalHoy += Number(v.total || 0);
+      }
+
+      if (fecha >= inicioMes) {
+        totalMes += Number(v.total || 0);
+      }
+    });
+
+    setVentasHoy(totalHoy);
+    setVentasMes(totalMes);
   };
 
-  // Datos vacíos para los gráficos
-  const lineData = {
-    labels: [],
-    datasets: [
-      {
-        label: '',
-        data: [],
-        borderColor: '#f97316',
-        backgroundColor: 'rgba(249, 115, 22, 0.2)',
-        tension: 0.4,
-      },
-    ],
-  };
+  // --------------------------------------------------
+  // Gráfica: Ventas por cada día del mes
+  // --------------------------------------------------
+  const ventasPorDia = [];
 
-  const pieData = {
-    labels: [],
-    datasets: [
-      {
-        data: [],
-        backgroundColor: ['#22c55e', '#f97316', '#eab308', '#3b82f6', '#6b7280'],
-      },
-    ],
-  };
+  for (let d = 1; d <= 31; d++) {
+    ventasPorDia.push({
+      dia: d,
+      total: 0,
+    });
+  }
+
+  ventas.forEach((v) => {
+    const fecha = v.fecha?.toDate();
+    if (!fecha) return;
+
+    if (fecha >= inicioMes) {
+      let dia = fecha.getDate();
+      ventasPorDia[dia - 1].total += Number(v.total || 0);
+    }
+  });
+
+  // --------------------------------------------------
+  // 📌 Gráfica de Balance mensual (acumulado)
+  // --------------------------------------------------
+  let acumulado = 0;
+  const balanceData = ventasPorDia.map((item) => {
+    acumulado += item.total;
+    return {
+      dia: item.dia,
+      total: item.total,
+      balance: acumulado, // línea ascendente acumulada
+    };
+  });
 
   return (
     <div className="dashboard-container">
-      {/* 🔹 Barra superior */}
-      <div className="top-status-bar">
-        <span className="status-text">Panel Administrativo</span>
+      <h1 className="dashboard-title">📊 Dashboard Administrativo</h1>
 
-        {/* 🔙 Botón Volver al Inicio */}
-        <button className="btn-volver" onClick={handleVolver}>
-          <Home size={16} />
-          <span>Volver Admin</span>
-        </button>
-      </div>
+      {/* Tarjetas */}
+      <div className="metricas-grid">
+        <div className="card-metrica">
+          <h3>🟩 Ventas del Día</h3>
+          <p className="card-valor">${ventasHoy.toLocaleString()}</p>
+        </div>
 
-      {/* 🔹 Tarjetas estadísticas */}
-      <div className="stats-cards">
-        <div className="card green">
-          <h2>--</h2>
-          <p>Ventas del Día</p>
+        <div className="card-metrica">
+          <h3>🟦 Ventas del Mes</h3>
+          <p className="card-valor">${ventasMes.toLocaleString()}</p>
         </div>
-        <div className="card orange">
-          <h2>--</h2>
-          <p>Productos</p>
-        </div>
-        <div className="card blue">
-          <h2>--</h2>
-          <p>Activos</p>
-        </div>
-        <div className="card red">
-          <h2>--</h2>
-          <p>Pendientes</p>
+
+        <div className="card-metrica">
+          <h3>📦 Total Registros Venta</h3>
+          <p className="card-valor">{ventas.length}</p>
         </div>
       </div>
 
-      {/* 🔹 Gráficos */}
-      <div className="charts-row">
-        <div className="chart-box line-chart">
-          <h3>📈 Ventas Semanales</h3>
-          <Line data={lineData} />
-        </div>
-        <div className="chart-box pie-chart">
-          <h3>📊 Distribución de Productos</h3>
-          <Pie data={pieData} />
-        </div>
-      </div>
+      {/* Gráfica original */}
+      <section className="grafica-box">
+        <h2>📆 Ventas por Día del Mes</h2>
 
-      {/* 🔹 Cumplimiento Legal */}
-      <div className="compliance-section">
-        <h3>✅ Cumplimiento Legal</h3>
-        <div className="progress-item">
-          <span>Productos con ficha técnica</span>
-          <div className="progress-bar yellow" style={{ width: '0%' }}></div>
-        </div>
-        <div className="progress-item">
-          <span>Verificaciones KYC completadas</span>
-          <div className="progress-bar red" style={{ width: '0%' }}></div>
-        </div>
-        <div className="progress-item">
-          <span>Productos certificados CE</span>
-          <div className="progress-bar green" style={{ width: '0%' }}></div>
-        </div>
-      </div>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={ventasPorDia}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="dia" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="total" stroke="#4caf50" />
+          </LineChart>
+        </ResponsiveContainer>
+      </section>
 
-      {/* 🔹 Últimas Operaciones */}
-      <div className="operations-section">
-        <h3>🕓 Últimas Operaciones</h3>
-        <ul>
-          <li className="success">--</li>
-          <li className="warning">--</li>
-          <li className="info">--</li>
-          <li className="error">--</li>
-        </ul>
-      </div>
+      {/* -------------------------------------------- */}
+      {/* 📊 NUEVA GRÁFICA: BALANCE MENSUAL ACUMULADO */}
+      {/* -------------------------------------------- */}
+      <section className="grafica-box">
+        <h2>💰 Balance Acumulado del Mes</h2>
+
+        <ResponsiveContainer width="100%" height={350}>
+          <LineChart data={balanceData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="dia" />
+            <YAxis />
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="balance"
+              stroke="#2196f3"
+              strokeWidth={3}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </section>
     </div>
   );
-};
-
-export default DashboardaAdmin;
-
+}

@@ -63,7 +63,7 @@
 
 .button-group {
   display: flex;
-  gap: 1.5rem; /* separa los botones */
+  gap: 0.1rem; /* separa los botones */
   margin-top: 3rem; /* espacio superior respecto al párrafo */
 }
 
@@ -73,7 +73,7 @@
   border: 2px solid rgb(221, 218, 215);
   border-radius: 9999px; /* hace el botón completamente redondo */
   padding: 0.75rem 2rem;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
   cursor: pointer;
 
 }
@@ -82,7 +82,7 @@
   background-color: orangered;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 40px 250px;
   border-radius: 5px;
   cursor: pointer;
 }
@@ -123,9 +123,8 @@
 .contenedor div .numero {
   font-size: 2rem;
   font-weight: 600;
-  color: #ffa500;
-  /* naranja dorado */
-  transition: transform 0.3s ease, color 0.3s ease;
+  color: #ffa500; /* naranja dorado */
+  transition: transform 0.0s ease, color 0.0s ease;
 }
 
 .contenedor div .etiqueta {
@@ -145,7 +144,6 @@
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -153,7 +151,7 @@
 }
 
 .contenedor div {
-  animation: aparecer 0.8s ease forwards;
+  animation: aparecer 0.1s ease forwards;
 }
 
 body {
@@ -201,12 +199,12 @@ body {
   border: none;
   color: #fff !important;
   font-weight: 600;
-  transition: 0.3s;
+  transition: 0.0s;
 }
 
 .btn-warning:hover {
   background-color: #ff8f3c !important;
-  transform: scale(1.05);
+  transform: scale(0.01);
 }
 
 .badge {
@@ -239,7 +237,7 @@ body {
   border-radius: 30px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
   font-size: 16px;
 }
 
@@ -247,7 +245,7 @@ body {
   background-color: #f97316;
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.1);
 }
 
 .filtros-catalogo button.active {
@@ -302,12 +300,7 @@ body {
 }
 
 .footer p {
-  line-height: 1.6!important; 
-  margin-bottom: 1rem;
-}
-
-.footer .legal-box {
-  margin-bottom: 2rem;
+  line-height: 0.1;
 }
 
 .footer .grid {

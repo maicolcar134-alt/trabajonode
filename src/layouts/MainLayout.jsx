@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import DashboardNavbar from "../pages/components/Navbar";
-import { auth } from "../firebase";
+import { auth } from "../firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 function MainLayout() {

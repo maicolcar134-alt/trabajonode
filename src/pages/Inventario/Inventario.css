@@ -1,175 +1,255 @@
-.inventario-page {
-  background: #0b0b10;
-  color: #fff;
+/* ================================
+   CONTENEDOR GENERAL
+================================ */
+.inventario-container {
+  padding: 30px;
+  background: #0d0d0d;
   min-height: 100vh;
+  color: #fff;
 }
 
-/* Navbar */
-.dashboard-navbar {
-  background: linear-gradient(90deg, #0a0a10, #1a1a30);
-  padding: 12px 0;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.2);
-}
-
-.user-photo-nav {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-}
-
-.inventario-root {
-  padding: 40px;
-}
-
-.filtros {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.filtros input,
-.filtros select {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  outline: none;
-}
-
-.btn-agregar {
-  background: #ffc107;
-  color: #000;
+.inventario-title {
+  font-size: 30px;
   font-weight: bold;
-  border: none;
-  padding: 8px 16px;
+  margin-bottom: 20px;
+  color: #ffa726;
+  text-align: center;
+}
+
+/* ================================
+   FILTROS DE CATEGORÍAS
+================================ */
+.filtros-categorias {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.filtros-categorias .btn {
+  padding: 8px 15px;
   border-radius: 8px;
   cursor: pointer;
-  transition: 0.2s;
-}
-
-.btn-agregar:hover {
-  background: #ffcd39;
-}
-
-/* Productos */
-.inventario-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-}
-
-.producto-card {
-  background: #1c1c2a;
-  border-radius: 10px;
-  padding: 16px;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.05);
+  border: 2px solid #ffa726;
+  color: #ffa726;
+  background: transparent;
   transition: 0.3s;
 }
 
-.producto-card:hover {
-  transform: scale(1.03);
+.filtros-categorias .btn-warning {
+  background: #ffa726;
+  color: #000;
 }
 
-.producto-imagen {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.placeholder {
+/* ================================
+   FORMULARIO
+================================ */
+.formulario {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #2a2a40;
-  color: #ccc;
+  gap: 30px;
+  margin-bottom: 40px;
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
 }
 
-.producto-body {
-  margin-top: 10px;
+.form-column {
+  flex: 1;
 }
 
-.acciones {
-  margin-top: 10px;
+.form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  margin-bottom: 15px;
 }
 
-.btn-editar,
-.btn-eliminar,
-.btn-guardar,
-.btn-cancelar {
-  border: none;
-  border-radius: 6px;
+.form-group label {
+  color: #ffa726;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
   padding: 8px;
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: white;
+}
+
+.form-group textarea {
+  height: 80px;
+}
+
+/* ================================
+   BOTONES GENERALES
+================================ */
+.btn {
+  background: #ffa726;
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: 0.2s;
   font-weight: bold;
 }
 
-.btn-editar {
-  background: #007bff;
+.btn:hover {
+  background: #ff9800;
+}
+
+.btn-danger {
+  background: #e53935;
+  color: #fff;
+}
+
+.btn-success {
+  background: #43a047;
+  color: #fff;
+}
+
+/* ================================
+   PREVIEW DE IMAGEN
+================================ */
+.preview-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.preview-image {
+  width: 200px;
+  height: 200px;
+  object-fit: contain;
+  background: #222;
+  border-radius: 10px;
+  border: 2px dashed #555;
+  padding: 5px;
+}
+
+/* ================================
+   TABLA
+================================ */
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1a1a1a;
+  border-radius: 10px;
+}
+
+table th {
+  padding: 10px;
+  background: #ffa726;
+  color: #000;
+  text-align: left;
+}
+
+table td {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #444;
+}
+
+/* ================================
+   BOTONES EN TABLA
+================================ */
+.table-btn {
+  padding: 6px 10px;
+  margin: 2px 0;
+  display: block;
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.btn-edit {
+  background: #0288d1;
+  color: #fff;
+}
+
+.btn-edit:hover {
+  background: #0277bd;
+}
+
+.btn-delete {
+  background: #e53935;
   color: white;
 }
 
-.btn-eliminar {
-  background: #dc3545;
+.btn-delete:hover {
+  background: #c62828;
+}
+
+/* ⭐ BOTÓN EDITAR OFERTA */
+.btn-offer-edit {
+  background: #ff6f00 !important;
   color: white;
 }
 
-.btn-guardar {
-  background: #28a745;
-  color: white;
+.btn-offer-edit:hover {
+  background: #ff8f00 !important;
 }
 
-.btn-cancelar {
-  background: #6c757d;
-  color: white;
-}
-
-/* Modal */
-.modal {
+/* ================================
+   MODAL EDITAR OFERTA (%)
+================================ */
+.modal-oferta-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.modal-content {
-  background: #1e1e2e;
-  padding: 24px;
-  border-radius: 10px;
-  width: 400px;
+.modal-oferta {
+  width: 350px;
+  background: #111;
+  padding: 25px;
+  border-radius: 12px;
+  color: #fff;
+  border: 2px solid #ffa726;
 }
 
-.modal-content input,
-.modal-content select {
+.modal-oferta h3 {
+  color: #ffa726;
+  font-size: 20px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.modal-oferta .input {
   width: 100%;
-  margin-top: 8px;
-  padding: 8px;
+  padding: 10px;
+  background: #222;
+  border: 1px solid #555;
   border-radius: 6px;
-  border: none;
-}
-
-.preview {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-top: 8px;
+  color: white;
 }
 
 .modal-buttons {
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
-  margin-top: 16px;
-}
-.producto-card.destacado {
-  border: 2px solid gold;
-  box-shadow: 0 0 10px gold;
 }

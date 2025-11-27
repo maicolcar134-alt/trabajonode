@@ -1,4 +1,61 @@
-.navbar .nav-link.active-item {
+/* ---- RESET PARA NO ROMPER BOOTSTRAP ---- */
+.navbar-collapse,
+.navbar-collapse.collapse,
+.navbar-collapse.collapsing {
+  display: block;
+  height: auto;
+  overflow: visible;
+}
+
+/* PERO SOLO EN PANTALLAS GRANDES */
+@media (min-width: 992px) {
+  .navbar-collapse {
+    display: flex !important;
+    height: auto !important;
+  }
+}
+
+/* ---- MOBILE ---- */
+@media (max-width: 991px) {
+
+  /* Ocultar collapse por defecto */
+  .navbar-collapse.collapse {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Cuando está abierto */
+  .navbar-collapse.collapse.show {
+    display: block !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: #0d0d0d;
+    padding: 15px 0;
+  }
+
+  /* Los items */
+  .navbar-nav {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px;
+  }
+
+  /* SPACING */
+  .nav-link {
+    font-size: 1.1rem;
+  }
+}
+
+/* ---- TOGGLER ---- */
+.navbar-toggler {
+  border: 2px solid gold !important;
+  padding: 6px 8px !important;
+  margin-left: auto;
+}
+
+/* ---- ACTIVE ITEM (TU BORDITO DORADO) ---- */
+.nav-link.active-item {
   border: 2px solid gold !important;
   border-radius: 6px;
   padding: 4px 12px !important;
