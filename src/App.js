@@ -1,8 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-
 
 // Layout global con Navbar
 import MainLayout from "./layouts/MainLayout";
@@ -34,7 +34,7 @@ import EventsPage from "./pages/EventsPage/Events";
 import Carrito from "./pages/CarritoPage/Carrito";
 import Checkout from "./pages/CheckoutPage/Checkout";
 import Gracias from "./pages/Gracias/Gracias";
-import Categorias from "./pages/CategoriasAdmin/CategoriasAdmin"; 
+import Categorias from "./pages/CategoriasAdmin/CategoriasAdmin";
 import Seguridad from "./pages/Seguridad/SeguridadAdmin";
 import TerminosCondiciones from "./pages/Terminos Y Condiciones/terminoscondiciones";
 import PoliticasVenta from "./pages/PoliticasVenta/PoliticasVenta";
@@ -153,7 +153,9 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="dashboardAdmin" element={<DashboardAdmin />} />
+          <Route index element={<Navigate replace to="dashboardadmin" />} />
+
+          <Route path="dashboardadmin" element={<DashboardAdmin />} />
           <Route path="inventario" element={<Inventario />} />
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="eventos" element={<EventosAdminAgregar />} />
