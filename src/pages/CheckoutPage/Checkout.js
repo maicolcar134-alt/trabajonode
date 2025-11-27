@@ -30,7 +30,7 @@ export default function Checkout() {
 
   const [mostrarQR, setMostrarQR] = useState(false);
   const [qrImg, setQrImg] = useState(null);
-  const [mostrarPayPal, setMostrarPayPal] = useState(false);
+
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
 
   // Campos para pago con tarjeta

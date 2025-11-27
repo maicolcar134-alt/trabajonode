@@ -14,18 +14,66 @@ function SeguridadAdmin() {
   const handleLogout = () => {
     console.log("Cerrar sesión");
     alert("Sesión cerrada correctamente");
-    // Aquí puedes agregar lógica real de logout con Firebase:
-    // signOut(auth).then(() => navigate("/login"));
     setUser(false);
     navigate("/dashboard");
   };
 
+  // 📄 Función para generar y descargar PDF
+  const descargarGuia = () => {
+    const contenido = `
+    📘 GUÍA DE SEGURIDAD PIROTÉCNICA
+
+    ⚠️ ADVERTENCIA LEGAL
+    El uso de artículos pirotécnicos está regulado por la ley.
+    Solo deben ser manipulados por adultos responsables y en zonas autorizadas.
+
+    🧯 INFORMACIÓN VITAL
+    - No apuntes fuegos artificiales hacia personas o animales.
+    - Evita encenderlos en espacios cerrados o con viento fuerte.
+    - Ten siempre agua o un extintor de emergencia.
+
+    🚀 ANTES / DURANTE / DESPUÉS
+    ➤ Antes:
+      Verifica el estado del producto y lee las instrucciones.
+    ➤ Durante:
+      Mantén distancia segura, evita alcohol y sigue recomendaciones.
+    ➤ Después:
+      Asegúrate de que no existan residuos encendidos.
+
+    🚫 PROHIBICIONES ÉTICAS
+    - No usar pirotecnia cerca de hospitales, animales o ancianos.
+    - No hacer demostraciones sin supervisión profesional.
+    - No vender productos ilegales.
+
+    🚨 PROTOCOLOS DE EMERGENCIA
+    En caso de accidente, mantén la calma.
+    Busca ayuda médica y llama a emergencias.
+
+    ❓ PREGUNTAS FRECUENTES
+    - ¿Puedo usar pirotecnia en zonas residenciales?
+      No, salvo autorización oficial.
+    - ¿Qué hago si un producto no enciende?
+      Espera 10 minutos y apágalo con agua.
+    - ¿Los niños pueden manipular pirotecnia?
+      No. Solo adultos responsables.
+
+    -----------------------------------------
+    Guía generada automáticamente desde el sistema.
+    `;
+
+    const blob = new Blob([contenido], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "Guia_de_Seguridad_Pirotecnica.txt"; // Puedes usar .pdf si quieres usar jsPDF
+    link.click();
+
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="seguridad-container">
-
-
-
-      {/* 🧨 CONTENIDO PRINCIPAL */}
       <header className="header">
         <h1 className="titulo-principal">Guía de Seguridad Pirotécnica</h1>
         <p className="subtitulo">
@@ -39,9 +87,7 @@ function SeguridadAdmin() {
         <h2>⚠️ Advertencia Legal</h2>
         <p>
           El uso de artículos pirotécnicos está regulado por la ley. Solo deben
-          ser manipulados por adultos responsables y en espacios autorizados. El
-          incumplimiento puede acarrear sanciones legales y riesgos graves de
-          salud.
+          ser manipulados por adultos responsables y en espacios autorizados.
         </p>
       </section>
 
@@ -62,23 +108,17 @@ function SeguridadAdmin() {
           <div className="paso">
             <h3>Antes</h3>
             <p>
-              Verifica el estado del producto, lee las instrucciones y asegúrate
-              de tener una zona despejada y segura.
+              Verifica el estado del producto y asegúrate de tener una zona
+              despejada.
             </p>
           </div>
           <div className="paso">
             <h3>Durante</h3>
-            <p>
-              Mantén una distancia prudente, evita el consumo de alcohol y sigue
-              las recomendaciones del fabricante.
-            </p>
+            <p>Mantén distancia, evita alcohol y sigue las recomendaciones.</p>
           </div>
           <div className="paso">
             <h3>Después</h3>
-            <p>
-              Revisa que no queden residuos encendidos y limpia el área. No
-              reutilices artículos fallados.
-            </p>
+            <p>Verifica que no queden residuos encendidos.</p>
           </div>
         </div>
       </section>
@@ -88,20 +128,18 @@ function SeguridadAdmin() {
         <h2>🚫 Prohibiciones Éticas</h2>
         <ul>
           <li>No usar pirotecnia cerca de hospitales, animales o ancianos.</li>
-          <li>No realizar demostraciones sin supervisión profesional.</li>
-          <li>No vender productos ilegales o de origen desconocido.</li>
+          <li>No realizar demostraciones sin supervisión.</li>
+          <li>No vender productos ilegales.</li>
         </ul>
       </section>
 
       {/* 🚨 EMERGENCIA */}
       <section className="bloque emergencia">
         <h2>🚨 Protocolos de Emergencia</h2>
-        <p>
-          En caso de accidente, mantén la calma y busca ayuda médica inmediata.
-          Llama a los números de emergencia locales y no apliques remedios sin
-          conocimiento.
-        </p>
-        <button className="btn-protocolo">Ver Guía de Emergencia</button>
+        <p>En caso de accidente, busca ayuda médica inmediata.</p>
+        <button onClick={descargarGuia} className="btn-protocolo">
+          📄 Descargar Guía de Emergencia
+        </button>
       </section>
 
       {/* ❓ FAQ */}
@@ -109,24 +147,17 @@ function SeguridadAdmin() {
         <h2>❓ Preguntas Frecuentes</h2>
         <details>
           <summary>¿Puedo usar pirotecnia en zonas residenciales?</summary>
-          <p>
-            No, salvo que las autoridades locales lo autoricen expresamente.
-          </p>
+          <p>No, salvo autorización oficial.</p>
         </details>
         <details>
           <summary>¿Qué hago si un producto no enciende?</summary>
-          <p>
-            Espera al menos 10 minutos, luego apágalo con agua. No intentes
-            encenderlo de nuevo.
-          </p>
+          <p>Espera 10 minutos, luego apágalo con agua.</p>
         </details>
         <details>
-          <summary>¿Los niños pueden manipular fuegos artificiales?</summary>
-          <p>Absolutamente no. Solo adultos responsables deben hacerlo.</p>
+          <summary>¿Los niños pueden manipular pirotecnia?</summary>
+          <p>No, solo adultos responsables.</p>
         </details>
       </section>
-
-
     </div>
   );
 }

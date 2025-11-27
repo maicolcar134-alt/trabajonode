@@ -1,4 +1,8 @@
 
+/* =====================================================
+   INVENTARIO COMPLETO – VERSION FINAL OPTIMIZADA
+   ===================================================== */
+
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -30,10 +34,10 @@ const categoriasData = [
 
 const imagenDefault = "/placeholder";
 
-// ============================
-// SUBIR IMAGEN
-// ============================
 
+// =====================================================
+// SUBIR IMAGEN
+// =====================================================
 async function subirImagenFirebase(file, idProductoReal) {
   try {
     const nombreLimpio = file.name.replace(/\s+/g, "_");
@@ -51,14 +55,14 @@ async function subirImagenFirebase(file, idProductoReal) {
   }
 }
 
-// ============================
-// COMPONENTE
-// ============================
 
+// =====================================================
+// COMPONENTE
+// =====================================================
 export default function Inventario() {
   const [productos, setProductos] = useState([]);
 
-  // Edición general
+  // Estados del formulario
   const [idEdit, setIdEdit] = useState("");
   const [modoEditar, setModoEditar] = useState(false);
   const [nombre, setNombre] = useState("");
@@ -66,29 +70,25 @@ export default function Inventario() {
   const [descripcion, setDescripcion] = useState("");
   const [categoria, setCategoria] = useState("");
   const [cantidad, setCantidad] = useState("");
-
   const [destacado, setDestacado] = useState(false);
   const [oferta, setOferta] = useState(false);
-
-  // Imagen
   const [fileImage, setFileImage] = useState(null);
   const [imagenVista, setImagenVista] = useState(imagenDefault);
-
   const [cargando, setCargando] = useState(false);
 
   // Filtro
   const [filtro, setFiltro] = useState("Todos");
 
-  // ⭐ Estados para EDITAR OFERTA (%)
+  // Modal para editar oferta
   const [modalOferta, setModalOferta] = useState(false);
   const [productoOferta, setProductoOferta] = useState(null);
   const [porcentajeOferta, setPorcentajeOferta] = useState("");
   const [precioOfertaCalculado, setPrecioOfertaCalculado] = useState("");
 
-  // ============================
-  // Cargar productos
-  // ============================
 
+  // =====================================================
+  // Cargar productos
+  // =====================================================
   useEffect(() => {
     const refCol = collection(db, "inventario");
     const unsub = onSnapshot(refCol, (snapshot) => {
@@ -99,10 +99,10 @@ export default function Inventario() {
     return () => unsub();
   }, []);
 
-  // ============================
-  // Limpiar
-  // ============================
 
+  // =====================================================
+  // Limpiar form
+  // =====================================================
   const limpiar = () => {
     setNombre("");
     setPrecio("");
@@ -117,10 +117,10 @@ export default function Inventario() {
     setIdEdit("");
   };
 
-  // ============================
-  // HANDLE FILE
-  // ============================
 
+  // =====================================================
+  // Manejar archivo de imagen
+  // =====================================================
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -138,10 +138,10 @@ export default function Inventario() {
     setImagenVista(URL.createObjectURL(file));
   };
 
-  // ============================
-  // GUARDAR PRODUCTO
-  // ============================
 
+  // =====================================================
+  // Guardar o actualizar producto
+  // =====================================================
   const guardarProducto = async () => {
     if (!nombre || !precio || !descripcion || !categoria || !cantidad) {
       return Swal.fire(
@@ -156,6 +156,7 @@ export default function Inventario() {
     try {
       let idFinal = idEdit;
 
+      // Crear nuevo
       if (!modoEditar) {
         const refCol = collection(db, "inventario");
         const nuevo = await addDoc(refCol, {
@@ -174,6 +175,7 @@ export default function Inventario() {
         idFinal = nuevo.id;
       }
 
+      // Editar producto existente
       await updateDoc(doc(db, "inventario", idFinal), {
         nombre,
         precio,
@@ -186,7 +188,7 @@ export default function Inventario() {
         fechaActualizacion: serverTimestamp(),
       });
 
-      // Subir imagen
+      // Subir imagen comprimida
       if (fileImage) {
         await new Promise((resolve, reject) => {
           new Compressor(fileImage, {
@@ -229,10 +231,10 @@ export default function Inventario() {
     }
   };
 
-  // ============================
-  // EDITAR PRODUCTO
-  // ============================
 
+  // =====================================================
+  // Editar producto
+  // =====================================================
   const editarProducto = (p) => {
     setModoEditar(true);
     setIdEdit(p.id);
@@ -247,10 +249,10 @@ export default function Inventario() {
     setFileImage(null);
   };
 
-  // ============================
-  // ELIMINAR
-  // ============================
 
+  // =====================================================
+  // Eliminar producto
+  // =====================================================
   const eliminarProducto = async (id, pathImagen) => {
     const confirm = await Swal.fire({
       title: "¿Eliminar?",
@@ -275,23 +277,22 @@ export default function Inventario() {
     }
   };
 
-  // ============================
-  // DESTACADO / OFERTA
-  // ============================
 
+  // =====================================================
+  // Destacado / Oferta toggle
+  // =====================================================
   const cambioDestacado = (id, val) =>
     updateDoc(doc(db, "inventario", id), { destacado: !val });
 
   const cambioOferta = (id, val) =>
     updateDoc(doc(db, "inventario", id), { oferta: !val });
 
-  // ============================
-  // ⭐ EDITAR OFERTA (%)
-  // ============================
 
+  // =====================================================
+  // Editar Oferta (%)
+  // =====================================================
   const editarOferta = (p) => {
     setProductoOferta(p);
-
     setPorcentajeOferta(p.porcentajeOferta || "");
 
     if (p.porcentajeOferta) {
@@ -304,6 +305,7 @@ export default function Inventario() {
     setModalOferta(true);
   };
 
+
   const guardarOferta = async () => {
     if (!productoOferta) return;
 
@@ -313,6 +315,7 @@ export default function Inventario() {
 
     const porcentajeNum = Number(porcentajeOferta);
     const precioOriginal = Number(productoOferta.precio);
+
     const precioFinal = Math.round(
       precioOriginal - precioOriginal * (porcentajeNum / 100)
     );
@@ -332,10 +335,10 @@ export default function Inventario() {
     }
   };
 
-  // ============================
-  // FILTRO
-  // ============================
 
+  // =====================================================
+  // Filtrado por categoría
+  // =====================================================
   const productosFiltrados = productos.filter((p) => {
     if (filtro === "Tortas") return p.categoria === "Tortas";
     if (filtro === "Juguetería") return p.categoria === "Juguetería";
@@ -343,54 +346,30 @@ export default function Inventario() {
     return true;
   });
 
-  // ============================
-  // RENDER
-  // ============================
 
+  // =====================================================
+  // RENDER
+  // =====================================================
   return (
     <div className="inventario-container">
       <h2 className="inventario-title">📦 Inventario</h2>
 
       {/* FILTROS */}
       <div className="filtros-categorias">
-        <button
-          className={`btn ${
-            filtro === "Todos" ? "btn-warning" : "btn-outline-warning"
-          }`}
-          onClick={() => setFiltro("Todos")}
-        >
-          Todos
-        </button>
-
-        <button
-          className={`btn ${
-            filtro === "Tortas" ? "btn-warning" : "btn-outline-warning"
-          }`}
-          onClick={() => setFiltro("Tortas")}
-        >
-          Tortas
-        </button>
-
-        <button
-          className={`btn ${
-            filtro === "Juguetería" ? "btn-warning" : "btn-outline-warning"
-          }`}
-          onClick={() => setFiltro("Juguetería")}
-        >
-          Juguetería
-        </button>
-
-        <button
-          className={`btn ${
-            filtro === "Uso Profesional" ? "btn-warning" : "btn-outline-warning"
-          }`}
-          onClick={() => setFiltro("Uso Profesional")}
-        >
-          Uso Profesional
-        </button>
+        {["Todos", "Tortas", "Juguetería", "Uso Profesional"].map((cat) => (
+          <button
+            key={cat}
+            className={`btn ${
+              filtro === cat ? "btn-active" : "btn-outline"
+            }`}
+            onClick={() => setFiltro(cat)}
+          >
+            {cat}
+          </button>
+        ))}
       </div>
 
-      {/* FORM */}
+      {/* FORMULARIO */}
       <div className="form-row formulario">
         <div className="form-column">
           <div className="form-group">
@@ -437,9 +416,9 @@ export default function Inventario() {
             />
           </div>
 
-          <div className="form-group" style={{ display: "flex", gap: 10 }}>
+          <div className="form-group botones-formulario">
             <button
-              className="btn"
+              className="btn btn-action"
               onClick={guardarProducto}
               disabled={cargando}
             >
@@ -450,20 +429,21 @@ export default function Inventario() {
                 : "Agregar"}
             </button>
 
-            <button className="btn btn-danger" onClick={limpiar}>
+            <button className="btn btn-cancel" onClick={limpiar}>
               Limpiar
             </button>
           </div>
         </div>
 
+        {/* Imagen */}
         <div className="form-column">
           <div className="form-group">
-            <label>Imagen manual</label>
+            <label>Imagen</label>
             <input type="file" accept="image/*" onChange={handleFileChange} />
           </div>
 
           <div className="preview-container">
-            <img src={imagenVista} alt="Vista" className="preview-image" />
+            <img src={imagenVista} alt="Vista previa" className="preview-image" />
           </div>
         </div>
       </div>
@@ -472,7 +452,7 @@ export default function Inventario() {
       <h3 className="subtitulo">Productos</h3>
 
       <div className="table-container">
-        <table>
+        <table className="tabla">
           <thead>
             <tr>
               <th>Imagen</th>
@@ -488,7 +468,7 @@ export default function Inventario() {
 
           <tbody>
             {productosFiltrados.map((p) => (
-              <tr key={p.id}>
+              <tr key={p.id} className={p.oferta ? "fila-oferta" : ""}>
                 <td>
                   <img
                     src={p.imagenUrl || imagenDefault}
@@ -502,16 +482,14 @@ export default function Inventario() {
                 <td>{p.categoria}</td>
                 <td>{p.cantidad}</td>
 
-                <td>{p.destacado ? "Sí" : "—"}</td>
+                <td>{p.destacado ? "⭐" : "—"}</td>
 
                 <td>
                   {p.oferta ? (
                     <>
-                      <strong style={{ color: "orange" }}>
-                        ${p.precioOferta}
-                      </strong>
+                      <strong className="precio-oferta">${p.precioOferta}</strong>
                       <br />
-                      <small style={{ color: "#0af" }}>
+                      <small className="etiqueta-oferta">
                         {p.porcentajeOferta}% OFF
                       </small>
                     </>
@@ -520,41 +498,40 @@ export default function Inventario() {
                   )}
                 </td>
 
-                <td>
+                <td className="acciones">
                   <button
                     className="table-btn btn-edit"
                     onClick={() => editarProducto(p)}
                   >
-                    Editar
+                    ✏️
                   </button>
 
                   <button
                     className="table-btn btn-delete"
                     onClick={() => eliminarProducto(p.id, p.pathImagen)}
                   >
-                    Eliminar
+                    🗑️
                   </button>
 
                   <button
-                    className="table-btn btn-edit"
+                    className="table-btn btn-star"
                     onClick={() => cambioDestacado(p.id, p.destacado)}
                   >
-                    {p.destacado ? "Quitar" : "Destacar"}
+                    {p.destacado ? "⭐" : "☆"}
                   </button>
 
                   <button
-                    className="table-btn btn-edit"
+                    className="table-btn btn-offer"
                     onClick={() => cambioOferta(p.id, p.oferta)}
                   >
                     {p.oferta ? "Quitar" : "Oferta"}
                   </button>
 
-                  {/* ⭐ BOTÓN EDITAR OFERTA */}
                   <button
                     className="table-btn btn-offer-edit"
                     onClick={() => editarOferta(p)}
                   >
-                    Editar Oferta
+                    % Editar
                   </button>
                 </td>
               </tr>
@@ -563,7 +540,7 @@ export default function Inventario() {
         </table>
       </div>
 
-      {/* ⭐ MODAL EDITAR OFERTA ⭐ */}
+      {/* MODAL OFERTA */}
       {modalOferta && (
         <div className="modal-oferta-overlay">
           <div className="modal-oferta">
@@ -589,7 +566,7 @@ export default function Inventario() {
             />
 
             {precioOfertaCalculado !== "" && (
-              <p style={{ marginTop: 10 }}>
+              <p className="precio-final">
                 💰 Precio final: <strong>${precioOfertaCalculado}</strong>
               </p>
             )}

@@ -1,135 +1,229 @@
+/* =============================== */
+/*        ESTILOS GENERALES        */
+/* =============================== */
 body {
   background-color: #0d1117 !important;
   color: #fff !important;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .page-title {
-  font-size: 1.8rem;
+  font-size: 2rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #e5e7eb;
 }
 
 .page-subtitle {
   color: #9ca3af;
 }
 
+/* Tarjetas de Resumen */
 .summary-card {
-  background-color: #070708;
-  border: 1px solid #30363d;
-  border-radius: 12px;
-  text-align: center;
+  background: linear-gradient(180deg, #111827, #0d1117);
+  border: 1px solid #1f2937;
+  border-radius: 14px;
   padding: 20px;
+  text-align: center;
   color: #fff;
+  transition: 0.3s;
+}
+
+.summary-card:hover {
+  transform: translateY(-3px);
+  border-color: #3b82f6;
+  box-shadow: 0px 4px 14px rgba(59, 130, 246, 0.4);
 }
 
 .summary-card h4 {
-  font-size: 1.8rem;
+  font-size: 1.9rem;
   font-weight: 700;
 }
 
 .summary-card p {
-  color: #0745af;
+  color: #60a5fa;
   margin-top: 5px;
 }
 
-.summary-card.verified h4 {
-  color: #22c55e;
-}
-.summary-card.completed h4 {
-  color: #3b82f6;
-
-}
-.summary-card.pending h4 {
-  color: #f59e0b;
-}
+/* =============================== */
+/*           TABLA PRO             */
+/* =============================== */
 
 .table-card {
-  background-color: #161b22;
-  border-radius: 12px;
-  border: 1px solid #30363d;
+  background-color: #111827;
+  border-radius: 14px;
+  border: 1px solid #1f2937;
   overflow: hidden;
+  box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .table-header {
-  background-color: #161b22;
-  color: #a31212;
+  background: #0f172a;
+  padding: 16px;
+  font-size: 1.1rem;
   font-weight: 600;
-  border-bottom: 1px solid #30363d;
+  color: #f3f4f6;
+  border-bottom: 1px solid #1f2937;
 }
 
-.custom-table thead {
-  color: #9ca3af;
-  border-bottom: 1px solid #30363d;
+/* Tabla */
+.custom-table {
+  color: #d1d5db;
+  font-size: 0.95rem;
+}
+
+.custom-table thead tr {
+  background: #1e293b;
+}
+
+.custom-table thead th {
+  padding: 14px;
+  border-bottom: 2px solid #334155;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.5px;
 }
 
 .custom-table tbody tr {
-  border-bottom: 1px solid #30363d;
+  transition: 0.2s;
+  border-bottom: 1px solid #1f2937;
 }
 
 .custom-table tbody tr:hover {
-  background-color: #1f2937;
+  background: rgba(59, 130, 246, 0.08);
+  transform: scale(1.01);
 }
 
+.custom-table td {
+  vertical-align: middle;
+  padding: 12px;
+}
+
+/* Email debajo del nombre */
 .email {
   color: #9ca3af;
-  font-size: 0.9rem;
-}
-
-.role-badge {
-  padding: 4px 10px;
-  border-radius: 10px;
-  font-weight: 600;
   font-size: 0.8rem;
 }
 
+/* =============================== */
+/*            BADGES               */
+/* =============================== */
+
+.role-badge,
+.kyc-badge,
+.estado-badge {
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  display: inline-block;
+}
+
+/* Rol */
 .role-badge.admin {
-  background-color: rgba(139, 92, 246, 0.2);
-  color: #a855f7;
+  background-color: rgba(139, 92, 246, 0.25);
+  color: #c084fc;
 }
 
 .role-badge.cliente {
-  background-color: rgba(107, 114, 128, 0.2);
-  color: #d1d5db;
+  background-color: rgba(107, 114, 128, 0.25);
+  color: #e5e7eb;
 }
 
+/* KYC */
 .kyc-badge.verificado {
-  background-color: rgba(34, 197, 94, 0.2);
-  color: #22c55e;
-  padding: 4px 10px;
-  border-radius: 10px;
+  background-color: rgba(34, 197, 94, 0.25);
+  color: #4ade80;
 }
 
 .kyc-badge.pendiente {
-  background-color: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
-  padding: 4px 10px;
-  border-radius: 10px;
+  background-color: rgba(245, 158, 11, 0.25);
+  color: #fbbf24;
 }
 
+/* Estado Activo */
 .estado-badge.activo {
-  background-color: rgba(34, 197, 94, 0.2);
+  background-color: rgba(34, 197, 94, 0.15);
   color: #22c55e;
-  padding: 4px 10px;
-  border-radius: 10px;
 }
 
-.verificar-btn {
-  color: #f59e0b;
-  font-weight: 600;
-  text-decoration: none;
+/* =============================== */
+/*            ACCIONES             */
+/* =============================== */
+
+.acciones-td {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
+/* Icono de ver */
 .accion-icon {
   color: #9ca3af;
-  margin-right: 8px;
   cursor: pointer;
+  transition: 0.3s;
 }
+
 .accion-icon:hover {
-  color: #ffffff;
+  color: #fff;
+  transform: scale(1.2);
 }
-.pagination .page-link {
-  background-color: #0d1117;
-  color: #9ca3af;
-  border: 1px solid #30363d;
+
+/* Verificar */
+.verificar-btn {
+  color: #38bdf8 !important;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.verificar-btn:hover {
+  color: #0ea5e9 !important;
+  text-shadow: 0px 0px 6px rgba(56, 189, 248, 0.7);
+}
+
+/* Botón eliminar */
+.eliminar-btn {
+  background: #ef4444 !important;
+  border: none !important;
+  padding: 5px 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.eliminar-btn:hover {
+  background: #dc2626 !important;
+  transform: scale(1.05);
+}
+
+/* =============================== */
+/*            MODAL                */
+/* =============================== */
+
+.modal-content {
+  background-color: #111827 !important;
+  color: #fff;
+  border: 1px solid #1f2937;
+}
+
+.modal-header {
+  border-bottom: 1px solid #1f2937;
+}
+
+.modal-footer {
+  border-top: 1px solid #1f2937;
+}
+
+.form-control,
+.form-select {
+  background: #1f2937 !important;
+  color: #fff !important;
+  border: 1px solid #374151 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0px 0px 6px rgba(59, 130, 246, 0.6);
 }

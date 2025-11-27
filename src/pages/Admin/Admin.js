@@ -8,7 +8,8 @@ import {
   FaStore,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { auth } from "../../firebaseConfig"; // ⚠️ ajusta la ruta a tu archivo firebase.js
+import { auth, db } from "../../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 import Swal from "sweetalert2";
 import "./Admin.css";
 
@@ -17,25 +18,37 @@ const Admin = () => {
   const [isAuthorized, setIsAuthorized] = useState(null);
 
   useEffect(() => {
-    const verificarAcceso = () => {
+    const verificarAcceso = async () => {
       const user = auth.currentUser;
 
-      // 🔒 Si no hay usuario logueado
+      // ❌ No hay usuario logueado
       if (!user) {
         Swal.fire("Acceso denegado", "Debes iniciar sesión primero.", "error");
         navigate("/login");
         return;
       }
 
-      // 🔹 Solo permitir este correo
-      if (user.email === "maicolcar134@gmail.com") {
+      try {
+        // 🔍 Leer solo el documento del usuario actual por UID
+        const ref = doc(db, "usuarios", user.uid);
+        const snap = await getDoc(ref);
+
+        // ❌ No existe o no es Admin
+        if (!snap.exists() || snap.data().Rol !== "Admin") {
+          Swal.fire(
+            "Acceso restringido",
+            "Solo el administrador puede acceder a esta sección.",
+            "warning"
+          );
+          navigate("/dashboard");
+          return;
+        }
+
+        // ✔ Usuario autorizado
         setIsAuthorized(true);
-      } else {
-        Swal.fire(
-          "Acceso restringido",
-          "Solo el administrador puede acceder a esta sección.",
-          "warning"
-        );
+      } catch (error) {
+        console.error("Error verificando rol:", error);
+        Swal.fire("Error", "No se pudo verificar tu rol.", "error");
         navigate("/dashboard");
       }
     };
@@ -48,8 +61,9 @@ const Admin = () => {
   }
 
   const menuItems = [
-    { name: "Dashboard", path: "/admin/dashboard", icon: <FaChartBar /> },
+    { name: "Dashboard", path: "/admin/dashboardAdmin", icon: <FaChartBar /> },
     { name: "Inventario", path: "/admin/inventario", icon: <FaBox /> },
+    { name: "Eventos",path: "/admin/eventos",icon: <FaBox/>},
     { name: "Pedidos", path: "/admin/pedidos", icon: <FaClipboardList /> },
     { name: "Usuarios", path: "/admin/usuarios", icon: <FaUsers /> },
     { name: "Envío / Zonas", path: "/admin/zonas", icon: <FaTruck /> },
@@ -66,7 +80,6 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
-      {/* SIDEBAR */}
       <aside className="sidebar">
         <div className="logo-section">
           <div className="logo-icon">🔥</div>
@@ -104,7 +117,6 @@ const Admin = () => {
         </div>
       </aside>
 
-      {/* ✅ CONTENIDO ADMIN */}
       <main className="admin-content">
         <Outlet />
       </main>

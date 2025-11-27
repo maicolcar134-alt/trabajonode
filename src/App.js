@@ -30,7 +30,7 @@ import DashboardPage from "./pages/DashboardPage/DashboardPage";
 import AuxiliaresPage from "./pages/AuxiliaresPage/AuxiliaresPage";
 import HelpCenter from "./pages/HelpCenter/HelpCenter";
 import OfertasPirotecnia from "./pages/OfertasPirotecnia/OfertasPirotecnia";
-import EventsPage from "./pages/Events/Events";
+
 import Carrito from "./pages/CarritoPage/Carrito";
 import Checkout from "./pages/CheckoutPage/Checkout";
 import Gracias from "./pages/Gracias/Gracias";
@@ -45,6 +45,7 @@ import PoliticaPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
 import Admin from "./pages/Admin/Admin";
 import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
+import EventosAdminAgregar from "./pages/Eventos/Eventos";
 import Pedidos from "./pages/pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
@@ -53,7 +54,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/*  RUTAS SIN NAVBAR */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -71,7 +71,6 @@ function App() {
             </>
           }
         >
-
           {/* Página inicial */}
           <Route path="/" element={<DashboardPage />} />
 
@@ -97,12 +96,18 @@ function App() {
           {/* CLIENTES / TIENDA */}
           <Route path="/helpcenter" element={<HelpCenter />} />
           <Route path="/ofertaspirotecnia" element={<OfertasPirotecnia />} />
-          <Route path="/events" element={<EventsPage />} />
+          <Route path="/eventos" element={<EventosAdminAgregar />} />
           <Route path="/categorias" element={<Categorias />} />
           <Route path="/seguridad" element={<Seguridad />} />
-          <Route path="/terminoscondiciones" element={<TerminosCondiciones />} />
+          <Route
+            path="/terminoscondiciones"
+            element={<TerminosCondiciones />}
+          />
           <Route path="/politicasventa" element={<PoliticasVenta />} />
-          <Route path="/normativaregulacion" element={<NormativaRegulacion />} />
+          <Route
+            path="/normativaregulacion"
+            element={<NormativaRegulacion />}
+          />
           <Route path="/politicaprivacidad" element={<PoliticaPrivacidad />} />
 
           {/* COMPRA */}
@@ -135,21 +140,22 @@ function App() {
           <Route path="/usestate" element={<UseStatePlay />} />
           <Route path="/useeffect" element={<UseEffectPlay />} />
           <Route path="/useref" element={<UseRefPlay />} />
-
         </Route>
 
         {/* PANEL ADMIN (NO USA EL NAVBAR DE CLIENTES NI FOOTER) */}
         <Route
-          path="/admin"
+          path="/Admin"
           element={
             <ProtectedRoute rol="admin">
               <Admin />
             </ProtectedRoute>
           }
         >
+      
           <Route path="dashboard" element={<DashboardAdmin />} />
           <Route path="inventario" element={<Inventario />} />
           <Route path="pedidos" element={<Pedidos />} />
+          <Route path="eventos" element={<EventosAdminAgregar />} />
           <Route path="usuarios" element={<AuxiliaresPage />} />
           <Route path="auditoria" element={<Auditoria />} />
           <Route path="zonas" element={<ZonasEnvioPro />} />
@@ -157,7 +163,6 @@ function App() {
 
         {/* 404 */}
         <Route path="*" element={<NotFoundPage />} />
-
       </Routes>
     </BrowserRouter>
   );

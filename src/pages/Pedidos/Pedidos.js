@@ -12,13 +12,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
-import {
-  Container,
-  Table,
-  Badge,
-  Button,
-  Form,
-} from "react-bootstrap";
+import { Container, Table, Badge, Button, Form } from "react-bootstrap";
 import { FaBoxOpen, FaTrashAlt, FaSyncAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import "./Pedidos.css";
@@ -31,7 +25,9 @@ export default function Pedidos() {
   const [seleccionados, setSeleccionados] = useState([]);
   const navigate = useNavigate();
 
-  // 🔍 Buscar pedidos por teléfono
+  // ---------------------------------------------------------
+  // BUSCAR PEDIDOS POR TELÉFONO
+  // ---------------------------------------------------------
   const buscarPedidos = () => {
     if (!telefono.trim()) {
       alert("Por favor ingresa un número de teléfono.");
@@ -52,7 +48,9 @@ export default function Pedidos() {
     setListenerActivo(() => unsub);
   };
 
-  // 📋 Mostrar todos los pedidos
+  // ---------------------------------------------------------
+  // MOSTRAR TODOS
+  // ---------------------------------------------------------
   const mostrarTodos = () => {
     setCargando(true);
     if (listenerActivo) listenerActivo();
@@ -66,7 +64,9 @@ export default function Pedidos() {
     setListenerActivo(() => unsub);
   };
 
-  // 🔁 Actualizar pedidos manualmente
+  // ---------------------------------------------------------
+  // ACTUALIZAR
+  // ---------------------------------------------------------
   const actualizarPedidos = async () => {
     setCargando(true);
     const snapshot = await getDocs(collection(db, "pedidos"));
@@ -74,7 +74,6 @@ export default function Pedidos() {
     setCargando(false);
   };
 
-  // 🧹 Limpieza
   useEffect(() => {
     mostrarTodos();
     return () => {
@@ -82,7 +81,9 @@ export default function Pedidos() {
     };
   }, []);
 
-  // 🎨 Colores del estado
+  // ---------------------------------------------------------
+  // COLORES
+  // ---------------------------------------------------------
   const colorEstado = (estado) => {
     switch (estado) {
       case "En proceso":
@@ -96,7 +97,9 @@ export default function Pedidos() {
     }
   };
 
-  // 🧾 Registrar acción en auditoría
+  // ---------------------------------------------------------
+  // AUDITORÍA
+  // ---------------------------------------------------------
   const registrarAuditoria = async (accion, idPedido, detalles = {}) => {
     try {
       await addDoc(collection(db, "auditoria_logs"), {
@@ -106,59 +109,57 @@ export default function Pedidos() {
         fecha: serverTimestamp(),
         usuario: "Administrador",
       });
-    } catch (error) {
-      console.error("Error registrando auditoría:", error);
-    }
+    } catch (error) {}
   };
 
-  // ✅ Actualizar estado
+  // ---------------------------------------------------------
+  // ACTUALIZAR ESTADO
+  // ---------------------------------------------------------
   const actualizarEstado = async (idPedido, nuevoEstado) => {
     try {
-      const ref = doc(db, "pedidos", idPedido);
-      await updateDoc(ref, { estado: nuevoEstado });
-      await registrarAuditoria("Cambio de estado", idPedido, { nuevoEstado });
+      await updateDoc(doc(db, "pedidos", idPedido), { estado: nuevoEstado });
+      registrarAuditoria("Cambio estado", idPedido, { nuevoEstado });
     } catch (error) {
-      alert("Error al actualizar el estado del pedido.");
+      alert("Error al actualizar el estado.");
     }
   };
 
-  // 💳 Actualizar pago
+  // ---------------------------------------------------------
+  // ACTUALIZAR PAGO
+  // ---------------------------------------------------------
   const actualizarPago = async (idPedido, nuevoPago) => {
     try {
-      const ref = doc(db, "pedidos", idPedido);
-      await updateDoc(ref, { pago: nuevoPago });
-      await registrarAuditoria("Actualización de pago", idPedido, {
-        nuevoPago,
-      });
+      await updateDoc(doc(db, "pedidos", idPedido), { pago: nuevoPago });
+      registrarAuditoria("Cambio pago", idPedido, { nuevoPago });
     } catch (error) {
-      alert("Error al actualizar el estado del pago.");
+      alert("Error al actualizar el pago.");
     }
   };
 
-  // 🗑️ Eliminar un pedido individual
+  // ---------------------------------------------------------
+  // ELIMINAR 1 PEDIDO
+  // ---------------------------------------------------------
   const eliminarPedido = async (idPedido) => {
-    const confirmar = window.confirm(
-      "¿Seguro que deseas eliminar este pedido?"
-    );
-    if (!confirmar) return;
+    if (!window.confirm("¿Seguro?")) return;
+
     try {
       await deleteDoc(doc(db, "pedidos", idPedido));
-      await registrarAuditoria("Eliminación de pedido", idPedido);
+      registrarAuditoria("Eliminar pedido", idPedido);
       setPedidos((prev) => prev.filter((p) => p.id !== idPedido));
-      alert("Pedido eliminado correctamente ✅");
     } catch (error) {
-      alert("Error al eliminar el pedido.");
+      alert("Error eliminando el pedido.");
     }
   };
 
-  // ✅ Seleccionar/desmarcar pedido
+  // ---------------------------------------------------------
+  // SELECCIONAR
+  // ---------------------------------------------------------
   const toggleSeleccion = (id) => {
     setSeleccionados((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
     );
   };
 
-  // ✅ Seleccionar todos
   const seleccionarTodos = () => {
     if (seleccionados.length === pedidos.length) {
       setSeleccionados([]);
@@ -167,27 +168,24 @@ export default function Pedidos() {
     }
   };
 
-  // 🗑️ Eliminar pedidos seleccionados
   const eliminarSeleccionados = async () => {
     if (seleccionados.length === 0) {
-      alert("⚠️ No hay pedidos seleccionados.");
+      alert("No hay pedidos seleccionados.");
       return;
     }
-    const confirmar = window.confirm(
-      `¿Eliminar ${seleccionados.length} pedidos seleccionados?`
-    );
-    if (!confirmar) return;
+
+    if (!window.confirm("¿Eliminar pedidos seleccionados?")) return;
+
     try {
       for (const id of seleccionados) {
         await deleteDoc(doc(db, "pedidos", id));
-        await registrarAuditoria("Eliminación múltiple de pedido", id);
+        registrarAuditoria("Eliminar múltiple", id);
       }
 
       setPedidos((prev) => prev.filter((p) => !seleccionados.includes(p.id)));
       setSeleccionados([]);
-      alert("✅ Pedidos eliminados correctamente.");
     } catch (error) {
-      alert("❌ Error al eliminar pedidos seleccionados.");
+      alert("Error eliminando pedidos.");
     }
   };
 
@@ -197,11 +195,11 @@ export default function Pedidos() {
         <FaBoxOpen className="me-2" /> Gestión de Pedidos
       </h2>
 
-      {/* 🔍 BUSCADOR */}
+      {/* ---------------- BUSCADOR ---------------- */}
       <div className="d-flex justify-content-center mb-4">
         <input
           type="text"
-          placeholder="Ingresa el número de teléfono del cliente"
+          placeholder="Teléfono del cliente"
           className="form-control w-50 me-2 bg-dark text-white border-secondary"
           value={telefono}
           onChange={(e) => setTelefono(e.target.value)}
@@ -226,7 +224,7 @@ export default function Pedidos() {
         </button>
       </div>
 
-      {/* 🔘 ELIMINAR SELECCIONADOS */}
+      {/* ---------------- BOTÓN ELIMINAR SELECCIONADOS ---------------- */}
       {pedidos.length > 0 && (
         <div className="text-center mb-3">
           <Button
@@ -240,14 +238,7 @@ export default function Pedidos() {
         </div>
       )}
 
-
-
-      {/* ⚠️ SIN RESULTADOS */}
-      {!cargando && pedidos.length === 0 && (
-        <p className="text-center text-muted">No se encontraron pedidos.</p>
-      )}
-
-      {/* 📦 TABLA DE PEDIDOS */}
+      {/* ---------------- TABLA ---------------- */}
       {pedidos.length > 0 && (
         <div className="table-responsive shadow-sm mt-4">
           <Table striped bordered hover variant="dark">
@@ -270,6 +261,7 @@ export default function Pedidos() {
                 <th>Acciones</th>
               </tr>
             </thead>
+
             <tbody>
               {pedidos.map((pedido) => (
                 <tr key={pedido.id}>
@@ -280,30 +272,29 @@ export default function Pedidos() {
                       onChange={() => toggleSeleccion(pedido.id)}
                     />
                   </td>
+
                   <td className="text-center fw-semibold">{pedido.id}</td>
-                  <td>{pedido.cliente?.nombre || "Sin nombre"}</td>
-                  <td>{pedido.cliente?.telefono || "N/A"}</td>
+                  <td>{pedido.cliente?.nombre}</td>
+                  <td>{pedido.cliente?.telefono}</td>
+
                   <td>
-                    {Array.isArray(pedido.items) ? (
-                      pedido.items.map((item, idx) => (
-                        <div key={idx}>
-                          • {item.nombre} × {item.cantidad} — $
-                          {(item.precio * item.cantidad).toLocaleString()}
-                        </div>
-                      ))
-                    ) : (
-                      <span className="text-muted">Sin productos</span>
-                    )}
-                  </td>
-                  <td className="fw-bold text-end">
-                    ${pedido.total?.toLocaleString() || "0"}
+                    {pedido.items?.map((item, i) => (
+                      <div key={i}>
+                        • {item.nombre} × {item.cantidad} — $
+                        {(item.precio * item.cantidad).toLocaleString()}
+                      </div>
+                    ))}
                   </td>
 
-                  {/* 💳 PAGO */}
+                  <td className="fw-bold text-end">
+                    ${pedido.total?.toLocaleString()}
+                  </td>
+
+                  {/* PAGO */}
                   <td className="text-center">
                     <select
                       className="form-select form-select-sm bg-dark text-white border-secondary"
-                      value={pedido.pago || "Pendiente"}
+                      value={pedido.pago}
                       onChange={(e) => {
                         const nuevoPago = e.target.value;
                         actualizarPago(pedido.id, nuevoPago);
@@ -320,14 +311,15 @@ export default function Pedidos() {
                     </select>
                   </td>
 
-                  {/* 🚚 ESTADO */}
+                  {/* ESTADO */}
                   <td className="text-center">
                     <Badge bg={colorEstado(pedido.estado)} className="me-2">
-                      {pedido.estado || "Pendiente"}
+                      {pedido.estado}
                     </Badge>
+
                     <select
                       className="form-select form-select-sm bg-dark text-white border-secondary"
-                      value={pedido.estado || "En proceso"}
+                      value={pedido.estado}
                       onChange={(e) => {
                         const nuevoEstado = e.target.value;
                         actualizarEstado(pedido.id, nuevoEstado);
@@ -346,14 +338,14 @@ export default function Pedidos() {
                     </select>
                   </td>
 
-                  {/* 🗑️ ELIMINAR */}
+                  {/* ACCIONES */}
                   <td className="text-center">
                     <Button
                       variant="danger"
                       size="sm"
                       onClick={() => eliminarPedido(pedido.id)}
                     >
-                      <FaTrashAlt /> Eliminar
+                      <FaTrashAlt />
                     </Button>
                   </td>
                 </tr>
@@ -361,6 +353,10 @@ export default function Pedidos() {
             </tbody>
           </Table>
         </div>
+      )}
+
+      {pedidos.length === 0 && !cargando && (
+        <p className="text-center text-muted">No se encontraron pedidos</p>
       )}
     </Container>
   );
