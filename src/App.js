@@ -30,7 +30,7 @@ import DashboardPage from "./pages/DashboardPage/DashboardPage";
 import AuxiliaresPage from "./pages/AuxiliaresPage/AuxiliaresPage";
 import HelpCenter from "./pages/HelpCenter/HelpCenter";
 import OfertasPirotecnia from "./pages/OfertasPirotecnia/OfertasPirotecnia";
-
+import EventsPage from "./pages/EventsPage/Events";
 import Carrito from "./pages/CarritoPage/Carrito";
 import Checkout from "./pages/CheckoutPage/Checkout";
 import Gracias from "./pages/Gracias/Gracias";
@@ -45,7 +45,7 @@ import PoliticaPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
 import Admin from "./pages/Admin/Admin";
 import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
-import EventosAdminAgregar from "./pages/Eventos/Eventos";
+import EventosAdminAgregar from "./pages/EventosPage/EventosAdmin";
 import Pedidos from "./pages/pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
@@ -96,9 +96,11 @@ function App() {
           {/* CLIENTES / TIENDA */}
           <Route path="/helpcenter" element={<HelpCenter />} />
           <Route path="/ofertaspirotecnia" element={<OfertasPirotecnia />} />
+
           <Route path="/eventos" element={<EventosAdminAgregar />} />
           <Route path="/categorias" element={<Categorias />} />
           <Route path="/seguridad" element={<Seguridad />} />
+          <Route path="/events" element={<EventsPage />} />
           <Route
             path="/terminoscondiciones"
             element={<TerminosCondiciones />}
@@ -151,8 +153,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-      
-          <Route path="dashboard" element={<DashboardAdmin />} />
+          <Route path="dashboardAdmin" element={<DashboardAdmin />} />
           <Route path="inventario" element={<Inventario />} />
           <Route path="pedidos" element={<Pedidos />} />
           <Route path="eventos" element={<EventosAdminAgregar />} />
