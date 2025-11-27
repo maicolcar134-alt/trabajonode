@@ -111,3 +111,15 @@
 .footer .bottom a:hover {
   color: var(--brand-warm);
 }
+
+.footer iframe {
+  margin-top: 2.5rem;
+}
+
+.footer .map-box {
+  margin-bottom: 3rem; 
+}
+
+.footer .legal-box {
+  margin-top: 3rem; 
+}

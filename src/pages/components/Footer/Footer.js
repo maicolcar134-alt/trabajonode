@@ -90,24 +90,32 @@ export default function Footer() {
               <li className="flex items-start gap-2 text-sm text-white/80">
                 <span>pyroshopmc@gmail.com</span>
               </li>
-              <li className="flex items-start gap-2 text-sm text-white/80">
-                <span>
-                  Calle 12 # 45-67
-                  <br />
-                  Ocaña, Norte de Santander
-                </span>
-              </li>
             </ul>
           </div>
         </div>
 
-        <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/30 rounded-lg p-4 mb-6">
+        {/* Mapa */}
+        <div className="w-full h-64 rounded-lg overflow-hidden map-box">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3948.6746084202755!2d-73.3564525241768!3d8.235438400904044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e677bec71bc08dd%3A0x87799706d32a0a53!2sParque%20Principal%20Oca%C3%B1a!5e0!3m2!1ses-419!2sco!4v1764201206994!5m2!1ses-419!2sco"
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+
+        {/* Aviso legal */}
+        <div className="bg-[var(--brand-accent)]/10 border border-[var(--brand-accent)]/30 rounded-lg p-4 mt-10 mb-6">
           <p className="text-sm text-white/90 m-0">
             <strong>Aviso Legal:</strong> La venta de artículos pirotécnicos está sujeta a la normativa vigente. El comprador se compromete a usar los productos de forma responsable y siguiendo todas las instrucciones de seguridad.
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">
+        {/* Derechos reservados */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60 mt-10">
           <p className="m-0">© 2025 PyroShop. Todos los derechos reservados.</p>
         </div>
       </div>
