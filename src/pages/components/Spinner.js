@@ -8,21 +8,26 @@ function Spinner() {
             text: 'Por favor espera.',
             allowOutsideClick: false,
             allowEscapeKey: false,
-            background: '#000000', // 🔹 Fondo del modal negro
-            color: '#ffffff',      // 🔹 Texto blanco
+            background: '#000000',
+            color: '#ffffff',
             showConfirmButton: false,
             didOpen: () => {
                 Swal.showLoading();
 
-                // 🔹 Fondo de toda la pantalla (overlay) negro
                 const swalOverlay = document.querySelector('.swal2-container');
                 if (swalOverlay) {
-                    swalOverlay.style.backgroundColor = 'rgba(0,0,0,1)'; // negro sólido
+                    swalOverlay.style.backgroundColor = 'rgba(0,0,0,1)';
                 }
             }
         });
 
+        //  Cierra el spinner 
+        const timer = setTimeout(() => {
+            Swal.close();
+        }, 0);
+
         return () => {
+            clearTimeout(timer);
             Swal.close();
         };
     }, []);

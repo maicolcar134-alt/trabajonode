@@ -15,7 +15,7 @@ import Footer from "./pages/components/Footer/Footer";
 // Rutas públicas
 import NotFoundPage from "./pages/components/NotFoundPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
-import LoginPage from "./pages/loginPage/LoginPage.js";
+import LoginPage from "./pages/loginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 
