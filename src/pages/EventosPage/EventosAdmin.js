@@ -7,13 +7,7 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db, storage } from "../../firebaseConfig";
-import {
-  ref as storageRef,
-  uploadBytes,
-  deleteObject,
-  getDownloadURL,
-} from "firebase/storage";
+import { db } from "../../firebaseConfig";
 
 import { motion } from "framer-motion";
 import {
@@ -43,13 +37,11 @@ export default function EventosAdmin() {
     tipo: "",
     estado: "Pendiente",
     video: "",
-    imagen: null,
-    imagenURL: "",
   });
 
-  // ==============================
-  // CARGAR EVENTOS
-  // ==============================
+  /* ================================
+  CARGAR EVENTOS
+  ================================ */
   const cargarEventos = async () => {
     const res = await getDocs(collection(db, "eventos"));
     const data = res.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -60,39 +52,13 @@ export default function EventosAdmin() {
     cargarEventos();
   }, []);
 
-  // ==============================
-  // MANEJAR IMAGEN (URL + PATH)
-  // ==============================
-  const manejarImagen = async (file) => {
-    if (!file) return { url: "", path: "" };
-
-    const path = `eventos/${Date.now()}-${file.name}`;
-    const imgRef = storageRef(storage, path);
-
-    await uploadBytes(imgRef, file);
-    const url = await getDownloadURL(imgRef);
-
-    return { url, path };
-  };
-
-  // ==============================
-  // CREAR EVENTO
-  // ==============================
+  /* ================================
+  CREAR EVENTO
+  ================================ */
   const crearEvento = async () => {
     try {
-      let imgURL = "";
-      let imgPath = "";
-
-      if (form.imagen) {
-        const res = await manejarImagen(form.imagen);
-        imgURL = res.url;
-        imgPath = res.path;
-      }
-
       await addDoc(collection(db, "eventos"), {
         ...form,
-        imagen: imgURL,
-        imagenPath: imgPath,
       });
 
       setModalAgregar(false);
@@ -104,38 +70,15 @@ export default function EventosAdmin() {
     }
   };
 
-  // ==============================
-  // ACTUALIZAR EVENTO
-  // ==============================
+  /* ================================
+  ACTUALIZAR EVENTO
+  ================================ */
   const actualizarEvento = async () => {
     try {
       const refDoc = doc(db, "eventos", eventoActual.id);
 
-      let imgURL = form.imagenURL;
-      let imgPath = eventoActual.imagenPath || "";
-
-      // ¿subió nueva imagen?
-      if (form.imagen) {
-        // borrar imagen anterior si existe
-        if (imgPath) {
-          try {
-            const oldRef = storageRef(storage, imgPath);
-            await deleteObject(oldRef);
-          } catch (e) {
-            console.warn("No se pudo eliminar imagen anterior", e);
-          }
-        }
-
-        // subir nueva
-        const res = await manejarImagen(form.imagen);
-        imgURL = res.url;
-        imgPath = res.path;
-      }
-
       await updateDoc(refDoc, {
         ...form,
-        imagen: imgURL,
-        imagenPath: imgPath,
       });
 
       setModalEditar(false);
@@ -147,20 +90,12 @@ export default function EventosAdmin() {
     }
   };
 
-  // ==============================
-  // ELIMINAR EVENTO
-  // ==============================
-  const eliminarEvento = async (id, imagenPath) => {
+  /* ================================
+  ELIMINAR EVENTO
+  ================================ */
+  const eliminarEvento = async (id) => {
     try {
       await deleteDoc(doc(db, "eventos", id));
-
-      if (imagenPath) {
-        const imgRef = storageRef(storage, imagenPath);
-        await deleteObject(imgRef).catch(() =>
-          console.warn("La imagen no existe o ya fue eliminada")
-        );
-      }
-
       cargarEventos();
     } catch (error) {
       console.error(error);
@@ -168,9 +103,9 @@ export default function EventosAdmin() {
     }
   };
 
-  // ==============================
-  // RESET FORM
-  // ==============================
+  /* ================================
+  RESET FORM
+  ================================ */
   const resetForm = () => {
     setForm({
       nombre: "",
@@ -180,14 +115,12 @@ export default function EventosAdmin() {
       tipo: "",
       estado: "Pendiente",
       video: "",
-      imagen: null,
-      imagenURL: "",
     });
   };
 
-  // ==============================
-  // ABRIR MODAL EDITAR
-  // ==============================
+  /* ================================
+  ABRIR MODAL EDITAR
+  ================================ */
   const abrirEditar = (ev) => {
     setEventoActual(ev);
     setForm({
@@ -198,15 +131,13 @@ export default function EventosAdmin() {
       tipo: ev.tipo,
       estado: ev.estado,
       video: ev.video || "",
-      imagen: null,
-      imagenURL: ev.imagen,
     });
     setModalEditar(true);
   };
 
-  // ==============================
-  // RENDER VISUAL (FULL)
-  // ==============================
+  /* ================================
+  RENDER
+  ================================ */
   return (
     <Container className="eventos-admin-container">
       <motion.h1
@@ -233,7 +164,6 @@ export default function EventosAdmin() {
           >
             <thead>
               <tr>
-                <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Fecha</th>
@@ -248,11 +178,6 @@ export default function EventosAdmin() {
             <tbody>
               {eventos.map((ev) => (
                 <tr key={ev.id}>
-                  <td>
-                    {ev.imagen && (
-                      <img src={ev.imagen} alt="img" className="img-evento" />
-                    )}
-                  </td>
                   <td>{ev.nombre}</td>
                   <td>{ev.descripcion}</td>
                   <td>{ev.fecha}</td>
@@ -297,7 +222,7 @@ export default function EventosAdmin() {
                     <Button
                       variant="danger"
                       size="sm"
-                      onClick={() => eliminarEvento(ev.id, ev.imagenPath)}
+                      onClick={() => eliminarEvento(ev.id)}
                     >
                       Eliminar
                     </Button>
@@ -309,9 +234,7 @@ export default function EventosAdmin() {
         </Card.Body>
       </Card>
 
-      {/* =======================
-          MODAL AGREGAR
-      ======================= */}
+      {/* MODAL AGREGAR */}
       <Modal show={modalAgregar} onHide={() => setModalAgregar(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Agregar Evento</Modal.Title>
@@ -389,19 +312,8 @@ export default function EventosAdmin() {
               <Form.Label>Video (URL)</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="https://youtube.com/..."
                 value={form.video}
                 onChange={(e) => setForm({ ...form, video: e.target.value })}
-              />
-            </Form.Group>
-
-            <Form.Group className="mt-3">
-              <Form.Label>Imagen</Form.Label>
-              <Form.Control
-                type="file"
-                onChange={(e) =>
-                  setForm({ ...form, imagen: e.target.files[0] })
-                }
               />
             </Form.Group>
           </Form>
@@ -417,9 +329,7 @@ export default function EventosAdmin() {
         </Modal.Footer>
       </Modal>
 
-      {/* =======================
-          MODAL EDITAR
-      ======================= */}
+      {/* MODAL EDITAR */}
       <Modal show={modalEditar} onHide={() => setModalEditar(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Editar Evento</Modal.Title>
@@ -501,26 +411,6 @@ export default function EventosAdmin() {
                 onChange={(e) => setForm({ ...form, video: e.target.value })}
               />
             </Form.Group>
-
-            <Form.Group className="mt-3">
-              <Form.Label>Nueva Imagen (opcional)</Form.Label>
-              <Form.Control
-                type="file"
-                onChange={(e) =>
-                  setForm({ ...form, imagen: e.target.files[0] })
-                }
-              />
-            </Form.Group>
-
-            {form.imagenURL && (
-              <div className="mt-3 text-center">
-                <img
-                  src={form.imagenURL}
-                  alt="actual"
-                  className="img-actual-editar"
-                />
-              </div>
-            )}
           </Form>
         </Modal.Body>
 
