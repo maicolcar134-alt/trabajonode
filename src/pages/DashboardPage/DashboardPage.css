@@ -364,3 +364,7 @@ body {
 .footer .bottom a:hover {
   color: var(--brand-warm);
 }
+
+body, html {
+  overflow-x: hidden;
+}

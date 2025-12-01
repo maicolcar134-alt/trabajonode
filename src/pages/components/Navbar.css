@@ -2,62 +2,68 @@
 .navbar-collapse,
 .navbar-collapse.collapse,
 .navbar-collapse.collapsing {
-  display: block;
+  display: flex;          /* Flexible en lugar de block */
+  flex-wrap: wrap;        /* Evita overflow a 150%-200% */
   height: auto;
   overflow: visible;
 }
 
-/* PERO SOLO EN PANTALLAS GRANDES */
+/* ---- DESKTOP ---- */
 @media (min-width: 992px) {
   .navbar-collapse {
     display: flex !important;
     height: auto !important;
+    flex-wrap: wrap;
   }
 }
 
 /* ---- MOBILE ---- */
-@media (max-width: 991px) {
+@media (max-width: 320px) {
 
-  /* Ocultar collapse por defecto */
   .navbar-collapse.collapse {
     display: none !important;
     height: 0 !important;
     overflow: hidden !important;
   }
 
-  /* Cuando está abierto */
   .navbar-collapse.collapse.show {
     display: block !important;
     height: auto !important;
     overflow: visible !important;
     background: #0d0d0d;
-    padding: 15px 0;
+    padding: 1rem 0;
   }
 
-  /* Los items */
   .navbar-nav {
     flex-direction: column !important;
     align-items: center !important;
-    gap: 12px;
+    gap: 0.75rem;
   }
 
-  /* SPACING */
   .nav-link {
     font-size: 1.1rem;
+    padding: 0.5rem 1rem; /* mejora accesibilidad */
   }
 }
 
 /* ---- TOGGLER ---- */
 .navbar-toggler {
   border: 2px solid gold !important;
-  padding: 6px 8px !important;
+  padding: 0.75rem 1rem !important; /* área táctil accesible */
   margin-left: auto;
 }
 
-/* ---- ACTIVE ITEM (TU BORDITO DORADO) ---- */
+/* ---- ACTIVE ITEM ---- */
 .nav-link.active-item {
   border: 2px solid gold !important;
   border-radius: 6px;
-  padding: 4px 12px !important;
+  padding: 0.5rem 1rem !important;
   color: gold !important;
 }
+
+/* Previene desbordes en zoom alto */
+.navbar {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
