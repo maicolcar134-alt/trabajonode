@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
+import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./CategoriasAdmin.css";
 
 import { useNavigate } from "react-router-dom";
@@ -74,8 +75,7 @@ export default function CategoriasAdmin() {
   const productosFiltrados = productos.filter(
     (p) =>
       (!filtroCategoria || p.categoria === filtroCategoria) &&
-      (!filtroBusqueda ||
-        p.nombre.toLowerCase().includes(filtroBusqueda.toLowerCase()))
+      (!filtroBusqueda || buscarConNormalizacion(p.nombre || "", filtroBusqueda))
   );
 
   // 🔥 Ordenar productos por categoría

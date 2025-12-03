@@ -24,6 +24,7 @@ import {
 import Compressor from "compressorjs";
 import { db, storage } from "../../firebaseConfig";
 import Swal from "sweetalert2";
+import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./Inventario.css";
 
 const categoriasData = [
@@ -78,6 +79,13 @@ export default function Inventario() {
 
   // Filtro
   const [filtro, setFiltro] = useState("Todos");
+  const [busquedaSKU, setBusquedaSKU] = useState("");
+  const [resultadosBusqueda, setResultadosBusqueda] = useState([]);
+  const [mostraSugerencias, setMostraSugerencias] = useState(false);
+
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 20;
 
   // Modal para editar oferta
   const [modalOferta, setModalOferta] = useState(false);
@@ -101,6 +109,40 @@ export default function Inventario() {
 
 
   // =====================================================
+  // Autocomplete búsqueda de SKU (debounce 200ms)
+  // =====================================================
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (busquedaSKU.trim() === "") {
+        setResultadosBusqueda([]);
+        setMostraSugerencias(false);
+        return;
+      }
+
+      const q = busquedaSKU.trim();
+      const resultados = productos.filter(
+        (p) =>
+          buscarConNormalizacion(p.id || "", q) ||
+          buscarConNormalizacion(p.nombre || "", q) ||
+          buscarConNormalizacion(p.categoria || "", q)
+      );
+
+      setResultadosBusqueda(resultados);
+      setMostraSugerencias(true);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [busquedaSKU, productos]);
+
+  // Seleccionar producto desde sugerencias
+  const seleccionarDelBuscador = (producto) => {
+    editarProducto(producto);
+    setBusquedaSKU(producto.id);
+    setMostraSugerencias(false);
+  };
+
+
+  // =====================================================
   // Limpiar form
   // =====================================================
   const limpiar = () => {
@@ -115,6 +157,9 @@ export default function Inventario() {
     setFileImage(null);
     setModoEditar(false);
     setIdEdit("");
+    setBusquedaSKU("");
+    setResultadosBusqueda([]);
+    setMostraSugerencias(false);
   };
 
 
@@ -346,6 +391,19 @@ export default function Inventario() {
     return true;
   });
 
+  // Cálculo de paginación
+  const totalPaginas = Math.max(1, Math.ceil(productosFiltrados.length / itemsPorPagina));
+  const productosPaginados = productosFiltrados.slice(
+    (paginaActual - 1) * itemsPorPagina,
+    paginaActual * itemsPorPagina
+  );
+
+  // Resetear página si se filtra
+  const handleCambioFiltro = (nuevoFiltro) => {
+    setFiltro(nuevoFiltro);
+    setPaginaActual(1);
+  };
+
 
   // =====================================================
   // RENDER
@@ -353,6 +411,55 @@ export default function Inventario() {
   return (
     <div className="inventario-container">
       <h2 className="inventario-title">📦 Inventario</h2>
+
+      {/* BÚSQUEDA AUTOCOMPLETE SKU */}
+      <div className="busqueda-sku-container">
+        <label>🔍 Buscar SKU / Producto</label>
+        <div className="busqueda-sku-wrapper">
+          <input
+            type="text"
+            className="busqueda-sku-input"
+            placeholder="Ingresa SKU, nombre o categoría..."
+            value={busquedaSKU}
+            onChange={(e) => setBusquedaSKU(e.target.value)}
+            onFocus={() => busquedaSKU && setMostraSugerencias(true)}
+          />
+
+          {mostraSugerencias && resultadosBusqueda.length > 0 && (
+            <div className="busqueda-sku-sugerencias">
+              {resultadosBusqueda.slice(0, 8).map((prod) => (
+                <div
+                  key={prod.id}
+                  className="sugerencia-item"
+                  onClick={() => seleccionarDelBuscador(prod)}
+                >
+                  <img
+                    src={prod.imagenUrl || imagenDefault}
+                    alt={prod.nombre}
+                    className="sugerencia-img"
+                  />
+                  <div className="sugerencia-info">
+                    <strong>{prod.id}</strong>
+                    <p>{prod.nombre}</p>
+                    <small>${prod.precio}</small>
+                  </div>
+                </div>
+              ))}
+              {resultadosBusqueda.length > 8 && (
+                <div className="sugerencia-mas">
+                  +{resultadosBusqueda.length - 8} más resultados
+                </div>
+              )}
+            </div>
+          )}
+
+          {mostraSugerencias && busquedaSKU && resultadosBusqueda.length === 0 && (
+            <div className="busqueda-sku-no-resultados">
+              No se encontraron productos
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* FILTROS */}
       <div className="filtros-categorias">
@@ -467,7 +574,7 @@ export default function Inventario() {
           </thead>
 
           <tbody>
-            {productosFiltrados.map((p) => (
+            {productosPaginados.map((p) => (
               <tr key={p.id} className={p.oferta ? "fila-oferta" : ""}>
                 <td>
                   <img
@@ -539,6 +646,31 @@ export default function Inventario() {
           </tbody>
         </table>
       </div>
+
+      {/* PAGINACIÓN */}
+      {totalPaginas > 1 && (
+        <div className="paginacion-container">
+          <button
+            className="btn btn-pagination"
+            onClick={() => setPaginaActual(Math.max(1, paginaActual - 1))}
+            disabled={paginaActual === 1}
+          >
+            ← Anterior
+          </button>
+
+          <span className="info-pagina">
+            Página {paginaActual} de {totalPaginas} ({productosFiltrados.length} items)
+          </span>
+
+          <button
+            className="btn btn-pagination"
+            onClick={() => setPaginaActual(Math.min(totalPaginas, paginaActual + 1))}
+            disabled={paginaActual === totalPaginas}
+          >
+            Siguiente →
+          </button>
+        </div>
+      )}
 
       {/* MODAL OFERTA */}
       {modalOferta && (

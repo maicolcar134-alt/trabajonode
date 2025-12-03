@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import { validarEmailConDominios } from '../../utils/validarEmail';
 import './ForgotPasswordPage.css';
 import logo from '../../assets/Explosión de color y energía.png';
 import { auth } from '../../firebaseConfig';
@@ -16,9 +17,10 @@ function ForgotPasswordPage() {
       return;
     }
 
-    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formatoCorreo.test(email)) {
-      Swal.fire("Correo inválido", "Por favor escribe un correo válido.", "error");
+    const allowed = ["gmail.com","hotmail.com","outlook.com","live.com","yahoo.com","icloud.com"];
+    const resultado = validarEmailConDominios(email, allowed, "simple");
+    if (!resultado.valido) {
+      Swal.fire("Correo inválido", resultado.razon, "error");
       return;
     }
 

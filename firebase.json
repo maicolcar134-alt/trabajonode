@@ -15,5 +15,10 @@
   },
   "storage": {
     "rules": "y"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs20",
+    "codebase": "default"
   }
 }

@@ -4,6 +4,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebaseConfig";
 import { doc, setDoc, collection, getDocs } from "firebase/firestore";
 import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { validarEmail, validarEmailConDominios } from "../../utils/validarEmail";
 import "./RegisterPage.css";
 import logo from "../../assets/Explosión de color y energía.png";
 
@@ -62,9 +63,19 @@ function RegisterPage() {
       }
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      Swal.fire("Correo inválido", "Escribe un correo válido.", "error");
+    // Validar formato y dominio permitido
+    const allowed = [
+      "gmail.com",
+      "hotmail.com",
+      "outlook.com",
+      "live.com",
+      "yahoo.com",
+      "icloud.com",
+    ];
+
+    const resultadoDominio = validarEmailConDominios(formData.email, allowed, "simple");
+    if (!resultadoDominio.valido) {
+      Swal.fire("Correo inválido", resultadoDominio.razon, "error");
       return;
     }
 

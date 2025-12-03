@@ -23,6 +23,10 @@ export default function Pedidos() {
   const [cargando, setCargando] = useState(false);
   const [listenerActivo, setListenerActivo] = useState(null);
   const [seleccionados, setSeleccionados] = useState([]);
+
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 20;
   const navigate = useNavigate();
 
   // ---------------------------------------------------------

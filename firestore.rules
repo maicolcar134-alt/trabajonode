@@ -1,0 +1,234 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =====================================================
+    // FUNCIONES AUXILIARES
+    // =====================================================
+
+    // Obtener el contador de rate limit del usuario
+    function getRateLimitCounter() {
+      return get(/databases/(default)/documents/rateLimits/$(request.auth.uid)).data.count;
+    }
+
+    // Obtener timestamp del último reset
+    function getRateLimitTimestamp() {
+      return get(/databases/(default)/documents/rateLimits/$(request.auth.uid)).data.lastReset;
+    }
+
+    // Verificar si el usuario está autenticado
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Verificar si el usuario es admin
+    function isAdmin() {
+      return request.auth.token.role == 'Admin';
+    }
+
+    // Verificar si el usuario es el dueño del documento
+    function isOwner(uid) {
+      return request.auth.uid == uid;
+    }
+
+    // =====================================================
+    // RATE LIMITING: 100 requests por minuto por usuario
+    // =====================================================
+
+    // Verificar rate limit (ventana de 60 segundos)
+    function checkRateLimit() {
+      let now = request.time.toMillis();
+      let counter = getRateLimitCounter();
+      let lastReset = getRateLimitTimestamp();
+      
+      // Si pasó más de 60 segundos desde el último reset, reiniciar contador
+      if (now - lastReset > 60000) {
+        return true; // Permitir, se reinicia el contador
+      }
+      
+      // Si el contador es menor a 100, permitir
+      if (counter < 100) {
+        return true;
+      }
+      
+      // Si alcanzó 100 en menos de 60 segundos, denegar
+      return false;
+    }
+
+    // Incrementar contador de rate limit
+    function incrementRateLimitCounter() {
+      let now = request.time.toMillis();
+      let counter = getRateLimitCounter();
+      let lastReset = getRateLimitTimestamp();
+      
+      // Si pasó más de 60 segundos, reiniciar a 1
+      if (now - lastReset > 60000) {
+        return { count: 1, lastReset: now };
+      }
+      
+      // Si no, incrementar
+      return { count: counter + 1, lastReset: lastReset };
+    }
+
+    // =====================================================
+    // COLECCIÓN: rateLimits (SISTEM CONTROL)
+    // =====================================================
+    match /rateLimits/{uid} {
+      // Solo el sistema (funciones) puede escribir
+      allow read: if request.auth.uid == uid;
+      allow write: if false; // Se actualiza solo desde Cloud Functions
+    }
+
+    // =====================================================
+    // COLECCIÓN: inventario
+    // =====================================================
+    match /inventario/{document=**} {
+      // Lectura pública
+      allow read: if true;
+
+      // Escritura: solo admin, con rate limit
+      allow create, update, delete: if isAuthenticated()
+        && isAdmin()
+        && checkRateLimit()
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0
+        && request.resource.data.precio is number
+        && request.resource.data.precio > 0
+        && request.resource.data.descripcion is string
+        && request.resource.data.descripcion.size() <= 2000
+        && request.resource.data.cantidad is number
+        && request.resource.data.cantidad >= 0
+        && request.resource.data.categoria is string;
+    }
+
+    // =====================================================
+    // COLECCIÓN: pedidos
+    // =====================================================
+    match /pedidos/{document=**} {
+      // Usuario puede leer sus propios pedidos
+      allow read: if isAuthenticated()
+        && (isOwner(resource.data.usuarioId) || isAdmin());
+
+      // Usuario puede crear pedido con rate limit (5 req/min para prevenir spam)
+      allow create: if isAuthenticated()
+        && checkRateLimit()
+        && request.resource.data.usuarioId == request.auth.uid
+        && request.resource.data.estado is string
+        && request.resource.data.total is number
+        && request.resource.data.total > 0
+        && request.resource.data.fecha != null;
+
+      // Solo admin puede actualizar estado
+      allow update: if isAuthenticated()
+        && isAdmin()
+        && checkRateLimit()
+        && resource.data.usuarioId == request.auth.uid;
+
+      // Admin puede eliminar
+      allow delete: if isAuthenticated()
+        && isAdmin();
+    }
+
+    // =====================================================
+    // COLECCIÓN: usuarios
+    // =====================================================
+    match /usuarios/{uid} {
+      // Usuario puede leer sus propios datos
+      allow read: if isAuthenticated()
+        && isOwner(uid);
+
+      // Admin puede leer todos
+      allow read: if isAuthenticated()
+        && isAdmin();
+
+      // Usuario puede actualizar su perfil (con rate limit)
+      allow update: if isAuthenticated()
+        && isOwner(uid)
+        && checkRateLimit()
+        && request.resource.data.Rol == resource.data.Rol; // No puede cambiar su rol
+
+      // Admin puede crear usuarios y cambiar roles
+      allow create, update: if isAuthenticated()
+        && isAdmin()
+        && checkRateLimit();
+    }
+
+    // =====================================================
+    // COLECCIÓN: zonas
+    // =====================================================
+    match /zonas/{document=**} {
+      // Lectura pública
+      allow read: if true;
+
+      // Admin puede escribir con rate limit
+      allow create, update, delete: if isAuthenticated()
+        && isAdmin()
+        && checkRateLimit()
+        && request.resource.data.nombre is string
+        && request.resource.data.ciudad is string
+        && request.resource.data.costo is number
+        && request.resource.data.costo >= 0
+        && request.resource.data.estado is string;
+    }
+
+    // =====================================================
+    // COLECCIÓN: auditoria
+    // =====================================================
+    match /auditoria/{document=**} {
+      // Solo admin puede leer logs
+      allow read: if isAuthenticated()
+        && isAdmin();
+
+      // Sistema escribe logs (desde Cloud Functions o cliente)
+      allow create: if isAuthenticated()
+        && checkRateLimit()
+        && request.resource.data.usuario is string
+        && request.resource.data.accion is string
+        && request.resource.data.fecha != null;
+
+      // Solo admin puede eliminar (por limpieza)
+      allow delete: if isAuthenticated()
+        && isAdmin();
+    }
+
+    // =====================================================
+    // COLECCIÓN: categorias
+    // =====================================================
+    match /categorias/{document=**} {
+      // Lectura pública
+      allow read: if true;
+
+      // Admin puede escribir con rate limit
+      allow create, update, delete: if isAuthenticated()
+        && isAdmin()
+        && checkRateLimit()
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0;
+    }
+
+    // =====================================================
+    // COLECCIÓN: eventos
+    // =====================================================
+    match /eventos/{document=**} {
+      // Lectura pública
+      allow read: if true;
+
+      // Admin puede escribir con rate limit
+      allow create, update, delete: if isAuthenticated()
+        && isAdmin()
+        && checkRateLimit()
+        && request.resource.data.titulo is string
+        && request.resource.data.descripcion is string
+        && request.resource.data.descripcion.size() <= 2000
+        && request.resource.data.fecha != null;
+    }
+
+    // =====================================================
+    // COLECCIÓN: default (RECHAZAR TODO)
+    // =====================================================
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

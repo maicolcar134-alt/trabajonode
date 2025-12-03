@@ -11,6 +11,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig"; // ajusta la ruta si es necesario
+import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./ZonasEnvio.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -65,13 +66,13 @@ export default function ZonasEnvioProFirebase() {
     // filtro por tab (estado)
     if (tab !== "Todos") arr = arr.filter((z) => z.estado === tab);
 
-    // búsqueda
-    const q = busqueda.trim().toLowerCase();
+    // búsqueda con normalización (ignora acentos)
+    const q = busqueda.trim();
     if (q) {
       arr = arr.filter(
         (z) =>
-          (z.nombre || "").toString().toLowerCase().includes(q) ||
-          (z.ciudad || "").toString().toLowerCase().includes(q)
+          buscarConNormalizacion(z.nombre || "", q) ||
+          buscarConNormalizacion(z.ciudad || "", q)
       );
     }
 

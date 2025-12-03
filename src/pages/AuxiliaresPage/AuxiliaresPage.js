@@ -8,6 +8,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import {
   Table,
   Button,
@@ -222,7 +223,7 @@ function AuxiliaresPage() {
     }
 
     const filtrados = allAuxiliares.filter((a) =>
-      a.email?.toLowerCase().includes(searchEmail.toLowerCase())
+      buscarConNormalizacion(a.email || "", searchEmail)
     );
 
     if (filtrados.length === 0) {

@@ -7,12 +7,17 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
+import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./Auditoria.css";
 
 export default function Auditoria() {
   const navigate = useNavigate();
   const [registros, setRegistros] = useState([]);
   const [busqueda, setBusqueda] = useState(""); // 🔍 NUEVO: estado del buscador
+
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 20;
 
   useEffect(() => {
     const db = getFirestore();
@@ -32,18 +37,26 @@ export default function Auditoria() {
 
 
 
-  // 🔍 NUEVO — FILTRO EN TIEMPO REAL
+  // 🔍 NUEVO — FILTRO EN TIEMPO REAL (con normalización de acentos)
   const registrosFiltrados = registros.filter((r) => {
-    const texto = busqueda.toLowerCase();
+    const texto = busqueda.trim();
+    if (!texto) return true;
 
     return (
-      r.usuario?.toLowerCase().includes(texto) ||
-      r.accion?.toLowerCase().includes(texto) ||
-      r.resultado?.toLowerCase().includes(texto) ||
-      r.ip?.toLowerCase().includes(texto) ||
-      r.fecha?.toLowerCase().includes(texto)
+      buscarConNormalizacion(r.usuario || "", texto) ||
+      buscarConNormalizacion(r.accion || "", texto) ||
+      buscarConNormalizacion(r.resultado || "", texto) ||
+      buscarConNormalizacion(r.ip || "", texto) ||
+      buscarConNormalizacion(r.fecha || "", texto)
     );
   });
+
+  // Cálculo de paginación
+  const totalPaginas = Math.max(1, Math.ceil(registrosFiltrados.length / itemsPorPagina));
+  const registrosPaginados = registrosFiltrados.slice(
+    (paginaActual - 1) * itemsPorPagina,
+    paginaActual * itemsPorPagina
+  );
 
   return (
     <div className="auditoria">
@@ -100,14 +113,14 @@ export default function Auditoria() {
             </tr>
           </thead>
           <tbody>
-            {registrosFiltrados.length === 0 ? (
+            {registrosPaginados.length === 0 ? (
               <tr>
                 <td colSpan="5" className="sin-datos">
                   No hay registros que coincidan con la búsqueda
                 </td>
               </tr>
             ) : (
-              registrosFiltrados.map((r) => (
+              registrosPaginados.map((r) => (
                 <tr key={r.id}>
                   <td>{r.fecha}</td>
                   <td>
@@ -134,6 +147,31 @@ export default function Auditoria() {
           </tbody>
         </table>
       </div>
+
+      {/* PAGINACIÓN */}
+      {totalPaginas > 1 && (
+        <div className="paginacion-container">
+          <button
+            className="btn-pagination"
+            onClick={() => setPaginaActual(Math.max(1, paginaActual - 1))}
+            disabled={paginaActual === 1}
+          >
+            ← Anterior
+          </button>
+
+          <span className="info-pagina">
+            Página {paginaActual} de {totalPaginas} ({registrosFiltrados.length} items)
+          </span>
+
+          <button
+            className="btn-pagination"
+            onClick={() => setPaginaActual(Math.min(totalPaginas, paginaActual + 1))}
+            disabled={paginaActual === totalPaginas}
+          >
+            Siguiente →
+          </button>
+        </div>
+      )}
     </div>
   );
 }
