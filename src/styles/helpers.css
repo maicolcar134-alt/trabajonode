@@ -1,0 +1,103 @@
+/* Helpers responsive global
+   - Contenedores fluidos y fijos
+   - Imágenes responsivas
+   - Tablas responsivas
+   - Utilidades para stack en mobile
+*/
+
+:root{
+  --max-width-lg: 1200px;
+  --max-width-md: 900px;
+  --gap-sm: 12px;
+  --gap-md: 20px;
+}
+
+/* Contenedores */
+.container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
+}
+
+.container-sm { max-width: 540px; }
+.container-md { max-width: 720px; }
+.container-lg { max-width: var(--max-width-lg); }
+
+/* Imágenes */
+.responsive-img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Utilidad: hacer elementos apilables en móvil */
+.stack-on-mobile {
+  display: flex;
+  gap: var(--gap-sm);
+}
+
+@media (max-width: 768px) {
+  .stack-on-mobile { flex-direction: column; }
+}
+
+/* Tablas responsivas: envuelve tabla en contenedor scroll */
+.responsive-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.responsive-table th,
+.responsive-table td {
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap; /* evitar quiebres en celdas */
+}
+
+/* Formularios adaptativos */
+.form-row {
+  display: flex;
+  gap: var(--gap-md);
+}
+
+@media (max-width: 768px) {
+  .form-row { flex-direction: column; }
+}
+
+/* Helpers de espaciado */
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+
+/* Utils para esconder en mobile/desktop */
+.d-none-mobile { display: block; }
+.d-none-desktop { display: none; }
+@media (max-width: 768px) {
+  .d-none-mobile { display: none !important; }
+  .d-none-desktop { display: block !important; }
+}
+
+/* Botones de ancho completo en pantallas pequeñas */
+.btn-block-sm { display: inline-block; }
+@media (max-width: 768px) {
+  .btn-block-sm { display: block; width: 100%; }
+}
+
+/* Flex utilities */
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-between { display:flex; align-items:center; justify-content:space-between; }
+
+/* Ajuste de tipografía base escalable */
+html { font-size: 16px; }
+@media (max-width: 480px) { html { font-size: 14px; } }
+
+/* Evitar overflow horizontal general */
+body, html { max-width: 100%; overflow-x: hidden; }

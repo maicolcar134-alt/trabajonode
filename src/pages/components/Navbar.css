@@ -17,8 +17,9 @@
   }
 }
 
-/* ---- MOBILE ---- */
-@media (max-width: 320px) {
+/* ---- MOBILE / TABLET ---- */
+/* Aplicar reglas para pantallas pequeñas y medianas (hasta tablet grande) */
+@media (max-width: 991px) {
 
   .navbar-collapse.collapse {
     display: none !important;
@@ -38,11 +39,24 @@
     flex-direction: column !important;
     align-items: center !important;
     gap: 0.75rem;
+    width: 100%;
   }
 
   .nav-link {
-    font-size: 1.1rem;
-    padding: 0.5rem 1rem; /* mejora accesibilidad */
+    font-size: 1.05rem;
+    padding: 0.6rem 1rem; /* mejora accesibilidad */
+    width: 100%;
+    text-align: center;
+  }
+
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .navbar-toggler {
+    display: block;
   }
 }
 
