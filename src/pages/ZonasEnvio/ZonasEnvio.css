@@ -79,13 +79,15 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   gap: 8px;
   background: var(--accent);
   color: white;
-  padding: 8px 12px;
+  padding: 12px 16px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: 600;
   box-shadow: 0 6px 14px rgba(37,99,235,0.14);
   transition: transform 0.14s ease, box-shadow 0.14s ease;
+  min-height: 44px;
+  min-width: 44px;
 }
 .btn-nuevo:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(37,99,235,0.18); }
 
@@ -154,6 +156,28 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   vertical-align: middle;
   color: var(--text);
 }
+
+/* Responsive table para móvil */
+@media (max-width: 768px) {
+  .tabla-zonas {
+    font-size: 13px;
+  }
+  .tabla-zonas thead th,
+  .tabla-zonas tbody td {
+    padding: 10px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-zonas {
+    font-size: 12px;
+    min-width: 300px;
+  }
+  .tabla-zonas thead th,
+  .tabla-zonas tbody td {
+    padding: 8px 6px;
+  }
+}
 .tabla-zonas tbody tr { transition: background 0.14s ease, transform 0.12s; }
 .tabla-zonas tbody tr:hover { background: rgba(255,255,255,0.02); transform: translateY(-2px); }
 
@@ -175,9 +199,14 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   border: none;
   color: var(--text);
   cursor: pointer;
-  padding: 6px;
+  padding: 10px 12px;
   border-radius: 6px;
   transition: background 0.12s, color 0.12s, transform 0.08s;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .icon-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.02); }
 .icon-btn.delete:hover { background: rgba(239,68,68,0.12); color: #fff; }
@@ -199,12 +228,17 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   margin-top: 12px;
 }
 .paginacion button {
-  padding: 8px 10px;
+  padding: 12px 14px;
   border-radius: 8px;
   border: none;
   background: rgba(255,255,255,0.02);
   color: var(--text);
   cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .paginacion button:disabled { opacity: 0.35; cursor: not-allowed; }
 
@@ -249,8 +283,12 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
 /* Modal buttons */
 .modal-form button {
   width: 100%;
-  padding: 10px 12px;
+  padding: 14px 20px;
   border-radius: 8px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   background: var(--accent);
   color: white;

@@ -9,7 +9,7 @@ const rateLimitFunctions = require("./rateLimitController");
 
 /**
  * Limpieza diaria de logs de auditoría
- * Elimina registros más antiguos de 90 días
+ * Elimina registros más antiguos de 730 días (2 años)
  * Se ejecuta cada día a las 2:00 AM UTC
  */
 exports.cleanupAuditoria = functions
@@ -17,21 +17,21 @@ exports.cleanupAuditoria = functions
   .pubsub.schedule("0 2 * * *") // Cada día a las 2 AM UTC
   .timeZone("UTC")
   .onRun(async (context) => {
-    console.log("🧹 Iniciando limpieza de auditoría...");
+    console.log("🧹 Iniciando limpieza de auditoría (retención 2 años)...");
 
     try {
       const ahora = new Date();
-      const hace90Dias = new Date(ahora.getTime() - 90 * 24 * 60 * 60 * 1000);
+      const hace730Dias = new Date(ahora.getTime() - 730 * 24 * 60 * 60 * 1000);
 
-      // Consultar logs más antiguos de 90 días
+      // Consultar logs más antiguos de 730 días (2 años)
       const querySnapshot = await db
         .collection("auditoria")
-        .where("fecha", "<", admin.firestore.Timestamp.fromDate(hace90Dias))
+        .where("fecha", "<", admin.firestore.Timestamp.fromDate(hace730Dias))
         .limit(500) // Limitar a 500 por ejecución para evitar timeout
         .get();
 
       if (querySnapshot.empty) {
-        console.log("✅ No hay logs para eliminar.");
+        console.log("✅ No hay logs para eliminar (retención 2 años).");
         return { success: true, deletedCount: 0, message: "No data to delete" };
       }
 
@@ -46,7 +46,7 @@ exports.cleanupAuditoria = functions
 
       await batch.commit();
 
-      console.log(`✅ Limpieza completada: ${count} logs eliminados`);
+      console.log(`✅ Limpieza completada (retención 2 años): ${count} logs eliminados`);
       return { success: true, deletedCount: count };
     } catch (error) {
       console.error("❌ Error en limpieza de auditoría:", error);

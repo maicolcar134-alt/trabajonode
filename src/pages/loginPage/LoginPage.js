@@ -6,6 +6,7 @@ import { doc, getDoc } from "firebase/firestore";
 import "./LoginPage.css";
 import logo from "../../assets/Explosión de color y energía.png";
 import { registrarLog } from "../../utils/auditoriaService";
+import { retryAsyncSmartly } from "../../utils/retryHelper";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -25,16 +26,21 @@ function LoginPage() {
     }
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
+      // Reintentar autenticación en caso de errores de red
+      const userCredential = await retryAsyncSmartly(
+        () => signInWithEmailAndPassword(auth, email, password),
+        3,
+        1000
       );
       const user = userCredential.user;
 
-      // 📄 Buscar datos del usuario en Firestore
+      // 📄 Buscar datos del usuario en Firestore (también con reintentos)
       const userDocRef = doc(db, "usuarios", user.uid);
-      const userSnap = await getDoc(userDocRef);
+      const userSnap = await retryAsyncSmartly(
+        () => getDoc(userDocRef),
+        3,
+        1000
+      );
 
       if (!userSnap.exists()) {
         Swal.fire("Acceso denegado", "Tu cuenta no está registrada.", "error");
@@ -73,7 +79,7 @@ Swal.fire({
   }
 });
     } catch (error) {
-      console.error("Error de login:", error);
+      console.error("❌ Error de login (después de reintentos):", error);
       let message = "Error al iniciar sesión. Inténtalo de nuevo.";
 
       // Mensajes específicos según el código de error
