@@ -6,7 +6,7 @@ import Logo from "../../assets/Logo.png";
 import { Badge } from "react-bootstrap";
 import "./Navbar.css";
 
-const DashboardNavbar = ({ user, userPhoto, handleLogout, carrito }) => {
+const DashboardNavbar = ({ user, userPhoto, handleLogout, carrito, rol }) => {
   const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,9 +55,14 @@ const DashboardNavbar = ({ user, userPhoto, handleLogout, carrito }) => {
               Ayuda
             </Nav.Link>
 
-            <Nav.Link onClick={() => handleClose("/Admin")} className={`text-warning ${isActive("/Admin") ? "active-item" : ""}`}>
-              <i className="bi bi-shield-lock"></i> Admin
-            </Nav.Link>
+            {(rol?.toLowerCase() === "admin" || rol === undefined) && (
+              <Nav.Link
+                onClick={() => handleClose("/Admin")}
+                className={`text-warning ${isActive("/Admin") ? "active-item" : ""}`}
+              >
+                <i className="bi bi-shield-lock"></i> Admin
+              </Nav.Link>
+            )}
 
             {user ? (
               <Nav.Item className="logout-container">
