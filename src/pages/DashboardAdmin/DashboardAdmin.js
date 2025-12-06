@@ -21,9 +21,15 @@ import {
   Bar,
 } from "recharts";
 
+// Hook para detectar móvil
+import { useIsMobile } from "../../hooks/useIsMobile";
+
 import "./DashboardAdmin.css";
 
 export default function DashboardAdmin() {
+  // Detectar si es móvil
+  const isMobile = useIsMobile(768);
+
   // ------------------------------
   // ESTADOS
   // ------------------------------
@@ -105,7 +111,7 @@ export default function DashboardAdmin() {
   };
 
   // --------------------------------------------------
-  // 📊 Ventas por día del mes
+  // 📊 Ventas por día del mes (simplificadas en móvil)
   // --------------------------------------------------
   let ventasPorDia = [];
 
@@ -122,14 +128,24 @@ export default function DashboardAdmin() {
     }
   });
 
+  // En móvil, mostrar solo cada 3er día para mejor legibilidad
+  const ventasPorDiaOptimizado = isMobile
+    ? ventasPorDia.filter((item) => item.dia % 3 === 0 || item.dia === 1)
+    : ventasPorDia;
+
   // --------------------------------------------------
-  // 💰 Balance acumulado
+  // 💰 Balance acumulado (simplificado en móvil)
   // --------------------------------------------------
   let acumulado = 0;
   const balanceData = ventasPorDia.map((item) => {
     acumulado += item.total;
     return { dia: item.dia, total: item.total, balance: acumulado };
   });
+
+  // En móvil, mostrar solo cada 3er día
+  const balanceDataOptimizado = isMobile
+    ? balanceData.filter((item) => item.dia % 3 === 0 || item.dia === 1)
+    : balanceData;
 
   // --------------------------------------------------
   // 📈 Gráfica: Pedidos por estado
@@ -197,8 +213,8 @@ export default function DashboardAdmin() {
       <section className="grafica-box">
         <h2>📆 Ventas por día del mes</h2>
 
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={ventasPorDia}>
+        <ResponsiveContainer width="100%" height={isMobile ? 200 : 300}>
+          <LineChart data={ventasPorDiaOptimizado}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="dia" />
             <YAxis />
@@ -214,8 +230,8 @@ export default function DashboardAdmin() {
       <section className="grafica-box">
         <h2>💰 Balance acumulado del mes</h2>
 
-        <ResponsiveContainer width="100%" height={350}>
-          <LineChart data={balanceData}>
+        <ResponsiveContainer width="100%" height={isMobile ? 200 : 350}>
+          <LineChart data={balanceDataOptimizado}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="dia" />
             <YAxis />
@@ -236,7 +252,7 @@ export default function DashboardAdmin() {
       <section className="grafica-box">
         <h2>📦 Pedidos por estado</h2>
 
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={isMobile ? 200 : 350}>
           <BarChart data={pedidosChart}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="estado" />

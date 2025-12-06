@@ -294,4 +294,53 @@ h1 {
         order: -1;
         margin-bottom: 14px;
     }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .form-group label {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .checkout-root {
+        padding: 16px 12px;
+    }
+
+    .checkout-card {
+        padding: 16px;
+    }
+
+    h1 {
+        font-size: 1.4rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        font-size: 16px;
+        padding: 14px;
+        min-height: 44px;
+    }
+
+    .btn-back {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    .summary-item {
+        font-size: 0.95rem;
+    }
+
+    .summary-item img {
+        width: 50px;
+        height: 50px;
+    }
 }

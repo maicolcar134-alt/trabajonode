@@ -169,6 +169,37 @@
   color: #4b6cad;
 }
 
+/* Responsive para títulos en móvil */
+@media (max-width: 768px) {
+  .titulo-principal {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+  }
+
+  .subtitulo {
+    font-size: 0.95rem;
+  }
+
+  .header {
+    padding: 80px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .titulo-principal {
+    font-size: 1.4rem;
+  }
+
+  .subtitulo {
+    font-size: 0.9rem;
+  }
+
+  .header {
+    padding: 60px 12px;
+    margin-bottom: 20px;
+  }
+}
+
 /* =========================================================
     BLOQUES DE CONTENIDO
    ========================================================= */

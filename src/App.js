@@ -44,7 +44,7 @@ import GaleriaFotos from "./pages/components/cloudinary.jsx"
 import Admin from "./pages/Admin/Admin";
 import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
-import EventosAdminAgregar from "./pages/EventosPage/EventosAdmin";
+import EventosAdminAgregar from "./pages/EventsPage/Events";
 import Pedidos from "./pages/pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";

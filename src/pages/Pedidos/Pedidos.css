@@ -38,6 +38,11 @@ input.form-control:focus {
 .btn {
   transition: 0.3s ease;
   font-weight: bold;
+  padding: 12px 16px !important;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-warning {
@@ -141,17 +146,53 @@ select.form-select:focus {
     padding: 20px;
   }
 
+  h1 {
+    font-size: 1.8rem;
+  }
+
   input.form-control {
     width: 100% !important;
     margin-bottom: 10px;
+    font-size: 16px;
+    padding: 12px;
   }
 
   .btn {
     width: 100%;
     margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  .table {
+    font-size: 14px;
   }
 
   .table thead {
-    font-size: 0.8rem;
+    font-size: 13px;
+  }
+
+  .table th, .table td {
+    padding: 12px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .table {
+    font-size: 12px;
+    min-width: 320px;
+  }
+
+  .table th, .table td {
+    padding: 8px 4px;
+  }
+
+  input.form-control {
+    font-size: 16px;
+    padding: 14px;
+    min-height: 44px;
   }
 }

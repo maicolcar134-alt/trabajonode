@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../firebaseConfig";
-import { doc, setDoc, collection, getDocs } from "firebase/firestore";
+import { doc, setDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
+import { validarEmail, validarEmailConDominios } from "../../utils/validarEmail";
 import "./RegisterPage.css";
 import logo from "../../assets/Explosión de color y energía.png";
 
@@ -19,13 +20,67 @@ function RegisterPage() {
     confirmPassword: "",
   });
 
+  // Mostrar teléfono con máscara (visual). `formData.telefono` mantiene sólo dígitos (10)
+  const [phoneDisplay, setPhoneDisplay] = useState("");
+
+  const formatColPhone = (digits) => {
+    if (!digits) return "";
+    const d = digits.replace(/\D/g, "");
+    if (d.length <= 3) return d;
+    if (d.length <= 6) return `${d.slice(0,3)} ${d.slice(3)}`;
+    return `${d.slice(0,3)} ${d.slice(3,6)} ${d.slice(6,10)}`;
+  };
+
   // 🔹 Estado para las verificaciones de edad
   const [edadVerificada, setEdadVerificada] = useState(0);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Para los nombres y apellidos: solo letras, espacios, guión y apóstrofe
+    if (name === "nombres" || name === "apellidos") {
+      // permitir letras acentuadas, espacios, guiones y apóstrofes
+      const cleanedName = value.replace(/[^A-Za-zÀ-ÖØ-öø-ÿ\s\-']/g, "").replace(/\s+/g, " ").slice(0, 60);
+      setFormData((prev) => ({ ...prev, [name]: cleanedName }));
+      return;
+    }
+
+    // Para el teléfono: soportar +57 prefijo y máscara visual
+    if (name === "telefono") {
+      // permitir sólo dígitos y signo +
+      let cleaned = value.replace(/[^\d\+]/g, "");
+
+      // Si comienza con +, sólo permitir +57 como prefijo; si no, tratar como número local
+      if (cleaned.startsWith("+")) {
+        if (!cleaned.startsWith("+57")) {
+          // eliminar el + y tratar como número local
+          cleaned = cleaned.replace("+", "");
+        }
+      }
+
+      if (cleaned.startsWith("+57")) {
+        // extraer dígitos después del prefijo y limitar a 10
+        const after = cleaned.replace("+57", "").replace(/\D/g, "").slice(0, 10);
+        setFormData((prev) => ({ ...prev, telefono: after }));
+        setPhoneDisplay(`+57 ${formatColPhone(after)}`);
+        return;
+      }
+
+      // número sin prefijo internacional
+      const digits = cleaned.replace(/\D/g, "").slice(0, 10);
+      setFormData((prev) => ({ ...prev, telefono: digits }));
+      setPhoneDisplay(formatColPhone(digits));
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  // Sincronizar phoneDisplay inicial si formData cambia externamente
+  useEffect(() => {
+    if (formData.telefono) {
+      setPhoneDisplay(formatColPhone(formData.telefono));
+    }
+  }, [formData.telefono]);
 
   // 🔹 Función para calcular edad
   const calcularEdad = (fechaNacimiento) => {
@@ -49,38 +104,99 @@ function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🔹 Validaciones básicas
-    for (const key in formData) {
-      if (formData[key] === "") {
-        Swal.fire(
-          "Campos incompletos",
-          "Por favor llena todos los campos.",
-          "warning"
-        );
-        return;
-      }
+    // 🔹 Validaciones detalladas con checklist
+    const errors = {};
+    const valid = {};
+
+    // Required fields
+    const required = ["nombres", "apellidos", "fechaNacimiento", "sexo", "telefono", "email", "password", "confirmPassword"];
+    required.forEach((k) => {
+      valid[k] = !!(formData[k] && String(formData[k]).trim() !== "");
+      if (!valid[k]) errors[k] = "Campo requerido";
+    });
+
+    // nombres/apellidos only letters
+    const nameRx = /^[A-Za-zÀ-ÖØ-öø-ÿ\s\-']+$/;
+    if (formData.nombres && !nameRx.test(formData.nombres)) {
+      valid.nombres = false;
+      errors.nombres = "Solo letras, espacios, guiones o apóstrofes";
+    }
+    if (formData.apellidos && !nameRx.test(formData.apellidos)) {
+      valid.apellidos = false;
+      errors.apellidos = "Solo letras, espacios, guiones o apóstrofes";
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      Swal.fire("Correo inválido", "Escribe un correo válido.", "error");
-      return;
+    // telefono digits
+    const telefonoDigits = (formData.telefono || "").replace(/\D/g, "");
+    if (telefonoDigits.length !== 10) {
+      valid.telefono = false;
+      errors.telefono = "Debe tener exactamente 10 dígitos";
+    } else {
+      valid.telefono = true;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      Swal.fire("Contraseña", "Las contraseñas no coinciden.", "error");
-      return;
+    // email + domain allowed
+    const allowed = ["gmail.com", "hotmail.com", "outlook.com", "live.com", "yahoo.com", "icloud.com"];
+    const resultadoDominio = validarEmailConDominios(formData.email, allowed, "simple");
+    if (!resultadoDominio.valido) {
+      valid.email = false;
+      errors.email = resultadoDominio.razon || "Correo inválido";
+    } else valid.email = true;
+
+    // passwords
+    if (formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      valid.password = false;
+      valid.confirmPassword = false;
+      errors.password = "Las contraseñas no coinciden";
     }
 
-    // 🔹 Calcular edad del usuario
+    // edad
     const edad = calcularEdad(formData.fechaNacimiento);
+    if (!isFinite(edad) || edad < 18) {
+      valid.fechaNacimiento = false;
+      errors.fechaNacimiento = "Debes tener al menos 18 años";
+    } else valid.fechaNacimiento = true;
 
-    if (edad < 18) {
-      Swal.fire({
+    // Si hay errores iniciales, mostrar checklist
+    const anyInvalid = Object.values(valid).some((v) => v === false);
+    // Antes de mostrar, comprobar duplicados en DB (email y telefono)
+    const emailQ = query(collection(db, "usuarios"), where("email", "==", (formData.email || "").toLowerCase()));
+    const phoneQ = query(collection(db, "usuarios"), where("telefono", "==", telefonoDigits));
+    const [emailSnap, phoneSnap] = await Promise.all([getDocs(emailQ), getDocs(phoneQ)]);
+    if (!emailSnap.empty) {
+      valid.email = false;
+      errors.email = errors.email ? `${errors.email} — Correo ya registrado` : "Correo ya registrado";
+    }
+    if (!phoneSnap.empty) {
+      valid.telefono = false;
+      errors.telefono = errors.telefono ? `${errors.telefono} — Teléfono ya registrado` : "Teléfono ya registrado";
+    }
+
+    const anyInvalidAfterDup = Object.values(valid).some((v) => v === false);
+    if (anyInvalid || anyInvalidAfterDup) {
+      const labels = {
+        nombres: "Nombres",
+        apellidos: "Apellidos",
+        fechaNacimiento: "Fecha de Nacimiento (edad)",
+        sexo: "Sexo",
+        telefono: "Teléfono",
+        email: "Correo Electrónico",
+        password: "Contraseña",
+        confirmPassword: "Confirmar Contraseña",
+      };
+
+      const rows = Object.keys(labels).map((k) => {
+        const ok = valid[k] !== false && valid[k] !== undefined ? true : false; // treat undefined as true if not checked
+        const icon = ok ? "✅" : "❌";
+        const msg = errors[k] ? `<small style=\"color:#d33;margin-left:8px\">${errors[k]}</small>` : "";
+        return `<div style=\"display:flex;align-items:center;gap:8px;margin:6px 0\">${icon} <strong>${labels[k]}</strong> ${msg}</div>`;
+      }).join("");
+
+      await Swal.fire({
+        title: "Errores en el formulario",
+        html: rows,
         icon: "error",
-        title: "Edad no permitida",
-        text: "Debes tener al menos 18 años para registrarte.",
-        confirmButtonText: "Entendido",
+        width: 600,
       });
       return;
     }
@@ -94,13 +210,15 @@ function RegisterPage() {
       const user = userCredential.user;
 
       // 🔹 Guardar en Firestore
+      // Normalizamos teléfono a sólo dígitos antes de guardar
+      const telefonoGuardar = (formData.telefono || "").replace(/\D/g, "");
       await setDoc(doc(db, "usuarios", user.uid), {
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         fechaNacimiento: formData.fechaNacimiento,
         edad: edad,
         sexo: formData.sexo,
-        telefono: formData.telefono,
+        telefono: telefonoGuardar,
         email: formData.email,
         Rol: "Cliente",
         estado: "pendiente",
@@ -176,7 +294,7 @@ function RegisterPage() {
             />
           </div>
 
-          {/* Campo 'Cédula' eliminado según petición */}
+          {/* Cédula field removed as per requirement */}
 
           <div className="mb-3">
             <label className="form-label">Fecha de Nacimiento</label>
@@ -195,10 +313,13 @@ function RegisterPage() {
               type="tel"
               className="form-control"
               name="telefono"
-              value={formData.telefono}
+              value={phoneDisplay}
               onChange={handleChange}
-              placeholder="Ej: 3001234567"
+              placeholder="Ej: 3001234567 o +573001234567"
+              inputMode="numeric"
+              maxLength={15}
             />
+            <div className="form-text"></div>
           </div>
 
           <div className="mb-3">

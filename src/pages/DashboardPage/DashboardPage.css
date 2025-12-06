@@ -9,7 +9,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #ffffff;
   position: relative;
   z-index: 0;
 }
@@ -25,7 +25,7 @@
 
 /* Caja de contenido dentro del fondo */
 .overlay {
-  background-color: rgba(227, 220, 220, 0.6);
+  background-color: #e3dcdc99;
   padding: 40px;
   border-radius: 12px;
   max-width: 900px;
@@ -43,6 +43,44 @@
 .welcome-text {
   color: #141414;
   margin-bottom: 20px;
+}
+
+/* Responsive legibilidad móvil */
+@media (max-width: 768px) {
+  .overlay {
+    padding: 30px;
+    width: calc(100% - 60px);
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+    margin: 8px 0;
+  }
+
+  .welcome-text {
+    font-size: 1rem;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlay {
+    padding: 20px;
+    width: calc(100% - 40px);
+  }
+
+  .welcome-title {
+    font-size: 1.3rem;
+  }
+
+  .welcome-text {
+    font-size: 0.95rem;
+  }
+
+  .user-details {
+    padding: 14px;
+    font-size: 0.95rem;
+  }
 }
 
 .user-details {

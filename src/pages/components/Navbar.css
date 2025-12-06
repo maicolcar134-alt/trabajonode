@@ -44,20 +44,34 @@
   /* SPACING */
   .nav-link {
     font-size: 1.1rem;
+    padding: 12px 16px !important;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
 /* ---- TOGGLER ---- */
 .navbar-toggler {
   border: 2px solid gold !important;
-  padding: 6px 8px !important;
+  padding: 10px 14px !important;
   margin-left: auto;
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ---- ACTIVE ITEM (TU BORDITO DORADO) ---- */
 .nav-link.active-item {
   border: 2px solid gold !important;
   border-radius: 6px;
-  padding: 4px 12px !important;
+  padding: 12px 16px !important;
   color: gold !important;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -6,6 +6,7 @@ import {
   FaUsers,
   FaTruck,
   FaStore,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebaseConfig";
@@ -78,6 +79,34 @@ const Admin = () => {
     navigate("/dashboard");
   };
 
+  const handleLogout = async () => {
+    const resultado = await Swal.fire({
+      title: "¿Cerrar sesión?",
+      text: "¿Estás seguro de que quieres cerrar sesión?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, cerrar sesión",
+      cancelButtonText: "Cancelar",
+      reverseButtons: true,
+    });
+
+    if (resultado.isConfirmed) {
+      try {
+        await auth.signOut();
+        await Swal.fire({
+          title: "Sesión cerrada",
+          icon: "success",
+          timer: 1100,
+          showConfirmButton: false,
+        });
+        navigate("/login");
+      } catch (error) {
+        console.error("Error cerrando sesión:", error);
+        Swal.fire("Error", "No se pudo cerrar sesión.", "error");
+      }
+    }
+  };
+
   return (
     <div className="admin-container">
       <aside className="sidebar">
@@ -110,6 +139,11 @@ const Admin = () => {
         <button className="btn-volver" onClick={handleVolver}>
           <FaStore />
           <span>Volver a la Tienda</span>
+        </button>
+
+        <button className="btn-logout" onClick={handleLogout}>
+          <FaSignOutAlt />
+          <span>Cerrar sesión</span>
         </button>
 
         <div className="footer">

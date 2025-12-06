@@ -18,6 +18,7 @@ import {
 } from "firebase/storage";
 import Swal from "sweetalert2";
 import Compressor from "compressorjs";
+import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./Inventario.css";
 
 /* ===========================
@@ -90,6 +91,13 @@ export default function Inventario() {
   const [cargando, setCargando] = useState(false);
 
   const [filtro, setFiltro] = useState("Todos");
+  const [busquedaSKU, setBusquedaSKU] = useState("");
+  const [resultadosBusqueda, setResultadosBusqueda] = useState([]);
+  const [mostraSugerencias, setMostraSugerencias] = useState(false);
+
+  // Paginación
+  const [paginaActual, setPaginaActual] = useState(1);
+  const itemsPorPagina = 20;
 
   /* Cargar productos en tiempo real */
   useEffect(() => {
@@ -100,6 +108,42 @@ export default function Inventario() {
     return () => unsub();
   }, []);
 
+  // =====================================================
+  // Autocomplete búsqueda de SKU (debounce 200ms)
+  // =====================================================
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (busquedaSKU.trim() === "") {
+        setResultadosBusqueda([]);
+        setMostraSugerencias(false);
+        return;
+      }
+
+      const q = busquedaSKU.trim();
+      const resultados = productos.filter(
+        (p) =>
+          buscarConNormalizacion(p.id || "", q) ||
+          buscarConNormalizacion(p.nombre || "", q) ||
+          buscarConNormalizacion(p.categoria || "", q)
+      );
+
+      setResultadosBusqueda(resultados);
+      setMostraSugerencias(true);
+    }, 200);
+
+    return () => clearTimeout(timer);
+  }, [busquedaSKU, productos]);
+
+  // Seleccionar producto desde sugerencias
+  const seleccionarDelBuscador = (producto) => {
+    editarProducto(producto);
+    setBusquedaSKU(producto.id);
+    setMostraSugerencias(false);
+  };
+
+  // =====================================================
+  // Limpiar form
+  // =====================================================
   const limpiar = () => {
     setNombre("");
     setPrecio("");
@@ -114,6 +158,9 @@ export default function Inventario() {
     setPublicIdImage("");
     setModoEditar(false);
     setIdEdit("");
+    setBusquedaSKU("");
+    setResultadosBusqueda([]);
+    setMostraSugerencias(false);
   };
 
   const handleFileChange = (e) => {
@@ -241,11 +288,11 @@ export default function Inventario() {
     setDescripcion(p.descripcion);
     setCategoria(p.categoria);
     setCantidad(p.cantidad);
-    setDestacado(p.destacado);
-    setOferta(p.oferta);
-    setImagenVista(p.imagenUrl);
-    setImagenUrl(p.imagenUrl); // Guardar URL anterior para usar en edición
-    setPublicIdImage(p.publicId);
+    setDestacado(Boolean(p.destacado));
+    setOferta(Boolean(p.oferta));
+    setImagenVista(p.imagenUrl || imagenDefault);
+    setImagenUrl(p.imagenUrl || ""); // Guardar URL anterior para usar en edición
+    setPublicIdImage(p.publicId || "");
   };
 
   /* Eliminar */
@@ -260,6 +307,25 @@ export default function Inventario() {
 
     if (!confirm.isConfirmed) return;
 
+    // Primero obtener el doc para eliminar la imagen si existe
+    try {
+      const productoDoc = productos.find((p) => p.id === id);
+      if (productoDoc?.publicId) {
+        try {
+          const oldRef = ref(storage, productoDoc.publicId);
+          await deleteObject(oldRef);
+          console.log("🗑️ Imagen eliminada de Firebase al borrar producto");
+        } catch (err) {
+          console.warn(
+            "⚠️ No se pudo eliminar imagen al borrar producto:",
+            err
+          );
+        }
+      }
+    } catch (err) {
+      console.warn("⚠️ Error buscando doc antes de eliminar imagen:", err);
+    }
+
     await deleteDoc(doc(db, "inventario", id));
     Swal.fire("Eliminado", "Producto eliminado", "success");
   };
@@ -271,7 +337,7 @@ export default function Inventario() {
     });
   };
 
-  /* Activar/desactivar oferta */
+  /* Activar/desactivar oferta (toggle) */
   const cambioOferta = async (id, val) => {
     await updateDoc(doc(db, "inventario", id), {
       oferta: !val,
@@ -279,7 +345,7 @@ export default function Inventario() {
   };
 
   /* =====================================
-     🚀 EDITAR OFERTA — NUEVO
+     🚀 EDITAR OFERTA — con SweetAlert
      ===================================== */
   const editarOferta = async (p) => {
     const { value: porcentaje } = await Swal.fire({
@@ -292,17 +358,37 @@ export default function Inventario() {
       confirmButtonText: "Guardar",
     });
 
-    if (!porcentaje) return;
+    // Si canceló o no digitó nada
+    if (porcentaje === undefined || porcentaje === null || porcentaje === "")
+      return;
 
-    const precioFinal = Math.round(p.precio - (p.precio * porcentaje) / 100);
+    // Validar número
+    const porcNum = Number(porcentaje);
+    if (Number.isNaN(porcNum) || porcNum <= 0) {
+      return Swal.fire(
+        "Valor inválido",
+        "Ingresa un porcentaje válido.",
+        "warning"
+      );
+    }
 
-    await updateDoc(doc(db, "inventario", p.id), {
-      porcentajeOferta: Number(porcentaje),
-      precioOferta: precioFinal,
-      oferta: true,
-    });
+    const precioOriginal = Number(p.precio) || 0;
+    const precioFinal = Math.round(
+      precioOriginal - (precioOriginal * porcNum) / 100
+    );
 
-    Swal.fire("Actualizado", "Oferta modificada", "success");
+    try {
+      await updateDoc(doc(db, "inventario", p.id), {
+        porcentajeOferta: porcNum,
+        precioOferta: precioFinal,
+        oferta: true,
+      });
+
+      Swal.fire("Actualizado", "Oferta modificada", "success");
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "No se pudo actualizar la oferta", "error");
+    }
   };
 
   const productosFiltrados = productos.filter((p) => {
@@ -312,17 +398,87 @@ export default function Inventario() {
     return true;
   });
 
+  // Cálculo de paginación
+  const totalPaginas = Math.max(
+    1,
+    Math.ceil(productosFiltrados.length / itemsPorPagina)
+  );
+  const productosPaginados = productosFiltrados.slice(
+    (paginaActual - 1) * itemsPorPagina,
+    paginaActual * itemsPorPagina
+  );
+
+  // Resetear página si se filtra
+  const handleCambioFiltro = (nuevoFiltro) => {
+    setFiltro(nuevoFiltro);
+    setPaginaActual(1);
+  };
+
+  // =====================================================
+  // RENDER
+  // =====================================================
   return (
     <div className="inventario-container">
       <h2 className="inventario-title">📦 Inventario</h2>
 
-      {/* Filtros */}
+      {/* BÚSQUEDA AUTOCOMPLETE SKU */}
+      <div className="busqueda-sku-container">
+        <label>🔍 Buscar SKU / Producto</label>
+        <div className="busqueda-sku-wrapper">
+          <input
+            type="text"
+            className="busqueda-sku-input"
+            placeholder="Ingresa SKU, nombre o categoría..."
+            value={busquedaSKU}
+            onChange={(e) => setBusquedaSKU(e.target.value)}
+            onFocus={() => busquedaSKU && setMostraSugerencias(true)}
+          />
+
+          {mostraSugerencias && resultadosBusqueda.length > 0 && (
+            <div className="busqueda-sku-sugerencias">
+              {resultadosBusqueda.slice(0, 8).map((prod) => (
+                <div
+                  key={prod.id}
+                  className="sugerencia-item"
+                  onClick={() => seleccionarDelBuscador(prod)}
+                >
+                  <img
+                    src={prod.imagenUrl || imagenDefault}
+                    alt={prod.nombre || prod.id}
+                    className="sugerencia-img"
+                  />
+                  <div className="sugerencia-info">
+                    <strong>{prod.id}</strong>
+                    <p>{prod.nombre}</p>
+                    <small>${prod.precio}</small>
+                  </div>
+                </div>
+              ))}
+              {resultadosBusqueda.length > 8 && (
+                <div className="sugerencia-mas">
+                  +{resultadosBusqueda.length - 8} más resultados
+                </div>
+              )}
+            </div>
+          )}
+
+          {mostraSugerencias &&
+            busquedaSKU &&
+            resultadosBusqueda.length === 0 && (
+              <div className="busqueda-sku-no-resultados">
+                No se encontraron productos
+              </div>
+            )}
+        </div>
+      </div>
+
+      {/* FILTROS */}
       <div className="filtros-categorias">
         {["Todos", "Tortas", "Juguetería", "Uso Profesional"].map((cat) => (
           <button
             key={cat}
             className={`btn ${filtro === cat ? "btn-active" : "btn-outline"}`}
-            onClick={() => setFiltro(cat)}
+            onClick={() => handleCambioFiltro(cat)}
           >
             {cat}
           </button>
@@ -430,10 +586,14 @@ export default function Inventario() {
           </thead>
 
           <tbody>
-            {productosFiltrados.map((p) => (
+            {productosPaginados.map((p) => (
               <tr key={p.id} className={p.oferta ? "fila-oferta" : ""}>
                 <td>
-                  <img src={p.imagenUrl} className="product-image" />
+                  <img
+                    src={p.imagenUrl || imagenDefault}
+                    alt={p.nombre || p.id}
+                    className="product-image"
+                  />
                 </td>
                 <td>{p.nombre}</td>
                 <td>${p.precio}</td>
@@ -501,6 +661,35 @@ export default function Inventario() {
           </tbody>
         </table>
       </div>
+
+      {/* PAGINACIÓN */}
+      {totalPaginas > 1 && (
+        <div className="paginacion-container">
+          <button
+            className="btn btn-pagination"
+            onClick={() => setPaginaActual(Math.max(1, paginaActual - 1))}
+            disabled={paginaActual === 1}
+          >
+            ← Anterior
+          </button>
+
+          <span className="info-pagina">
+            Página {paginaActual} de {totalPaginas} ({productosFiltrados.length}{" "}
+            items)
+          </span>
+
+          <button
+            className="btn btn-pagination"
+            onClick={() =>
+              setPaginaActual(Math.min(totalPaginas, paginaActual + 1))
+            }
+            disabled={paginaActual === totalPaginas}
+          >
+            Siguiente →
+          </button>
+        </div>
+      )}
     </div>
   );
 }
+        
