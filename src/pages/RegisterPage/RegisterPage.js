@@ -9,7 +9,6 @@ import logo from "../../assets/Explosión de color y energía.png";
 
 function RegisterPage() {
   const [formData, setFormData] = useState({
-    cedula: "",
     nombres: "",
     apellidos: "",
     fechaNacimiento: "",
@@ -96,7 +95,6 @@ function RegisterPage() {
 
       // 🔹 Guardar en Firestore
       await setDoc(doc(db, "usuarios", user.uid), {
-        cedula: formData.cedula,
         nombres: formData.nombres,
         apellidos: formData.apellidos,
         fechaNacimiento: formData.fechaNacimiento,
@@ -178,17 +176,7 @@ function RegisterPage() {
             />
           </div>
 
-          <div className="mb-3">
-            <label className="form-label">Cédula</label>
-            <input
-              type="text"
-              className="form-control"
-              name="cedula"
-              value={formData.cedula}
-              onChange={handleChange}
-              placeholder="Tu cédula"
-            />
-          </div>
+          {/* Campo 'Cédula' eliminado según petición */}
 
           <div className="mb-3">
             <label className="form-label">Fecha de Nacimiento</label>

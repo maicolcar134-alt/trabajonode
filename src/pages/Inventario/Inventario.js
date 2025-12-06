@@ -1,8 +1,4 @@
-
-/* =====================================================
-   INVENTARIO COMPLETO – VERSION FINAL OPTIMIZADA
-   ===================================================== */
-
+// src/pages/Inventario/Inventario.js
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -13,18 +9,60 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-
+import { db, storage } from "../../firebaseConfig";
 import {
-  ref as storageRef,
+  ref,
   uploadBytes,
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-
-import Compressor from "compressorjs";
-import { db, storage } from "../../firebaseConfig";
 import Swal from "sweetalert2";
+import Compressor from "compressorjs";
 import "./Inventario.css";
+
+/* ===========================
+   SUBIR IMAGEN A FIREBASE STORAGE
+   =========================== */
+const subirImagenFirebase = async (file) => {
+  try {
+    // Comprimir antes de subir
+    const compressed = await new Promise((res, rej) => {
+      new Compressor(file, {
+        quality: 0.7,
+        maxWidth: 1200,
+        maxHeight: 1200,
+        success: res,
+        error: rej,
+      });
+    });
+
+    // Crear referencia con timestamp y nombre original
+    const timestamp = Date.now();
+    const nombreArchivo = `${timestamp}_${file.name}`;
+    const storageRef = ref(storage, `inventario/${nombreArchivo}`);
+
+    console.log(`📤 Subiendo imagen a Firebase: inventario/${nombreArchivo}`);
+
+    // Subir archivo comprimido
+    const snapshot = await uploadBytes(storageRef, compressed);
+    console.log("✅ Archivo subido a:", snapshot.ref.fullPath);
+
+    // Obtener URL de descarga
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    console.log("✅ URL de descarga:", downloadURL);
+
+    return {
+      secure_url: downloadURL,
+      public_id: snapshot.ref.fullPath, // Guardar la ruta para poder eliminar después
+      nombre_archivo: nombreArchivo,
+    };
+  } catch (error) {
+    console.error("❌ Error subiendo imagen a Firebase:", error);
+    return null;
+  }
+};
+
+const imagenDefault = "";
 
 const categoriasData = [
   { nombre: "Tortas" },
@@ -32,39 +70,11 @@ const categoriasData = [
   { nombre: "Uso Profesional" },
 ];
 
-const imagenDefault = "/placeholder";
-
-
-// =====================================================
-// SUBIR IMAGEN
-// =====================================================
-async function subirImagenFirebase(file, idProductoReal) {
-  try {
-    const nombreLimpio = file.name.replace(/\s+/g, "_");
-    const path = `productos/${idProductoReal}_${Date.now()}_${nombreLimpio}`;
-    const ref = storageRef(storage, path);
-
-    await uploadBytes(ref, file);
-    const url = await getDownloadURL(ref);
-
-    return { url, path };
-  } catch (error) {
-    console.error("Error subiendo imagen:", error);
-    Swal.fire("Error", "No se pudo subir la imagen.", "error");
-    return { url: imagenDefault, path: "" };
-  }
-}
-
-
-// =====================================================
-// COMPONENTE
-// =====================================================
 export default function Inventario() {
   const [productos, setProductos] = useState([]);
-
-  // Estados del formulario
   const [idEdit, setIdEdit] = useState("");
   const [modoEditar, setModoEditar] = useState(false);
+
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -72,37 +82,24 @@ export default function Inventario() {
   const [cantidad, setCantidad] = useState("");
   const [destacado, setDestacado] = useState(false);
   const [oferta, setOferta] = useState(false);
+
   const [fileImage, setFileImage] = useState(null);
   const [imagenVista, setImagenVista] = useState(imagenDefault);
+  const [imagenUrl, setImagenUrl] = useState(""); // URL anterior en edición
+  const [publicIdImage, setPublicIdImage] = useState("");
   const [cargando, setCargando] = useState(false);
 
-  // Filtro
   const [filtro, setFiltro] = useState("Todos");
 
-  // Modal para editar oferta
-  const [modalOferta, setModalOferta] = useState(false);
-  const [productoOferta, setProductoOferta] = useState(null);
-  const [porcentajeOferta, setPorcentajeOferta] = useState("");
-  const [precioOfertaCalculado, setPrecioOfertaCalculado] = useState("");
-
-
-  // =====================================================
-  // Cargar productos
-  // =====================================================
+  /* Cargar productos en tiempo real */
   useEffect(() => {
     const refCol = collection(db, "inventario");
-    const unsub = onSnapshot(refCol, (snapshot) => {
-      const lista = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-      setProductos(lista);
+    const unsub = onSnapshot(refCol, (snap) => {
+      setProductos(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     });
-
     return () => unsub();
   }, []);
 
-
-  // =====================================================
-  // Limpiar form
-  // =====================================================
   const limpiar = () => {
     setNombre("");
     setPrecio("");
@@ -112,15 +109,13 @@ export default function Inventario() {
     setDestacado(false);
     setOferta(false);
     setImagenVista(imagenDefault);
+    setImagenUrl("");
     setFileImage(null);
+    setPublicIdImage("");
     setModoEditar(false);
     setIdEdit("");
   };
 
-
-  // =====================================================
-  // Manejar archivo de imagen
-  // =====================================================
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -138,103 +133,106 @@ export default function Inventario() {
     setImagenVista(URL.createObjectURL(file));
   };
 
-
-  // =====================================================
-  // Guardar o actualizar producto
-  // =====================================================
+  /* Guardar */
   const guardarProducto = async () => {
     if (!nombre || !precio || !descripcion || !categoria || !cantidad) {
-      return Swal.fire(
-        "Campos incompletos",
-        "Completa todos los campos.",
-        "warning"
-      );
+      return Swal.fire("Campos incompletos", "Completa todo.", "warning");
     }
 
     setCargando(true);
 
     try {
       let idFinal = idEdit;
+      let publicId = publicIdImage;
+      let imagenFinal = imagenDefault;
 
-      // Crear nuevo
+      // Si hay un archivo nuevo, subir a Firebase Storage
+      if (fileImage) {
+        const subida = await subirImagenFirebase(fileImage);
+        if (!subida || !subida.secure_url) {
+          setCargando(false);
+          return Swal.fire(
+            "Error al subir imagen",
+            "No se pudo subir la imagen a Firebase. Verifica tu conexión.",
+            "error"
+          );
+        }
+
+        imagenFinal = subida.secure_url;
+        publicId = subida.public_id || "";
+
+        // Si estamos editando y hay una imagen anterior, eliminarla de Firebase
+        if (modoEditar && imagenUrl && publicIdImage) {
+          try {
+            const oldRef = ref(storage, publicIdImage);
+            await deleteObject(oldRef);
+            console.log("🗑️ Imagen anterior eliminada de Firebase");
+          } catch (err) {
+            console.warn("⚠️ No se pudo eliminar imagen anterior:", err);
+          }
+        }
+      } else if (modoEditar && imagenUrl) {
+        // En edición, si no hay nuevo archivo, mantener la imagen anterior
+        imagenFinal = imagenUrl;
+      }
+
+      // Garantizar que imagenFinal nunca sea string vacío
+      if (!imagenFinal || imagenFinal.trim() === "") {
+        imagenFinal = imagenDefault;
+      }
+
       if (!modoEditar) {
+        // Crear documento usando la URL definitiva (si la hay)
         const refCol = collection(db, "inventario");
         const nuevo = await addDoc(refCol, {
           nombre,
-          precio,
+          precio: Number(precio),
           descripcion,
           categoria,
           cantidad: Number(cantidad),
           destacado,
           oferta,
-          imagenUrl: imagenVista,
-          pathImagen: "",
+          precioOferta: "",
+          porcentajeOferta: "",
+          imagenUrl: imagenFinal,
+          publicId: publicId || "",
           creado: serverTimestamp(),
         });
-
         idFinal = nuevo.id;
-      }
+      } else {
+        // Edición: actualizar campos principales
+        await updateDoc(doc(db, "inventario", idFinal), {
+          nombre,
+          precio: Number(precio),
+          descripcion,
+          categoria,
+          cantidad: Number(cantidad),
+          destacado,
+          oferta,
+        });
 
-      // Editar producto existente
-      await updateDoc(doc(db, "inventario", idFinal), {
-        nombre,
-        precio,
-        descripcion,
-        categoria,
-        cantidad: Number(cantidad),
-        destacado,
-        oferta,
-        imagenUrl: imagenVista,
-        fechaActualizacion: serverTimestamp(),
-      });
-
-      // Subir imagen comprimida
-      if (fileImage) {
-        await new Promise((resolve, reject) => {
-          new Compressor(fileImage, {
-            quality: 0.7,
-            maxWidth: 1200,
-            maxHeight: 1200,
-            success: async (compressedFile) => {
-              try {
-                const subida = await subirImagenFirebase(
-                  compressedFile,
-                  idFinal
-                );
-                await updateDoc(doc(db, "inventario", idFinal), {
-                  imagenUrl: subida.url,
-                  pathImagen: subida.path,
-                });
-                resolve();
-              } catch (error) {
-                reject(error);
-              }
-            },
-            error(err) {
-              reject(err);
-            },
-          });
+        // Siempre actualizar la imagen (bien sea nueva o la anterior)
+        await updateDoc(doc(db, "inventario", idFinal), {
+          imagenUrl: imagenFinal,
+          publicId: publicId || "",
         });
       }
 
+      limpiar();
       Swal.fire(
         "Éxito",
-        modoEditar ? "Producto actualizado" : "Producto agregado",
+        modoEditar ? "Producto actualizado" : "Agregado",
         "success"
       );
-
-      limpiar();
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       Swal.fire("Error", "No se pudo guardar", "error");
-    } finally {
-      setCargando(false);
     }
+
+    setCargando(false);
   };
 
-
-  // =====================================================
-  // Editar producto
-  // =====================================================
+  /* Editar */
   const editarProducto = (p) => {
     setModoEditar(true);
     setIdEdit(p.id);
@@ -245,15 +243,13 @@ export default function Inventario() {
     setCantidad(p.cantidad);
     setDestacado(p.destacado);
     setOferta(p.oferta);
-    setImagenVista(p.imagenUrl || imagenDefault);
-    setFileImage(null);
+    setImagenVista(p.imagenUrl);
+    setImagenUrl(p.imagenUrl); // Guardar URL anterior para usar en edición
+    setPublicIdImage(p.publicId);
   };
 
-
-  // =====================================================
-  // Eliminar producto
-  // =====================================================
-  const eliminarProducto = async (id, pathImagen) => {
+  /* Eliminar */
+  const eliminarProducto = async (id) => {
     const confirm = await Swal.fire({
       title: "¿Eliminar?",
       text: "No podrás recuperarlo",
@@ -264,81 +260,51 @@ export default function Inventario() {
 
     if (!confirm.isConfirmed) return;
 
-    try {
-      if (pathImagen) {
-        await deleteObject(storageRef(storage, pathImagen));
-      }
-
-      await deleteDoc(doc(db, "inventario", id));
-
-      Swal.fire("Eliminado", "Producto eliminado", "success");
-    } catch (error) {
-      Swal.fire("Error", "No se pudo eliminar", "error");
-    }
+    await deleteDoc(doc(db, "inventario", id));
+    Swal.fire("Eliminado", "Producto eliminado", "success");
   };
 
-
-  // =====================================================
-  // Destacado / Oferta toggle
-  // =====================================================
-  const cambioDestacado = (id, val) =>
-    updateDoc(doc(db, "inventario", id), { destacado: !val });
-
-  const cambioOferta = (id, val) =>
-    updateDoc(doc(db, "inventario", id), { oferta: !val });
-
-
-  // =====================================================
-  // Editar Oferta (%)
-  // =====================================================
-  const editarOferta = (p) => {
-    setProductoOferta(p);
-    setPorcentajeOferta(p.porcentajeOferta || "");
-
-    if (p.porcentajeOferta) {
-      const precioFinal = p.precio - (p.precio * p.porcentajeOferta) / 100;
-      setPrecioOfertaCalculado(Math.round(precioFinal));
-    } else {
-      setPrecioOfertaCalculado("");
-    }
-
-    setModalOferta(true);
+  /* Cambiar destacado */
+  const cambioDestacado = async (id, val) => {
+    await updateDoc(doc(db, "inventario", id), {
+      destacado: !val,
+    });
   };
 
-
-  const guardarOferta = async () => {
-    if (!productoOferta) return;
-
-    if (!porcentajeOferta) {
-      return Swal.fire("Error", "Ingresa un porcentaje válido", "warning");
-    }
-
-    const porcentajeNum = Number(porcentajeOferta);
-    const precioOriginal = Number(productoOferta.precio);
-
-    const precioFinal = Math.round(
-      precioOriginal - precioOriginal * (porcentajeNum / 100)
-    );
-
-    try {
-      await updateDoc(doc(db, "inventario", productoOferta.id), {
-        oferta: true,
-        porcentajeOferta: porcentajeNum,
-        precioOferta: precioFinal,
-        fechaActualizacion: serverTimestamp(),
-      });
-
-      Swal.fire("Éxito", "Oferta actualizada", "success");
-      setModalOferta(false);
-    } catch (error) {
-      Swal.fire("Error", "No se pudo guardar la oferta", "error");
-    }
+  /* Activar/desactivar oferta */
+  const cambioOferta = async (id, val) => {
+    await updateDoc(doc(db, "inventario", id), {
+      oferta: !val,
+    });
   };
 
+  /* =====================================
+     🚀 EDITAR OFERTA — NUEVO
+     ===================================== */
+  const editarOferta = async (p) => {
+    const { value: porcentaje } = await Swal.fire({
+      title: "Editar Oferta",
+      input: "number",
+      inputLabel: "Porcentaje de descuento (%)",
+      inputValue: p.porcentajeOferta || 5,
+      inputAttributes: { min: 1, max: 90 },
+      showCancelButton: true,
+      confirmButtonText: "Guardar",
+    });
 
-  // =====================================================
-  // Filtrado por categoría
-  // =====================================================
+    if (!porcentaje) return;
+
+    const precioFinal = Math.round(p.precio - (p.precio * porcentaje) / 100);
+
+    await updateDoc(doc(db, "inventario", p.id), {
+      porcentajeOferta: Number(porcentaje),
+      precioOferta: precioFinal,
+      oferta: true,
+    });
+
+    Swal.fire("Actualizado", "Oferta modificada", "success");
+  };
+
   const productosFiltrados = productos.filter((p) => {
     if (filtro === "Tortas") return p.categoria === "Tortas";
     if (filtro === "Juguetería") return p.categoria === "Juguetería";
@@ -346,22 +312,16 @@ export default function Inventario() {
     return true;
   });
 
-
-  // =====================================================
-  // RENDER
-  // =====================================================
   return (
     <div className="inventario-container">
       <h2 className="inventario-title">📦 Inventario</h2>
 
-      {/* FILTROS */}
+      {/* Filtros */}
       <div className="filtros-categorias">
         {["Todos", "Tortas", "Juguetería", "Uso Profesional"].map((cat) => (
           <button
             key={cat}
-            className={`btn ${
-              filtro === cat ? "btn-active" : "btn-outline"
-            }`}
+            className={`btn ${filtro === cat ? "btn-active" : "btn-outline"}`}
             onClick={() => setFiltro(cat)}
           >
             {cat}
@@ -369,7 +329,7 @@ export default function Inventario() {
         ))}
       </div>
 
-      {/* FORMULARIO */}
+      {/* Formulario */}
       <div className="form-row formulario">
         <div className="form-column">
           <div className="form-group">
@@ -401,9 +361,11 @@ export default function Inventario() {
               value={categoria}
               onChange={(e) => setCategoria(e.target.value)}
             >
-              <option>Seleccione categoría</option>
-              {categoriasData.map((c, i) => (
-                <option key={i}>{c.nombre}</option>
+              <option value="">Seleccione categoría</option>
+              {categoriasData.map((c) => (
+                <option key={c.nombre} value={c.nombre}>
+                  {c.nombre}
+                </option>
               ))}
             </select>
           </div>
@@ -428,14 +390,12 @@ export default function Inventario() {
                 ? "Actualizar"
                 : "Agregar"}
             </button>
-
             <button className="btn btn-cancel" onClick={limpiar}>
               Limpiar
             </button>
           </div>
         </div>
 
-        {/* Imagen */}
         <div className="form-column">
           <div className="form-group">
             <label>Imagen</label>
@@ -443,14 +403,17 @@ export default function Inventario() {
           </div>
 
           <div className="preview-container">
-            <img src={imagenVista} alt="Vista previa" className="preview-image" />
+            <img
+              src={imagenVista || imagenDefault}
+              alt="Vista previa"
+              className="preview-image"
+            />
           </div>
         </div>
       </div>
 
-      {/* TABLA */}
+      {/* Tabla */}
       <h3 className="subtitulo">Productos</h3>
-
       <div className="table-container">
         <table className="tabla">
           <thead>
@@ -470,28 +433,34 @@ export default function Inventario() {
             {productosFiltrados.map((p) => (
               <tr key={p.id} className={p.oferta ? "fila-oferta" : ""}>
                 <td>
-                  <img
-                    src={p.imagenUrl || imagenDefault}
-                    alt={p.nombre}
-                    className="product-image"
-                  />
+                  <img src={p.imagenUrl} className="product-image" />
                 </td>
-
                 <td>{p.nombre}</td>
                 <td>${p.precio}</td>
                 <td>{p.categoria}</td>
                 <td>{p.cantidad}</td>
-
                 <td>{p.destacado ? "⭐" : "—"}</td>
 
+                {/* COLUMNA OFERTA - MODIFICADA */}
                 <td>
                   {p.oferta ? (
                     <>
-                      <strong className="precio-oferta">${p.precioOferta}</strong>
+                      <strong className="precio-oferta">
+                        ${p.precioOferta}
+                      </strong>
                       <br />
                       <small className="etiqueta-oferta">
                         {p.porcentajeOferta}% OFF
                       </small>
+
+                      {/* BOTÓN NUEVO */}
+                      <br />
+                      <button
+                        className="btn btn-action small-btn"
+                        onClick={() => editarOferta(p)}
+                      >
+                        ✏️ Editar Oferta
+                      </button>
                     </>
                   ) : (
                     "—"
@@ -508,7 +477,7 @@ export default function Inventario() {
 
                   <button
                     className="table-btn btn-delete"
-                    onClick={() => eliminarProducto(p.id, p.pathImagen)}
+                    onClick={() => eliminarProducto(p.id)}
                   >
                     🗑️
                   </button>
@@ -526,66 +495,12 @@ export default function Inventario() {
                   >
                     {p.oferta ? "Quitar" : "Oferta"}
                   </button>
-
-                  <button
-                    className="table-btn btn-offer-edit"
-                    onClick={() => editarOferta(p)}
-                  >
-                    % Editar
-                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      {/* MODAL OFERTA */}
-      {modalOferta && (
-        <div className="modal-oferta-overlay">
-          <div className="modal-oferta">
-            <h3>Editar Oferta (%)</h3>
-
-            <label>Porcentaje de descuento</label>
-            <input
-              type="number"
-              className="input"
-              value={porcentajeOferta}
-              onChange={(e) => {
-                const val = e.target.value;
-                setPorcentajeOferta(val);
-
-                if (val && productoOferta) {
-                  const precioOriginal = Number(productoOferta.precio);
-                  const precioFinal = Math.round(
-                    precioOriginal - (precioOriginal * val) / 100
-                  );
-                  setPrecioOfertaCalculado(precioFinal);
-                }
-              }}
-            />
-
-            {precioOfertaCalculado !== "" && (
-              <p className="precio-final">
-                💰 Precio final: <strong>${precioOfertaCalculado}</strong>
-              </p>
-            )}
-
-            <div className="modal-buttons">
-              <button className="btn btn-success" onClick={guardarOferta}>
-                Guardar
-              </button>
-
-              <button
-                className="btn btn-danger"
-                onClick={() => setModalOferta(false)}
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

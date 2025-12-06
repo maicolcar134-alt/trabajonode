@@ -3,13 +3,13 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
-
-import userDefault from "../../assets/Explosión de color y energía.png";
 import "./DashboardPage.css";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-
 import "react-bootstrap";
+
+// Imagen por defecto (usar logo o placeholder seguro)
+const userDefault = "/Logo.png";
 
 function DashboardPage() {
   const navigate = useNavigate();
@@ -280,6 +280,10 @@ function DashboardPage() {
                       className="card-img-top"
                       style={{ height: "220px", objectFit: "cover" }}
                       alt={p.nombre}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/Logo.png";
+                      }}
                     />
                   ) : (
                     <div
@@ -382,6 +386,10 @@ function DashboardPage() {
                       className="card-img-top"
                       style={{ height: "220px", objectFit: "cover" }}
                       alt={p.nombre}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/Logo.png";
+                      }}
                     />
                   ) : (
                     <div

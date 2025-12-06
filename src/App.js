@@ -40,8 +40,7 @@ import TerminosCondiciones from "./pages/Terminos Y Condiciones/terminoscondicio
 import PoliticasVenta from "./pages/PoliticasVenta/PoliticasVenta";
 import NormativaRegulacion from "./pages/NormativaRegulacion/NormativaRegulacion";
 import PoliticaPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
-
-// Panel admin
+import GaleriaFotos from "./pages/components/cloudinary.jsx"
 import Admin from "./pages/Admin/Admin";
 import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
@@ -49,6 +48,7 @@ import EventosAdminAgregar from "./pages/EventosPage/EventosAdmin";
 import Pedidos from "./pages/pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
+
 
 function App() {
   return (
@@ -162,6 +162,8 @@ function App() {
           <Route path="usuarios" element={<AuxiliaresPage />} />
           <Route path="auditoria" element={<Auditoria />} />
           <Route path="zonas" element={<ZonasEnvioPro />} />
+          <Route path="galeria" element={<GaleriaFotos/>}/>
+       
         </Route>
 
         {/* 404 */}
