@@ -1,33 +1,37 @@
-/* 🌑 NAVBAR COMPLETO DE ORILLA A ORILLA */
+/* ================================================
+   🌑 NAVBAR COMPLETO (OPTIMIZADO)
+================================================ */
 .dashboard-navbar {
   background-color: #1a1d23 !important;
   width: 100%;
-  margin: 0;
   padding: 10px 0;
   border-bottom: 2px solid #ff5722;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 0 15px rgba(255, 87, 34, 0.3);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
+
+  /* sombras optimizadas */
+  box-shadow: 0 0 10px rgba(255, 87, 34, 0.25);
+  will-change: transform;
 }
 
-/* 🔥 Contenedor interno */
 .dashboard-navbar .container {
   max-width: 100%;
   width: 100%;
-  margin: 0;
   padding: 0 40px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-/* 🟡 Logo y nombre */
+/* ================================================
+   🟡 LOGO
+================================================ */
 .brand-logo {
   display: flex;
   align-items: center;
@@ -38,17 +42,19 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  box-shadow: 0 0 15px rgba(255, 204, 0, 0.8);
+  box-shadow: 0 0 10px rgba(255, 204, 0, 0.65); /* suavizado */
 }
 
 .brand-logo span {
   font-size: 1.4rem;
   font-weight: bold;
   color: #ffd700;
-  text-shadow: 0 0 8px #ffcc00;
+  text-shadow: 0 0 6px #ffcc00; /* optimizado */
 }
 
-/* 🧭 Enlaces centrados */
+/* ================================================
+   MENU
+================================================ */
 .dashboard-navbar .navbar-collapse {
   flex-grow: 1;
   display: flex;
@@ -58,25 +64,26 @@
 .dashboard-navbar .navbar-nav {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 25px;
+  gap: 22px;
 }
 
-/* 🔗 Enlaces */
+/* Enlaces */
 .dashboard-navbar .nav-link {
   color: #e0e0e0 !important;
   font-weight: 500;
   font-size: 1rem;
-  transition: all 0.2s ease;
   border-radius: 6px;
   padding: 6px 12px !important;
+
+  /* transiciones más ligeras */
+  transition: color 0.2s ease, background 0.2s ease;
 }
 
 .dashboard-navbar .nav-link:hover {
   color: #ff5722 !important;
 }
 
-/* 🔶 Enlace activo */
+/* Activo */
 .active-link {
   background-color: #ff5722;
   color: #fff !important;
@@ -84,23 +91,24 @@
   padding: 6px 14px !important;
 }
 
-/* 👤 Sección derecha (usuario + carrito) */
+/* ================================================
+   ICONOS DERECHA
+================================================ */
 .navbar-right {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-/* 🟠 Icono usuario */
 .user-photo-nav {
   width: 38px;
   height: 38px;
   border-radius: 50%;
   border: 2px solid #ffcc00;
-  box-shadow: 0 0 15px #ffcc00;
+  box-shadow: 0 0 10px #ffcc00; /* suavizado */
 }
 
-/* 🛒 Carrito */
+/* Carrito */
 .cart-icon {
   position: relative;
   font-size: 1.5rem;
@@ -124,17 +132,12 @@
   justify-content: center;
 }
 
-/* 💫 Ajustes visuales */
-@media (max-width: 992px) {
-  .dashboard-navbar .navbar-collapse {
-    justify-content: flex-start;
-  }
-}
-
-/* 🔹 Header principal */
+/* ================================================
+   HEADER
+================================================ */
 .header {
   text-align: center;
-  padding:120px 20px 40px;
+  padding: 120px 20px 40px;
   background: radial-gradient(circle at top, #202020, #0d0d0d);
 }
 
@@ -150,7 +153,7 @@
   margin-top: 8px;
 }
 
-/* 🔹 Botón principal */
+/* Botón */
 .btn-center {
   background-color: #ffc107;
   border: none;
@@ -158,8 +161,7 @@
   padding: 10px 25px;
   border-radius: 30px;
   font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: all 0.3s ease;
+  transition: background 0.25s ease, transform 0.25s ease;
 }
 
 .btn-center:hover {
@@ -167,8 +169,9 @@
   transform: scale(1.05);
 }
 
-
-/* 🔹 Sección de contacto */
+/* ================================================
+   CONTACTO
+================================================ */
 .contact-section {
   display: flex;
   justify-content: center;
@@ -178,7 +181,6 @@
   flex-wrap: wrap;
 }
 
-/* 🔹 Tarjetas */
 .contact-section .card {
   width: 400px;
   min-height: 220px;
@@ -186,41 +188,41 @@
   border-radius: 18px;
   padding: 25px;
   text-align: left;
-  box-shadow: 0 0 12px rgba(255, 193, 7, 0.15);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: all 0.3s ease;
+
+  /* sombras optimizadas */
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .contact-section .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 0 16px rgba(255, 193, 7, 0.25);
 }
 
-/* 🔹 Títulos del card */
+/* Títulos */
 .card h3 {
   font-size: 1.2rem;
   margin-bottom: 8px;
   color: #fff;
 }
 
-/* 🔹 Número / Email */
+/* Número / email */
 .card .main {
   font-size: 1.15rem;
   font-weight: 600;
   color: #ffc107;
-  margin-bottom: 5px;
 }
 
-/* 🔹 Texto adicional */
+/* Texto */
 .card p {
-  margin: 5px 0;
   color: #ccc;
   font-size: 0.95rem;
 }
 
-/* 🔹 Botón */
+/* Botón */
 .card button {
   margin-top: 15px;
   background-color: #ffc107;
@@ -231,7 +233,7 @@
   width: 100%;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.25s ease, transform 0.25s ease;
 }
 
 .card button:hover {
@@ -239,12 +241,12 @@
   transform: scale(1.03);
 }
 
-/* Colores de borde */
+/* Bordes colores */
 .card.green { border-top: 4px solid #ff4d4d; }
 .card.blue { border-top: 4px solid #4da6ff; }
 .card.orange { border-top: 4px solid #00ff88; }
 
-/* 🔹 Responsive */
+/* Responsive cards */
 @media (max-width: 768px) {
   .contact-section {
     flex-direction: column;
@@ -252,12 +254,14 @@
   }
 
   .contact-section .card {
-    width: 100%;
     max-width: 360px;
+    width: 100%;
   }
 }
 
-/* 🔹 Categorías */
+/* ================================================
+   CATEGORÍAS
+================================================ */
 .categories {
   display: flex;
   justify-content: center;
@@ -271,19 +275,14 @@
   color: #ccc;
   border: 1px solid #333;
   border-radius: 18px;
-  padding: 8px 18px;          
+  padding: 8px 18px;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: 0.3s ease;
-
-  width: auto;               
-  max-width: 500px;           
-  text-align: center;
-
   display: flex;
   align-items: center;
   gap: 6px;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 
 .categories button:hover {
@@ -292,12 +291,13 @@
 }
 
 .categories .active {
- 
   color: #ffffff;
   border: none;
 }
 
-/* 🔹 Preguntas frecuentes */
+/* ================================================
+   FAQ
+================================================ */
 .faq-section {
   max-width: 800px;
   margin: 40px auto;
@@ -315,7 +315,7 @@ details {
   border-radius: 12px;
   padding: 12px 18px;
   margin-bottom: 12px;
-  transition: background 0.3s ease;
+  transition: background 0.25s ease;
 }
 
 details:hover {
@@ -334,7 +334,9 @@ details p {
   font-size: 0.95rem;
 }
 
-/* 🔹 Sección adicional */
+/* ================================================
+   EXTRA SECTIONS
+================================================ */
 .extra-section {
   display: flex;
   justify-content: center;
@@ -349,7 +351,8 @@ details p {
   border-radius: 20px;
   padding: 25px;
   background: #1a1a1a;
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.05);
+
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
 }
 
 .extra-section h4 {
@@ -357,10 +360,7 @@ details p {
   margin-bottom: 10px;
 }
 
-.guide ul {
-  list-style: none;
-  padding-left: 0;
-}
+.guide ul { list-style: none; padding-left: 0; }
 
 .guide li {
   color: #ccc;
@@ -375,7 +375,7 @@ details p {
   margin-top: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 0.25s ease;
 }
 
 .support button:hover {
@@ -389,24 +389,16 @@ details p {
   font-size: 0.85rem;
 }
 
-/* 🔹 Responsivo */
+/* Responsive */
 @media (max-width: 768px) {
   .dashboard-navbar .container {
     padding: 0 15px;
   }
-
-  .contact-section,
-  .extra-section {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .header h2 {
-    font-size: 1.6rem;
-  }
 }
 
-/* Footer */
+/* ================================================
+   FOOTER
+================================================ */
 .footer {
   background-color: #111;
   color: #aaa;
@@ -415,11 +407,11 @@ details p {
   border-top: 2px solid #ff5722;
 }
 
+/* Variables */
 :root {
-  --brand-accent: #ff4d4f; /* Rojo principal */
-  --brand-warm: #ffa502; /* Amarillo cálido */
-  --footer-bg: #0a0a0a; /* Fondo oscuro */
+  --brand-accent: #ff4d4f;
+  --brand-warm: #ffa502;
+  --footer-bg: #0a0a0a;
   --text-light: rgba(255, 255, 255, 0.8);
   --text-muted: rgba(255, 255, 255, 0.6);
 }
-

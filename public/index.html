@@ -1,23 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
-   <link rel="icon" href="%PUBLIC_URL%/Logo.png" />
+
+    <!-- LOGO Optimizado (WebP recomendado) -->
+    <link rel="icon" href="%PUBLIC_URL%/Logo.webp" type="image/webp" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="PyroShop MC — Venta legal y responsable de productos pirotécnicos certificados."
     />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/Logo.png" />
-   
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-   
-    <title> PyroShop MC</title>
+
+    <!-- Preconnect para optimizar fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload CSS para mejorar FCP -->
+    <link rel="preload" as="style" href="/static/css/main.css" />
+
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/Logo.webp" />
+
+    <!-- Manifest con carga diferida -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" crossorigin="use-credentials" />
+
+    <!-- PRELOAD de imagen LCP (tu hero principal) -->
+    <link
+      rel="preload"
+      as="image"
+      href="https://images.unsplash.com/photo-1595567818311-57a0736507d8?crop=entropy&fit=max&w=1080"
+      fetchpriority="high"
+    />
+
+    <title>PyroShop MC</title>
   </head>
+
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>Debes habilitar JavaScript para usar esta aplicación.</noscript>
+
+    <!-- Punto raíz React -->
     <div id="root"></div>
- 
   </body>
 </html>

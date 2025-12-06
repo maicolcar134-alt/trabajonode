@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Footer.css";
 
 export default function Footer() {
+  const mapRef = useRef(null);
+  const [loadMap, setLoadMap] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setLoadMap(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (mapRef.current) {
+      observer.observe(mapRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <footer className="footer mt-auto">
       <div className="max-w-7xl mx-auto px-4 py-12">
@@ -94,17 +115,26 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Mapa */}
-        <div className="w-full h-64 rounded-lg overflow-hidden map-box">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3948.6746084202755!2d-73.3564525241768!3d8.235438400904044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e677bec71bc08dd%3A0x87799706d32a0a53!2sParque%20Principal%20Oca%C3%B1a!5e0!3m2!1ses-419!2sco!4v1764201206994!5m2!1ses-419!2sco"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
+        {/* Mapa con Lazy Loading avanzado */}
+        <div
+          ref={mapRef}
+          className="w-full h-64 rounded-lg overflow-hidden map-box"
+        >
+          {loadMap ? (
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3948.6746084202755!2d-73.3564525241768!3d8.235438400904044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e677bec71bc08dd%3A0x87799706d32a0a53!2sParque%20Principal%20Oca%C3%B1a!5e0!3m2!1ses-419!2sco!4v1764201206994!5m2!1ses-419!2sco"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          ) : (
+            <div className="w-full h-full bg-gray-700/30 flex items-center justify-center text-white/60">
+              Cargando mapa…
+            </div>
+          )}
         </div>
 
         {/* Aviso legal */}
@@ -121,5 +151,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-  
 }

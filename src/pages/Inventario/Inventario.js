@@ -446,6 +446,7 @@ export default function Inventario() {
                     src={prod.imagenUrl || imagenDefault}
                     alt={prod.nombre || prod.id}
                     className="sugerencia-img"
+                    loading="lazy"    // <<--- LAZY LOADING
                   />
                   <div className="sugerencia-info">
                     <strong>{prod.id}</strong>
@@ -543,8 +544,8 @@ export default function Inventario() {
               {cargando
                 ? "Procesando..."
                 : modoEditar
-                ? "Actualizar"
-                : "Agregar"}
+                  ? "Actualizar"
+                  : "Agregar"}
             </button>
             <button className="btn btn-cancel" onClick={limpiar}>
               Limpiar
@@ -563,6 +564,7 @@ export default function Inventario() {
               src={imagenVista || imagenDefault}
               alt="Vista previa"
               className="preview-image"
+              loading="lazy"    // <<--- LAZY LOADING
             />
           </div>
         </div>
@@ -593,6 +595,7 @@ export default function Inventario() {
                     src={p.imagenUrl || imagenDefault}
                     alt={p.nombre || p.id}
                     className="product-image"
+                    loading="lazy"    // <<--- LAZY LOADING
                   />
                 </td>
                 <td>{p.nombre}</td>
@@ -692,4 +695,3 @@ export default function Inventario() {
     </div>
   );
 }
-        

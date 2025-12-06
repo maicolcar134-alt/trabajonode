@@ -4,7 +4,6 @@ import { FaArrowLeft } from "react-icons/fa";
 import "./Checkout.css";
 import nequiQR from "../../assets/WhatsApp Image 2025-10-30 at 8.06.06 PM.jpeg";
 
-
 import { db } from "../../firebaseConfig";
 import {
   collection,
@@ -33,7 +32,6 @@ export default function Checkout() {
 
   const [mostrarTarjeta, setMostrarTarjeta] = useState(false);
 
-  // Campos para pago con tarjeta
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
   const [nombreTitular, setNombreTitular] = useState("");
   const [expMes, setExpMes] = useState("");
@@ -41,7 +39,6 @@ export default function Checkout() {
   const [cvc, setCvc] = useState("");
   const [errorTarjeta, setErrorTarjeta] = useState("");
 
-  // 🔄 Cargar carrito automáticamente
   useEffect(() => {
     const storedCarrito = JSON.parse(localStorage.getItem("carrito")) || [];
     setCarrito(storedCarrito);
@@ -76,7 +73,6 @@ export default function Checkout() {
     return true;
   };
 
-  // --- Utilidades de tarjeta ---
   const formatCardNumber = (value) => {
     const digits = value.replace(/\D/g, "").slice(0, 19);
     return digits.replace(/(.{4})/g, "$1 ").trim();
@@ -130,7 +126,6 @@ export default function Checkout() {
     return true;
   };
 
-  // --- FLUJO DE PAGO PRINCIPAL ---
   const handlePagar = async (e) => {
     e.preventDefault();
     if (!validar()) return;
@@ -154,13 +149,11 @@ export default function Checkout() {
       setOrderId(id);
       setProcesando(false);
 
-      // Mostrar método según selección
       if (metodoPago === "nequi") {
         setQrImg(nequiQR);
         setMostrarQR(true);
       } else if (metodoPago === "bancolombia") {
         setMostrarTarjeta(true);
-      
       } else {
         limpiarCarrito();
         navigate("/gracias", { state: { orderId: id } });
@@ -172,7 +165,6 @@ export default function Checkout() {
     }
   };
 
-  // --- ACTUALIZAR AL CONFIRMAR PAGO ---
   const confirmarPagoQR = async () => {
     try {
       if (pedidoDocId) {
@@ -193,6 +185,7 @@ export default function Checkout() {
 
   const confirmarPagoTarjeta = async () => {
     if (!validateCardFields()) return;
+
     const raw = numeroTarjeta.replace(/\s/g, "");
     const brand = detectCardBrand(raw);
     const last4 = raw.slice(-4);
@@ -215,9 +208,6 @@ export default function Checkout() {
     }
   };
 
- 
-
-  // --- Render principal ---
   return (
     <div className="checkout-root">
       <div className="checkout-card">
@@ -230,40 +220,30 @@ export default function Checkout() {
         <div className="grid-checkout">
           <form className="checkout-form" onSubmit={handlePagar}>
             <h3>Datos de envío</h3>
+
             <label>
               Nombre completo *
-              <input
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-              />
+              <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
             </label>
+
             <label>
               Teléfono *
-              <input
-                value={telefono}
-                onChange={(e) => setTelefono(e.target.value)}
-              />
+              <input value={telefono} onChange={(e) => setTelefono(e.target.value)} />
             </label>
+
             <label>
               Dirección *
-              <input
-                value={direccion}
-                onChange={(e) => setDireccion(e.target.value)}
-              />
+              <input value={direccion} onChange={(e) => setDireccion(e.target.value)} />
             </label>
+
             <label>
               Ciudad
-              <input
-                value={ciudad}
-                onChange={(e) => setCiudad(e.target.value)}
-              />
+              <input value={ciudad} onChange={(e) => setCiudad(e.target.value)} />
             </label>
 
             <h3>Método de pago</h3>
-            <select
-              value={metodoPago}
-              onChange={(e) => setMetodoPago(e.target.value)}
-            >
+
+            <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)}>
               <option value="nequi">Nequi QR</option>
               <option value="bancolombia">Bancolombia (tarjeta)</option>
               <option value="contraentrega">Pago Contra Entrega</option>
@@ -272,19 +252,22 @@ export default function Checkout() {
             {error && <p className="checkout-error">{error}</p>}
 
             <button type="submit" className="btn-confirm" disabled={procesando}>
-              {procesando
-                ? "Procesando..."
-                : `Pagar $${total.toLocaleString()} ✅`}
+              {procesando ? "Procesando..." : `Pagar $${total.toLocaleString()} ✅`}
             </button>
           </form>
 
-          {/* Resumen */}
+          {/* RESUMEN */}
           <aside className="checkout-summary">
             <h3>Resumen</h3>
+
             {carrito.map((p) => (
               <div className="summary-item" key={p.id}>
                 <div className="summary-left">
-                  <img src={p.imagenUrl || "/noimage.jpg"} alt="" />
+                  <img
+                    loading="lazy"
+                    src={p.imagenUrl || "/noimage.jpg"}
+                    alt={p.nombre}
+                  />
                   <div>
                     <b>{p.nombre}</b>
                     <small>
@@ -295,6 +278,7 @@ export default function Checkout() {
                 <b>${(p.precio * p.cantidad).toLocaleString()}</b>
               </div>
             ))}
+
             <hr />
             <h2>Total: ${total.toLocaleString()}</h2>
           </aside>
@@ -306,21 +290,23 @@ export default function Checkout() {
         <div className="qr-modal">
           <div className="qr-card">
             <h3>Escanea para pagar — {orderId}</h3>
+
             <img
+              loading="lazy"
               src={qrImg}
               alt="QR"
               style={{ width: "230px", borderRadius: 10 }}
             />
+
             <p>
               Monto: <b>${total.toLocaleString()}</b>
             </p>
+
             <button className="btn-primary" onClick={confirmarPagoQR}>
               ✅ Ya pagué
             </button>
-            <button
-              className="btn-secondary"
-              onClick={() => setMostrarQR(false)}
-            >
+
+            <button className="btn-secondary" onClick={() => setMostrarQR(false)}>
               Cancelar
             </button>
           </div>
@@ -332,13 +318,12 @@ export default function Checkout() {
         <div className="qr-modal">
           <div className="qr-card">
             <h3>Pagar con tarjeta Bancolombia</h3>
+
             <label>
               Nombre del titular
-              <input
-                value={nombreTitular}
-                onChange={(e) => setNombreTitular(e.target.value)}
-              />
+              <input value={nombreTitular} onChange={(e) => setNombreTitular(e.target.value)} />
             </label>
+
             <label>
               Número de tarjeta
               <input
@@ -347,37 +332,25 @@ export default function Checkout() {
                 placeholder="1234 5678 9012 3456"
               />
             </label>
+
             <div style={{ display: "flex", gap: 8 }}>
-              <input
-                placeholder="MM"
-                value={expMes}
-                onChange={(e) => setExpMes(e.target.value)}
-              />
-              <input
-                placeholder="YY"
-                value={expAno}
-                onChange={(e) => setExpAno(e.target.value)}
-              />
-              <input
-                placeholder="CVC"
-                value={cvc}
-                onChange={(e) => setCvc(e.target.value)}
-              />
+              <input placeholder="MM" value={expMes} onChange={(e) => setExpMes(e.target.value)} />
+              <input placeholder="YY" value={expAno} onChange={(e) => setExpAno(e.target.value)} />
+              <input placeholder="CVC" value={cvc} onChange={(e) => setCvc(e.target.value)} />
             </div>
+
             {errorTarjeta && <p className="checkout-error">{errorTarjeta}</p>}
+
             <button className="btn-primary" onClick={confirmarPagoTarjeta}>
               ✅ Confirmar pago
             </button>
-            <button
-              className="btn-secondary"
-              onClick={() => setMostrarTarjeta(false)}
-            >
+
+            <button className="btn-secondary" onClick={() => setMostrarTarjeta(false)}>
               Cancelar
             </button>
           </div>
         </div>
       )}
-
     </div>
   );
 }

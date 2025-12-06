@@ -1,4 +1,4 @@
-/* 🎨 Estilo general */
+/* 🎨 General */
 body {
   background-color: #121212;
   color: #fff;
@@ -13,54 +13,56 @@ body {
   box-shadow: 0 0 25px rgba(255, 193, 7, 0.15);
 }
 
-/* 🟡 Título principal */
+/* 🟡 Títulos */
 h2 {
   color: #ffc107;
   letter-spacing: 1px;
   text-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
 }
 
-/* 🔍 Buscador */
-input.form-control {
-  background-color: #222;
-  border: 1px solid #444;
-  color: #fff;
-  transition: all 0.3s ease;
+/* 🔍 Inputs */
+input.form-control, 
+select.form-select {
+  background-color: #222 !important;
+  border: 1px solid #444 !important;
+  color: #fff !important;
+  transition: 0.3s ease;
 }
 
-input.form-control:focus {
+input.form-control:focus,
+select.form-select:focus {
   background-color: #2c2c2c;
-  border-color: #ffc107;
-  box-shadow: 0 0 5px #ffc107;
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
 }
 
 /* 🔘 Botones */
 .btn {
-  transition: 0.3s ease;
   font-weight: bold;
   padding: 12px 16px !important;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: 0.3s ease;
 }
 
+/* Amarillo */
 .btn-warning {
   background-color: #ffc107;
-  border: none;
   color: #000;
+  border: none;
 }
-
 .btn-warning:hover {
   background-color: #ffca2c;
   transform: scale(1.05);
 }
 
+/* Gris */
 .btn-secondary {
   background-color: #444;
   border: none;
 }
-
 .btn-secondary:hover {
   background-color: #555;
   transform: scale(1.05);
@@ -70,6 +72,7 @@ input.form-control:focus {
 .table {
   border-radius: 10px;
   overflow: hidden;
+  font-size: 15px;
 }
 
 .table thead {
@@ -83,36 +86,9 @@ input.form-control:focus {
 .table tbody tr {
   transition: background 0.25s ease;
 }
-
 .table tbody tr:hover {
   background-color: rgba(255, 193, 7, 0.1);
 }
-
-/* 🏷️ Selectores de estado/pago */
-select.form-select {
-  background-color: #2c2c2c !important;
-  border: 1px solid #555 !important;
-  color: #fff !important;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-}
-
-select.form-select:hover,
-select.form-select:focus {
-  border-color: #ffc107 !important;
-  box-shadow: 0 0 5px rgba(255, 193, 7, 0.3);
-}
-
-/* 🧾 Badge (estado/pago) */
-.badge {
-  font-size: 0.8rem;
-  padding: 6px 10px;
-  border-radius: 8px;
-  text-transform: capitalize;
-  letter-spacing: 0.3px;
-}
-
-
 
 /* 🧱 Tabla contenedor */
 .table-responsive {
@@ -121,10 +97,18 @@ select.form-select:focus {
   overflow: hidden;
 }
 
+/* 🧾 Badge */
+.badge {
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
 /* 📢 Toast */
 .toast-container .toast {
   border-radius: 12px;
-  overflow: hidden;
 }
 
 .toast-header {
@@ -142,56 +126,22 @@ select.form-select:focus {
 
 /* 📱 Responsive */
 @media (max-width: 768px) {
-  .container {
-    padding: 20px;
-  }
+  .container { padding: 20px; }
 
-  h1 {
-    font-size: 1.8rem;
-  }
+  input.form-control,
+  .btn { width: 100%; margin-bottom: 10px; }
 
-  input.form-control {
-    width: 100% !important;
-    margin-bottom: 10px;
-    font-size: 16px;
-    padding: 12px;
-  }
+  .table { font-size: 14px; }
 
-  .btn {
-    width: 100%;
-    margin-bottom: 10px;
-    font-size: 15px;
-  }
-
-  .table {
-    font-size: 14px;
-  }
-
-  .table thead {
-    font-size: 13px;
-  }
-
-  .table th, .table td {
-    padding: 12px 8px;
-  }
+  .table th, .table td { padding: 12px 8px; }
 }
 
 @media (max-width: 480px) {
-  h1 {
-    font-size: 1.5rem;
-  }
+  .table { font-size: 12px; min-width: 320px; }
 
-  .table {
-    font-size: 12px;
-    min-width: 320px;
-  }
-
-  .table th, .table td {
-    padding: 8px 4px;
-  }
+  .table th, .table td { padding: 8px 4px; }
 
   input.form-control {
-    font-size: 16px;
     padding: 14px;
     min-height: 44px;
   }

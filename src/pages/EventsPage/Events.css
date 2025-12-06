@@ -8,14 +8,15 @@ body {
 
 /* Contenedor principal */
 .container {
-  animation: fadeIn 0.8s ease-in-out;
+  animation: fadeIn 0.7s ease-out;
+  will-change: opacity, transform; /* Mejor rendimiento */
 }
 
 /* Títulos */
 h1 {
   font-weight: 800;
   color: #2c3e50;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.08); /* más liviano */
 }
 
 h4 {
@@ -30,7 +31,8 @@ h4 {
   border-left: 6px solid #0d6efd;
   padding: 25px;
   border-radius: 12px;
-  animation: slideDown 0.8s ease;
+  animation: slideDown 0.65s ease-out;
+  will-change: opacity, transform;
 }
 
 .recomendado-box .card {
@@ -40,7 +42,7 @@ h4 {
 
 .recomendado-box .card:hover {
   transform: scale(1.03);
-  box-shadow: 0px 12px 22px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.12); /* suavizado */
 }
 
 /* ================================================
@@ -51,6 +53,7 @@ h4 {
   border-radius: 10px;
   padding: 10px 15px;
   transition: background 0.25s ease, transform 0.2s ease;
+  will-change: transform;
 }
 
 .btn-danger:hover {
@@ -65,11 +68,13 @@ h4 {
   border: none;
   border-radius: 15px !important;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  will-change: transform;
+  min-height: 100%; /* evita salto al cargar imágenes */
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.12);
 }
 
 .card-title {
@@ -98,23 +103,22 @@ h4 {
   padding: 10px;
   font-weight: 600;
   border: 2px solid #d0d7de;
-  transition: border 0.25s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .form-select:focus {
   border-color: #0d6efd;
-  box-shadow: 0 0 4px rgba(13, 110, 253, 0.4);
+  box-shadow: 0 0 4px rgba(13, 110, 253, 0.35);
 }
 
 /* ================================================
-   🎞️ ANIMACIONES
+   🎞️ ANIMACIONES (OPTIMIZADAS)
 ================================================ */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -124,9 +128,8 @@ h4 {
 @keyframes slideDown {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-14px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);

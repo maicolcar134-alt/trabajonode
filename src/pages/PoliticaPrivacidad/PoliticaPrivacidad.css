@@ -1,38 +1,38 @@
 .politicas-contenido {
   max-width: 900px;
   margin: 2rem auto;
+  padding: 2rem;
   color: #f8f9fa;
   line-height: 1.7;
   background: rgba(0, 0, 0, 0.4);
-  padding: 2rem;
   border-radius: 10px;
 }
 
-/* Estilo de títulos */
+/* 🔶 Títulos */
 .politicas-contenido h2 {
   color: #ffc107;
-  margin-top: 1.5rem;
   font-size: 1.4rem;
+  margin-top: 1.5rem;
 }
 
-/* 🔹 Quitar puntos de las listas */
+/* 🔹 Listas sin puntos */
 .politicas-contenido ul {
-  list-style: none;        /* Elimina las viñetas */
-  margin-left: 0;          /* Quita la sangría */
-  padding-left: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-/* Estilo de los ítems de lista */
+/* 🔸 Ítems */
 .politicas-contenido li {
-  margin-bottom: 0.6rem;
   font-size: 1rem;
+  margin-bottom: 0.6rem;
   padding-left: 1.2rem;
   position: relative;
 }
 
-/* (Opcional) Agregar un ícono decorativo o raya amarilla antes del texto */
+/* 🔸 Icono decorativo */
 .politicas-contenido li::before {
-  content: "—";           /* Puedes cambiar por "•", "→" o dejar vacío */
+  content: "—";
   color: #ffc107;
   position: absolute;
   left: 0;

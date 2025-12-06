@@ -1,4 +1,4 @@
-// OfertasPirotecnia.js (modificado para usar precioOferta y modal de edición)
+// OfertasPirotecnia.js (modificado para usar precioOferta, modal de edición y lazy loading)
 import React, { useEffect, useState } from "react";
 import {
   collection,
@@ -9,15 +9,12 @@ import {
   updateDoc,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "../../firebaseConfig"; // Ajusta la ruta según tu proyecto
+import { db } from "../../firebaseConfig";
 
 import { useNavigate } from "react-router-dom";
-import userDefault from "../../assets/Explosión de color y energía.png";
+import userDefault from "../../assets/Explosión de color y energía.webp";
 import Swal from "sweetalert2";
 import "./OfertasPirotecnia.css";
-
-
-
 
 const DURATION_HOURS = 3;
 const SALE_END_TIMESTAMP = null;
@@ -90,7 +87,7 @@ export default function OfertasPirotecnia() {
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
-  // Ejemplo principal (puedes dejarlo o enlazar a una oferta real)
+  // Ejemplo principal
   const mainProduct = {
     id: 100,
     title: "Venta Flash - Batería 50 Disparos",
@@ -104,7 +101,7 @@ export default function OfertasPirotecnia() {
   const [ofertas, setOfertas] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 Traer productos en oferta desde la colección "inventario"
+  // Firestore - traer productos en oferta
   useEffect(() => {
     const q = query(collection(db, "inventario"), where("oferta", "==", true));
     const unsubscribe = onSnapshot(
@@ -126,7 +123,7 @@ export default function OfertasPirotecnia() {
     return () => unsubscribe();
   }, []);
 
-  // 📝 Copiar mensaje de oferta al portapapeles (con fallbacks)
+  // Copiar mensaje
   const copiarMensajeOferta = (producto) => {
     const nombre = producto.nombre ?? producto.title ?? "producto";
     const porcentaje = producto.ofertaValor ?? producto.porcentajeOferta ?? 0;
@@ -140,21 +137,18 @@ export default function OfertasPirotecnia() {
     } ${porcentaje}% de descuento en ${nombre}. Precio: ${formatCurrency(
       precioFinal
     )}`;
+
     navigator.clipboard
       .writeText(texto)
       .then(() =>
-        Swal.fire(
-          "📋 Copiado",
-          "Texto de la oferta copiado al portapapeles",
-          "success"
-        )
+        Swal.fire("📋 Copiado", "Texto de la oferta copiado", "success")
       )
       .catch(() =>
         Swal.fire("❌ Error", "No se pudo copiar el texto", "error")
       );
   };
 
-  // ---------- Modal / editar oferta ----------
+  // Modal editar oferta
   const [modalOfertaVisible, setModalOfertaVisible] = useState(false);
   const [productoEditando, setProductoEditando] = useState(null);
   const [campoPrecioOferta, setCampoPrecioOferta] = useState("");
@@ -187,32 +181,24 @@ export default function OfertasPirotecnia() {
   const guardarOfertaFirestore = async () => {
     if (!productoEditando) return;
 
-    // Validaciones básicas
     let precioOfertaNum = campoPrecioOferta ? Number(campoPrecioOferta) : null;
     let porcentajeNum = campoPorcentaje ? Number(campoPorcentaje) : null;
 
     if (campoPrecioOferta && (isNaN(precioOfertaNum) || precioOfertaNum < 0)) {
-      return Swal.fire(
-        "Precio inválido",
-        "Introduce un precio de oferta válido.",
-        "warning"
-      );
+      return Swal.fire("Precio inválido", "Introduce un precio válido.", "warning");
     }
+
     if (
       campoPorcentaje &&
       (isNaN(porcentajeNum) || porcentajeNum < 0 || porcentajeNum > 100)
     ) {
-      return Swal.fire(
-        "Porcentaje inválido",
-        "Introduce un porcentaje entre 0 y 100.",
-        "warning"
-      );
+      return Swal.fire("Porcentaje inválido", "Debe estar entre 0 y 100.", "warning");
     }
 
-    // Si no provees precio pero sí porcentaje, calculamos el precioOferta desde porcentaje
     const precioOriginal = Number(
       productoEditando.precio ?? productoEditando.price ?? 0
     );
+
     if (!campoPrecioOferta && porcentajeNum != null) {
       precioOfertaNum = Math.round(
         precioOriginal - (precioOriginal * porcentajeNum) / 100
@@ -241,6 +227,7 @@ export default function OfertasPirotecnia() {
   return (
     <div className="ofertas-page">
       <div className="ofertas-wrap">
+
         {/* Banner Venta Flash */}
         <div className="flash-banner">
           <div className="flash-left">
@@ -306,7 +293,6 @@ export default function OfertasPirotecnia() {
             {ofertas.map((p) => {
               const precioRaw = Number(p.precio ?? p.price ?? 0);
 
-              // Si existe precioOferta explícito, usarlo como final
               let precioFinal;
               let porcentaje;
               if (p.precioOferta != null && p.precioOferta !== "") {
@@ -322,7 +308,6 @@ export default function OfertasPirotecnia() {
                   Math.round(precioRaw - (precioRaw * porcentaje) / 100)
                 );
               } else {
-                // fallback
                 porcentaje = 0;
                 precioFinal = precioRaw;
               }
@@ -333,9 +318,11 @@ export default function OfertasPirotecnia() {
               return (
                 <article key={p.id} className="product-card">
                   <div className="card-media">
+                    {/* 🔥 LAZY LOADING APLICADO AQUÍ */}
                     <img
                       src={imagen || ""}
                       alt={nombre}
+                      loading="lazy"
                       onError={(e) => (e.currentTarget.src = userPhoto)}
                     />
                     <div className="badge-left">Oferta</div>
@@ -358,8 +345,6 @@ export default function OfertasPirotecnia() {
                       </div>
                     </div>
 
-                    
-                    {/* Mostrar mensaje de oferta (si existe) */}
                     {p.mensajeOferta && (
                       <div className="offer-message">
                         <textarea
@@ -411,7 +396,6 @@ export default function OfertasPirotecnia() {
           </div>
         )}
       </div>
-           
     </div>
   );
 }

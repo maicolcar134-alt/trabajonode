@@ -1,19 +1,17 @@
-.footer {
-  background-color: #111;
-  color: #aaa;
-  padding: 12px;
-  font-size: 0.9rem;
-  border-top: 2px solid #ff5722;
-}
-
+/* ===========================
+   VARIABLES (unificadas)
+=========================== */
 :root {
-  --brand-accent: #ff4d4f; /* Rojo principal */
-  --brand-warm: #ffa502; /* Amarillo cálido */
-  --footer-bg: #0a0a0a; /* Fondo oscuro */
+  --brand-accent: #ff4d4f;
+  --brand-warm: #ffa502;
+  --footer-bg: #0a0a0a;
   --text-light: rgba(255, 255, 255, 0.8);
   --text-muted: rgba(255, 255, 255, 0.6);
 }
 
+/* ===========================
+   FOOTER BASE
+=========================== */
 .footer {
   background: var(--footer-bg);
   color: var(--text-light);
@@ -29,6 +27,7 @@
 }
 
 .footer a {
+  color: var(--text-light);
   transition: color 0.1s ease;
 }
 
@@ -42,14 +41,13 @@
 }
 
 .footer p {
-  line-height: 1.6!important; 
+  line-height: 1.6 !important;
   margin-bottom: 1rem;
 }
 
-.footer .legal-box {
-  margin-bottom: 2rem;
-}
-
+/* ===========================
+   GRID LAYOUT
+=========================== */
 .footer .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -62,6 +60,9 @@
   }
 }
 
+/* ===========================
+   ICONO MARCA
+=========================== */
 .footer .brand-icon {
   width: 40px;
   height: 40px;
@@ -77,14 +78,31 @@
   color: #fff;
 }
 
+/* ===========================
+   CUADRO LEGAL
+=========================== */
 .footer .legal-box {
   background: rgba(221, 211, 211, 0.1);
   border: 1px solid rgba(255, 77, 79, 0.3);
   border-radius: 12px;
   padding: 1rem;
-  margin: 2rem 0;
+  margin: 3rem 0; /* unificado */
 }
 
+/* ===========================
+   MAPA / IFRAME
+=========================== */
+.footer iframe {
+  margin-top: 2.5rem;
+}
+
+.footer .map-box {
+  margin-bottom: 3rem;
+}
+
+/* ===========================
+   BOTTOM BAR
+=========================== */
 .footer .bottom {
   display: flex;
   flex-direction: column;
@@ -110,16 +128,4 @@
 
 .footer .bottom a:hover {
   color: var(--brand-warm);
-}
-
-.footer iframe {
-  margin-top: 2.5rem;
-}
-
-.footer .map-box {
-  margin-bottom: 3rem; 
-}
-
-.footer .legal-box {
-  margin-top: 3rem; 
 }

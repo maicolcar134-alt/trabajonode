@@ -4,11 +4,7 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./CategoriasAdmin.css";
-
 import { useNavigate } from "react-router-dom";
-
-
-
 
 export default function CategoriasAdmin() {
   const [productos, setProductos] = useState([]);
@@ -91,9 +87,6 @@ export default function CategoriasAdmin() {
 
   return (
     <div className="catalogo-root">
-
-
-
       {/* 🎇 CATÁLOGO */}
       <div className="catalogo-contenedor">
         <h1 className="titulo-catalogo">🎆 Catálogo de Productos</h1>
@@ -135,6 +128,7 @@ export default function CategoriasAdmin() {
                             src={p.imagenUrl}
                             alt={p.nombre}
                             className="producto-imagen"
+                            loading="lazy"   // ✅ Lazy loading aplicado
                           />
                         ) : (
                           <div className="no-imagen">Sin imagen</div>
@@ -170,7 +164,6 @@ export default function CategoriasAdmin() {
             )
         )}
       </div>
-    
     </div>
   );
 }

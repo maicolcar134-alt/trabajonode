@@ -1,19 +1,16 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 
-// Layout global con Navbar
+// Layout + componentes globales
 import MainLayout from "./layouts/MainLayout";
-
-//  IMPORTAMOS EL FOOTER
 import Footer from "./pages/components/Footer/Footer";
 
 // Rutas públicas
 import NotFoundPage from "./pages/components/NotFoundPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage/ForgotPasswordPage";
-import LoginPage from "./pages/LoginPage/LoginPage";
+import LoginPage from "./pages/loginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 
@@ -21,9 +18,9 @@ import ResetPasswordPage from "./pages/ResetPasswordPage/ResetPasswordPage";
 import ProtectedRoute from "./pages/components/ProtectedRoute";
 
 // Playground hooks
-import UseEffectPlay from "./pages/Playground/UseEffectPlay";
-import UseRefPlay from "./pages/Playground/UseRefPlay";
-import UseStatePlay from "./pages/Playground/UseStatePlay";
+import UseEffectPlay from "./pages/playground/UseEffectPlay";
+import UseRefPlay from "./pages/playground/UseRefPlay";
+import UseStatePlay from "./pages/playground/UseStatePlay";
 
 // Tienda / clientes
 import DashboardPage from "./pages/DashboardPage/DashboardPage";
@@ -40,15 +37,14 @@ import TerminosCondiciones from "./pages/Terminos Y Condiciones/terminoscondicio
 import PoliticasVenta from "./pages/PoliticasVenta/PoliticasVenta";
 import NormativaRegulacion from "./pages/NormativaRegulacion/NormativaRegulacion";
 import PoliticaPrivacidad from "./pages/PoliticaPrivacidad/PoliticaPrivacidad";
-import GaleriaFotos from "./pages/components/cloudinary.jsx"
+import GaleriaFotos from "./pages/components/cloudinary.jsx";
 import Admin from "./pages/Admin/Admin";
 import DashboardAdmin from "./pages/DashboardAdmin/DashboardAdmin";
 import Inventario from "./pages/Inventario/Inventario";
 import EventosAdminAgregar from "./pages/EventosPage/EventosAdmin";
-import Pedidos from "./pages/pedidos/Pedidos";
+import Pedidos from "./pages/Pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
-
 
 function App() {
   return (
@@ -65,8 +61,6 @@ function App() {
           element={
             <>
               <MainLayout />
-
-              {/*FOOTER SE MOSTRARÁ EN TODAS LAS VISTAS DE CLIENTES */}
               <Footer />
             </>
           }
@@ -96,20 +90,13 @@ function App() {
           {/* CLIENTES / TIENDA */}
           <Route path="/helpcenter" element={<HelpCenter />} />
           <Route path="/ofertaspirotecnia" element={<OfertasPirotecnia />} />
-
           <Route path="/eventos" element={<EventosAdminAgregar />} />
           <Route path="/categorias" element={<Categorias />} />
           <Route path="/seguridad" element={<Seguridad />} />
           <Route path="/events" element={<EventsPage />} />
-          <Route
-            path="/terminoscondiciones"
-            element={<TerminosCondiciones />}
-          />
+          <Route path="/terminoscondiciones" element={<TerminosCondiciones />} />
           <Route path="/politicasventa" element={<PoliticasVenta />} />
-          <Route
-            path="/normativaregulacion"
-            element={<NormativaRegulacion />}
-          />
+          <Route path="/normativaregulacion" element={<NormativaRegulacion />} />
           <Route path="/politicaprivacidad" element={<PoliticaPrivacidad />} />
 
           {/* COMPRA */}
@@ -144,7 +131,7 @@ function App() {
           <Route path="/useref" element={<UseRefPlay />} />
         </Route>
 
-        {/* PANEL ADMIN (NO USA EL NAVBAR DE CLIENTES NI FOOTER) */}
+        {/* PANEL ADMIN */}
         <Route
           path="/Admin"
           element={
@@ -154,7 +141,6 @@ function App() {
           }
         >
           <Route index element={<Navigate replace to="dashboardadmin" />} />
-
           <Route path="dashboardadmin" element={<DashboardAdmin />} />
           <Route path="inventario" element={<Inventario />} />
           <Route path="pedidos" element={<Pedidos />} />
@@ -162,8 +148,7 @@ function App() {
           <Route path="usuarios" element={<AuxiliaresPage />} />
           <Route path="auditoria" element={<Auditoria />} />
           <Route path="zonas" element={<ZonasEnvioPro />} />
-          <Route path="galeria" element={<GaleriaFotos/>}/>
-       
+          <Route path="galeria" element={<GaleriaFotos />} />
         </Route>
 
         {/* 404 */}

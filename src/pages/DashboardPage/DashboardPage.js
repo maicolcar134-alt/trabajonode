@@ -180,77 +180,87 @@ function DashboardPage() {
         <section
           className="relative flex items-center justify-start bg-cover bg-center"
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1595567818311-57a0736507d8?crop=entropy&fit=max&w=1080')",
             height: "70vh",
             width: "100vw",
             marginLeft: "calc(-50vw + 50%)",
             position: "relative",
+            overflow: "hidden",
           }}
         >
-          <div className="absolute inset-0 bg-black/50"></div>
+          {/* Imagen LCP REAL */}
+          <img
+            src="../../assets/hero.webp"          // <--- coloca aquí tu imagen optimizada
+            alt="Pirotecnia PyroShop"
+            className="absolute inset-0 w-full h-full object-cover"
+            loading="eager"
+            fetchpriority="high"
+            style={{ zIndex: 1 }}
+          />
+
+          <div className="absolute inset-0 bg-black/50" style={{ zIndex: 2 }}></div>
 
           {/* Contenido */}
-          <div className="relative flex justify-start items-start min-h-screen">
-            <div
-              className="relative z-10 flex flex-col text-left"
-              style={{
-                paddingLeft: "4vw", // margen desde la izquierda
-                maxWidth: "800px", // ancho del bloque
-                marginTop: "20vh", // empuja el bloque más abajo
-              }}
-            >
-              <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 px-4 py-2 rounded-full mb-6 w-fit">
-                <span className="text-sm">Ofertas especiales de temporada</span>
+          <div
+            className="relative flex justify-start items-start min-h-screen"
+            style={{ zIndex: 3 }}
+          >
+                  <div
+            className="relative z-10 flex flex-col text-left"
+            style={{
+              paddingLeft: "4vw",
+              maxWidth: "800px",
+              marginTop: "20vh",
+            }}
+          >
+            <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 px-4 py-2 rounded-full mb-6 w-fit">
+              <span className="text-sm">Ofertas especiales de temporada</span>
+            </div>
+
+            <h1 className="text-5xl text-white mb-4 leading-tight">
+              PyroShop - Ilumina Tus Celebraciones
+            </h1>
+
+            <p className="text-xl text-white/90 mb-8">
+              Pirotecnia legal y certificada. Calidad profesional, uso responsable.
+              Todo lo que necesitas para crear momentos inolvidables.
+            </p>
+
+            <div className="button-group">
+              <button
+                className="btn btn-orange"
+                onClick={() => (window.location.href = "/Categorias")}
+              >
+                Explorar catálogo
+              </button>
+
+              <button
+                className="btn-black"
+                onClick={() => (window.location.href = "/Seguridad")}
+              >
+                Guía de Seguridad
+              </button>
+            </div>
+
+            <div className="contenedor"></div>
+            <div className="contenedor">
+              <div>
+                <div className="numero">500+</div>
+                <div className="etiqueta">Productos</div>
               </div>
 
-              <h1 className="text-5xl text-white mb-4 leading-tight">
-                PyroShop - Ilumina Tus Celebraciones
-              </h1>
-
-              <p className="text-xl text-white/90 mb-8">
-                Pirotecnia legal y certificada. Calidad profesional, uso
-                responsable. Todo lo que necesitas para crear momentos
-                inolvidables.
-              </p>
-
-              {/* Botones */}
-              <div className="button-group">
-                <button
-                  className="btn btn-orange"
-                  onClick={() => (window.location.href = "/Categorias")}
-                >
-                  Explorar catálogo
-                </button>
-
-                <button
-                  className="btn-black"
-                  onClick={() => (window.location.href = "/Seguridad")}
-                >
-                  Guía de Seguridad
-                </button>
+              <div>
+                <div className="numero">100%</div>
+                <div className="etiqueta">Certificados</div>
               </div>
 
-              <div className="contenedor"></div>
-              <div className="contenedor">
-                <div>
-                  <div className="numero">500+</div>
-                  <div className="etiqueta">Productos</div>
-                </div>
-
-                <div>
-                  <div className="numero">100%</div>
-                  <div className="etiqueta">Certificados</div>
-                </div>
-
-                <div>
-                  <div className="numero">24/7</div>
-                  <div className="etiqueta">Soporte</div>
-                </div>
+              <div>
+                <div className="numero">24/7</div>
+                <div className="etiqueta">Soporte</div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
       </main>
 
       {/* DESTACADOS */}
@@ -350,9 +360,8 @@ function DashboardPage() {
 
         <div className="d-flex gap-3 mb-4 justify-content-center">
           <button
-            className={`btn ${
-              filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
-            }`}
+            className={`btn ${filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
+              }`}
             onClick={() => setFiltroCategoria("")}
           >
             Todos
@@ -361,9 +370,8 @@ function DashboardPage() {
           {categoriasDisponibles.map((c) => (
             <button
               key={c}
-              className={`btn ${
-                filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
-              }`}
+              className={`btn ${filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
+                }`}
               onClick={() => setFiltroCategoria(c)}
             >
               {c}

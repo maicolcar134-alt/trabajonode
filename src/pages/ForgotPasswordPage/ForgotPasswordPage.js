@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 import { validarEmailConDominios } from '../../utils/validarEmail';
 import './ForgotPasswordPage.css';
-import logo from '../../assets/Explosión de color y energía.png';
+import logo from '../../assets/Explosión de color y energía.webp';
 import { auth } from '../../firebaseConfig';
 import { sendPasswordResetEmail } from 'firebase/auth';
 
@@ -17,7 +17,7 @@ function ForgotPasswordPage() {
       return;
     }
 
-    const allowed = ["gmail.com","hotmail.com","outlook.com","live.com","yahoo.com","icloud.com"];
+    const allowed = ["gmail.com", "hotmail.com", "outlook.com", "live.com", "yahoo.com", "icloud.com"];
     const resultado = validarEmailConDominios(email, allowed, "simple");
     if (!resultado.valido) {
       Swal.fire("Correo inválido", resultado.razon, "error");
@@ -47,7 +47,16 @@ function ForgotPasswordPage() {
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-gradient">
       <div className="form-card">
-        <img src={logo} alt="Logo mas " className="logo mb-3" style={{ width: '250px' }} />
+
+        {/* Aplicación de lazy loading */}
+        <img
+          src={logo}
+          alt="Logo mas"
+          className="logo mb-3"
+          style={{ width: '250px' }}
+          loading="lazy"
+        />
+
         <h3 className="mb-4 text-center">Recuperar Contraseña</h3>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">

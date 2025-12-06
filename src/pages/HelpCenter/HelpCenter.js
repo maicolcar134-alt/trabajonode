@@ -1,17 +1,13 @@
 import React from "react";
-
 import { useNavigate } from "react-router-dom";
-
 import "./HelpCenter.css";
-
 
 export default function HelpCenter() {
   const navigate = useNavigate();
-  const user = false; // 🔸 cambia esto por tu lógica de autenticación real
+  const user = false; // 🔸 Cambiar por lógica real
 
   const handleLogout = () => {
     console.log("Cerrar sesión");
-    // Aquí agregas tu lógica real para cerrar sesión (Firebase, etc.)
   };
 
   return (
@@ -20,7 +16,7 @@ export default function HelpCenter() {
       {/* 🔹 CONTENIDO PRINCIPAL */}
       <div className="header">
         <h2>Centro De Ayuda</h2>
-        <br></br>
+        <br />
         <h2>¿En qué podemos ayudarte?</h2>
         <p>
           Encuentra respuestas rápidas o contacta con nuestro equipo de soporte.
@@ -30,6 +26,7 @@ export default function HelpCenter() {
       {/* 🔹 Preguntas frecuentes */}
       <div className="faq-section">
         <h3>Pedidos y Compras</h3>
+
         <details>
           <summary>¿Cómo hago un pedido?</summary>
           <p>
@@ -37,6 +34,7 @@ export default function HelpCenter() {
             carrito hasta el pago.
           </p>
         </details>
+
         <details>
           <summary>¿Puedo cancelar o modificar mi pedido?</summary>
           <p>
@@ -44,6 +42,7 @@ export default function HelpCenter() {
             nuestro soporte.
           </p>
         </details>
+
         <details>
           <summary>¿Qué formas de pago aceptan?</summary>
           <p>
@@ -51,6 +50,7 @@ export default function HelpCenter() {
             efectivo.
           </p>
         </details>
+
         <details>
           <summary>¿Emiten facturas?</summary>
           <p>
@@ -88,6 +88,7 @@ export default function HelpCenter() {
         </div>
       </div>
 
+      {/* 🔹 Contacto */}
       <div className="contact-section">
 
         {/* Teléfono */}
@@ -96,10 +97,7 @@ export default function HelpCenter() {
           <p className="main">+57 3213148729</p>
           <p>🕒 L-V: 8:00–18:00, S: 9:00–13:00</p>
 
-          <a
-            href="tel:+573213148729"
-            className="btn-contact"
-          >
+          <a href="tel:+573213148729" className="btn-contact">
             Contactar
           </a>
         </div>
@@ -135,7 +133,7 @@ export default function HelpCenter() {
             Contactar
           </a>
         </div>
-       
+
       </div>
     </div>
   );

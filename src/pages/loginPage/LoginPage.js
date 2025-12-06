@@ -4,7 +4,7 @@ import { auth, db } from "../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import "./LoginPage.css";
-import logo from "../../assets/Explosión de color y energía.png";
+import logo from "../../assets/Explosión de color y energía.webp";
 import { registrarLog } from "../../utils/auditoriaService";
 import { retryAsyncSmartly } from "../../utils/retryHelper";
 
@@ -12,84 +12,96 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // LOGIN CON EMAIL/PASSWORD
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!email || !password) {
-      Swal.fire(
-        "Campos vacíos",
-        "Por favor llena todos los campos.",
-        "warning"
-      );
-      return;
+  // ========== VALIDACIONES ================
+  const validarInputs = () => {
+    if (!email.trim() || !password.trim()) {
+      Swal.fire("Campos vacíos", "Por favor llena todos los campos.", "warning");
+      return false;
     }
 
+    // Email válido
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      Swal.fire("Correo inválido", "Ingresa un correo válido.", "warning");
+      return false;
+    }
+
+    return true;
+  };
+
+  // ========== LOGIN ================
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validarInputs()) return;
+
     try {
-      // Reintentar autenticación en caso de errores de red
+      // Autenticación con reintentos
       const userCredential = await retryAsyncSmartly(
         () => signInWithEmailAndPassword(auth, email, password),
         3,
         1000
       );
+
       const user = userCredential.user;
 
-      // 📄 Buscar datos del usuario en Firestore (también con reintentos)
-      const userDocRef = doc(db, "usuarios", user.uid);
-      const userSnap = await retryAsyncSmartly(
-        () => getDoc(userDocRef),
-        3,
-        1000
-      );
+      // Obtener datos del usuario de Firestore con reintento
+      const userDoc = doc(db, "usuarios", user.uid);
+      const userSnap = await retryAsyncSmartly(() => getDoc(userDoc), 3, 1000);
 
+      // Usuario sin registro en Firestore
       if (!userSnap.exists()) {
         Swal.fire("Acceso denegado", "Tu cuenta no está registrada.", "error");
-        // 🔴 Registrar intento de acceso con cuenta inexistente
-        await registrarLog("Intento de inicio de sesión (usuario no registrado)", "Fallido");
+        await registrarLog(
+          "Intento de inicio de sesión (usuario no registrado)",
+          "Fallido"
+        );
         return;
       }
 
       const data = userSnap.data();
 
-      // 🚫 Validar estado
+      // Validar estado del usuario
       if (data.estado === "Inactivo") {
         Swal.fire(
-          "Acceso denegado",
+          "Cuenta inactiva",
           "Tu cuenta está inactiva. Contacta al administrador.",
           "error"
         );
         return;
       }
 
-     // ✅ Mostrar bienvenida
-Swal.fire({
-  title: "¡Bienvenido!",
-  text: `Sesión iniciada como ${user.email}`,
-  icon: "success",
-  timer: 1800,
-  showConfirmButton: false,
-}).then(() => {
-  // 🔹 Si el usuario es ADMIN → redirigir al panel admin
-  if (data.rol === "admin") {
-    window.location.href = "/admin/dashboard";
-  }
-  // 🔹 Si NO es admin → redirigir al dashboard normal
-  else {
-    window.location.href = "/dashboard";
-  }
-});
+      // ========== BIENVENIDA ==========
+      Swal.fire({
+        title: "¡Bienvenido!",
+        text: `Sesión iniciada como ${user.email}`,
+        icon: "success",
+        timer: 1700,
+        showConfirmButton: false,
+      }).then(() => {
+        const destino = data.rol === "admin" 
+          ? "/admin/dashboard" 
+          : "/dashboard";
+
+        window.location.href = destino;
+      });
+
     } catch (error) {
-      console.error("❌ Error de login (después de reintentos):", error);
+      console.error("❌ Error de login:", error);
       let message = "Error al iniciar sesión. Inténtalo de nuevo.";
 
-      // Mensajes específicos según el código de error
-      if (error.code === "auth/user-not-found") {
-        message = "Usuario no encontrado. Verifica tu correo.";
-      } else if (error.code === "auth/wrong-password") {
-        message = "Contraseña incorrecta. Inténtalo de nuevo.";
-      } else if (error.code === "auth/too-many-requests") {
-        message =
-          "Demasiados intentos fallidos. Intenta nuevamente más tarde.";
+      switch (error.code) {
+        case "auth/user-not-found":
+          message = "Usuario no encontrado. Verifica tu correo.";
+          break;
+        case "auth/wrong-password":
+          message = "Contraseña incorrecta.";
+          break;
+        case "auth/too-many-requests":
+          message = "Demasiados intentos fallidos. Intenta más tarde.";
+          break;
+        case "auth/network-request-failed":
+          message = "Problema de conexión. Verifica tu red.";
+          break;
       }
 
       Swal.fire("Error de autenticación", message, "error");
@@ -110,13 +122,13 @@ Swal.fire({
             padding: "5px",
           }}
         />
+
         <h3 className="mb-4 text-center">Iniciar Sesión</h3>
 
         <form onSubmit={handleSubmit}>
+          {/* EMAIL */}
           <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Correo electrónico
-            </label>
+            <label htmlFor="email" className="form-label">Correo electrónico</label>
             <input
               type="email"
               className="form-control"
@@ -124,14 +136,14 @@ Swal.fire({
               placeholder="tucorreo@ejemplo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               required
             />
           </div>
 
+          {/* PASSWORD */}
           <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Contraseña
-            </label>
+            <label htmlFor="password" className="form-label">Contraseña</label>
             <input
               type="password"
               className="form-control"
@@ -139,6 +151,7 @@ Swal.fire({
               placeholder="Contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               required
             />
           </div>

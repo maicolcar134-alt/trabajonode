@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
 import "./PoliticaPrivacidad.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import logo from "../../assets/Explosión de color y energía.png";
-import userPhoto from "../../assets/Explosión de color y energía.png";
+import logo from "../../assets/Explosión de color y energía.webp";
+import userPhoto from "../../assets/Explosión de color y energía.webp";
 
 function PoliticasPrivacidad() {
   const navigate = useNavigate();
@@ -21,81 +21,7 @@ function PoliticasPrivacidad() {
 
   return (
     <div className="seguridad-container">
-      {/* 🟡 NAVBAR */}
-      <Navbar expand="lg" variant="dark" className="dashboard-navbar">
-        <Container>
-          <Navbar.Brand
-            onClick={() => navigate("/dashboard")}
-            className="brand-logo d-flex align-items-center"
-            style={{ cursor: "pointer" }}
-          >
-            <img src={logo} alt="logo" height="40" />
-            <span className="ms-2 fw-bold text-warning">PyroShop</span>
-          </Navbar.Brand>
-
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto align-items-center">
-              <Nav.Link onClick={() => navigate("/Dashboard")}>Inicio</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Categorias")}>Categorías</Nav.Link>
-              <Nav.Link onClick={() => navigate("/ofertaspirotecnia")}>Ofertas</Nav.Link>
-              <Nav.Link onClick={() => navigate("/Seguridad")}>Seguridad</Nav.Link>
-              <Nav.Link onClick={() => navigate("/events")}>Eventos</Nav.Link>
-              <Nav.Link onClick={() => navigate("/helpcenter")}>Ayuda</Nav.Link>
-              <Nav.Link
-                onClick={() => navigate("/Admin")}
-                className="text-warning fw-bold"
-              >
-                <i className="bi bi-shield-lock"></i> Admin
-              </Nav.Link>
-
-              {/* 👤 Usuario / Login */}
-              {user ? (
-                <Nav.Item
-                  className="logout-container"
-                  onClick={handleLogout}
-                  style={{ cursor: "pointer" }}
-                >
-                  <Nav.Link className="logout-link d-flex align-items-center gap-2 text-danger fw-bold">
-                    <FaSignOutAlt /> Cerrar Sesión
-                    <img src={userPhoto} alt="user" className="user-photo-nav" />
-                  </Nav.Link>
-                </Nav.Item>
-              ) : (
-                <Nav.Link
-                  onClick={() => navigate("/login")}
-                  className="d-flex align-items-center gap-2 fw-bold text-light"
-                >
-                  <FaUser /> Acceder
-                </Nav.Link>
-              )}
-
-              {/* 🛒 Carrito */}
-              <Nav.Link
-                onClick={() => navigate("/Carrito")}
-                className="position-relative text-light"
-              >
-                <FaShoppingCart size={18} />
-                {cart.length > 0 && (
-                  <Badge
-                    bg="warning"
-                    text="dark"
-                    pill
-                    style={{
-                      position: "absolute",
-                      top: "0px",
-                      right: "0px",
-                      fontSize: "0.7rem",
-                    }}
-                  >
-                    {cart.length}
-                  </Badge>
-                )}
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
+      
 
       {/* 🧨 CONTENIDO PRINCIPAL */}
       <header className="header">

@@ -16,7 +16,6 @@ export default function EventosCliente() {
 
       setEventos(lista);
 
-      // Recomendación por fecha
       const proximos = [...lista].sort(
         (a, b) => new Date(a.fecha) - new Date(b.fecha)
       );
@@ -46,6 +45,16 @@ export default function EventosCliente() {
           <p className="text-muted">Basado en la fecha más próxima</p>
 
           <div className="card border-0 shadow-sm mt-3">
+            {/* Imagen recomendada con lazy loading */}
+            {recomendado.imagen && (
+              <img
+                src={recomendado.imagen}
+                alt={recomendado.nombre}
+                className="card-img-top"
+                loading="lazy"
+              />
+            )}
+
             <div className="card-body">
               <h3 className="card-title">{recomendado.nombre}</h3>
 
@@ -65,6 +74,7 @@ export default function EventosCliente() {
                   href={recomendado.video}
                   target="_blank"
                   className="btn btn-danger mt-2"
+                  rel="noopener noreferrer"
                 >
                   🎬 Ver Video del Evento
                 </a>
@@ -101,6 +111,17 @@ export default function EventosCliente() {
           {eventosFiltrados.map((evento) => (
             <div className="col-md-4 mb-4" key={evento.id}>
               <div className="card shadow-sm h-100">
+
+                {/* Imagen del evento con Lazy Loading */}
+                {evento.imagen && (
+                  <img
+                    src={evento.imagen}
+                    alt={evento.nombre}
+                    className="card-img-top"
+                    loading="lazy"
+                  />
+                )}
+
                 {/* Encabezado del evento */}
                 <div className="card-body">
                   <h5 className="card-title fw-bold">{evento.nombre}</h5>

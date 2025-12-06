@@ -1,6 +1,17 @@
 /* ================================
-     🌙 DASHBOARD ADMIN MODERNO
-   ================================ */
+      🌙 DASHBOARD ADMIN MODERNO
+================================ */
+:root {
+  --c-green: #00e676;
+  --c-green-soft: rgba(0, 230, 118, 0.8);
+  --c-blue: #4fc3f7;
+  --c-dark: #0d1b2a;
+  --c-dark2: #102337;
+  --shadow-green: rgba(0, 255, 140, 0.15);
+  --border-green: rgba(0, 255, 140, 0.2);
+  --shadow-blue: rgba(79, 195, 247, 0.25);
+  --border-blue: rgba(79, 195, 247, 0.2);
+}
 
 .dashboard-container {
   padding: 20px;
@@ -15,15 +26,14 @@
   text-align: center;
   font-size: 2rem;
   font-weight: 700;
-  color: #00e676;
+  color: var(--c-green);
   margin-bottom: 25px;
-  text-shadow: 0 0 6px rgba(0, 230, 118, 0.8);
+  text-shadow: 0 0 6px var(--c-green-soft);
 }
 
 /* ================================
       TARJETAS DE MÉTRICAS
-   ================================ */
-
+================================ */
 .metricas-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -32,16 +42,16 @@
 }
 
 .card-metrica {
-  background: #0d1b2a;
+  background: var(--c-dark);
   padding: 20px;
   border-radius: 14px;
-  border: 2px solid rgba(0, 255, 140, 0.2);
-  box-shadow: 0 0 12px rgba(0, 255, 140, 0.15);
+  border: 2px solid var(--border-green);
+  box-shadow: 0 0 12px var(--shadow-green);
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .card-metrica h3 {
-  color: #4fc3f7;
+  color: var(--c-blue);
   font-weight: 600;
   margin-bottom: 10px;
 }
@@ -49,37 +59,37 @@
 .card-valor {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #00e676;
+  color: var(--c-green);
 }
 
 .card-metrica:hover {
   transform: scale(1.03);
-  box-shadow: 0 0 18px rgba(0, 255, 140, 0.25);
+  box-shadow: 0 0 18px var(--shadow-green);
 }
 
 /* ================================
-        GRAFICAS
-   ================================ */
-
+          GRAFICAS
+================================ */
 .grafica-box {
-  background: #102337;
+  background: var(--c-dark2);
   padding: 20px;
   border-radius: 16px;
-  margin: 0 auto;
   max-width: 900px;
-  /* 👈 hace la gráfica mediana */
-  border: 2px solid rgba(79, 195, 247, 0.2);
-  box-shadow: 0 0 12px rgba(79, 195, 247, 0.25);
+  margin: 0 auto;
+  border: 2px solid var(--border-blue);
+  box-shadow: 0 0 12px var(--shadow-blue);
 }
 
 .grafica-box h2 {
   text-align: center;
   margin-bottom: 14px;
-  color: #4fc3f7;
+  color: var(--c-blue);
   text-shadow: 0 0 6px rgba(79, 195, 247, 0.7);
 }
 
-/* RESPONSIVE */
+/* ================================
+        RESPONSIVE
+================================ */
 @media (max-width: 768px) {
   .grafica-box {
     max-width: 100%;
@@ -108,7 +118,6 @@
   }
 }
 
-/* Pantallas muy pequeñas (móvil pequeño) */
 @media (max-width: 480px) {
   .dashboard-container {
     padding: 10px;
@@ -122,7 +131,6 @@
   .metricas-grid {
     grid-template-columns: 1fr;
     gap: 10px;
-    margin-bottom: 20px;
   }
 
   .card-metrica {
@@ -132,7 +140,6 @@
 
   .card-metrica h3 {
     font-size: 0.8rem;
-    margin-bottom: 8px;
   }
 
   .card-valor {

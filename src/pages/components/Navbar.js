@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaSignOutAlt, FaUser, FaShoppingCart } from "react-icons/fa";
-import Logo from "../../assets/Logo.png";
+import Logo from "../../assets/Explosión de color y energía.webp";
 import { Badge } from "react-bootstrap";
 import "./Navbar.css";
 

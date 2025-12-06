@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import "./ResetPasswordPage.css";
-import logo from "../../assets/Explosión de color y energía.png";
+import logo from "../../assets/Explosión de color y energía.webp";
 import { confirmPasswordReset, getAuth } from "firebase/auth";
 import { useSearchParams } from "react-router-dom";
 
@@ -51,12 +51,15 @@ function ResetPasswordPage() {
     return (
         <div className="d-flex justify-content-center align-items-center min-vh-100 bg-gradient">
             <div className="form-card">
+                {/* IMAGEN CON LAZY LOADING */}
                 <img
                     src={logo}
+                    loading="lazy"
                     alt="Logo mas"
                     className="logo mb-3 mx-auto d-block"
                     style={{ width: "250px" }}
                 />
+
                 <h3 className="mb-4 text-center">Restablecer contraseña</h3>
                 <form onSubmit={handleSubmit}>
                     {/* Campo Nueva contraseña */}
@@ -92,12 +95,9 @@ function ResetPasswordPage() {
                         <div className="password-wrapper">
                             <input
                                 type={showRepeatPassword ? "text" : "password"}
-                                className={`form-control ${match === null
-                                        ? ""
-                                        : match
-                                            ? "is-valid"
-                                            : "is-invalid"
-                                    }`}
+                                className={`form-control ${
+                                    match === null ? "" : match ? "is-valid" : "is-invalid"
+                                }`}
                                 placeholder="Repetir contraseña"
                                 value={repeatPassword}
                                 onChange={handleRepeatChange}
@@ -113,6 +113,7 @@ function ResetPasswordPage() {
                                 onClick={() => setShowRepeatPassword(!showRepeatPassword)}
                             ></i>
                         </div>
+
                         {match === false && (
                             <div className="invalid-feedback">
                                 Las contraseñas no coinciden.

@@ -1,11 +1,11 @@
-/* ZonasEnvio.css
-   Estilos completos para ZonasEnvioProFirebase / ZonasEnvioFull
-   Incluye: notificaciones, header, tabs, buscador, tabla, botones, modal, paginación y responsive.
-*/
+/* ============================================================
+   ZONAS ENVÍO - CSS OPTIMIZADO
+   Mejora performance, reduce repeticiones y conserva el diseño
+=============================================================== */
 
-/* ---------- Base ---------- */
-:root{
-  --bg: #0f1724;         /* fondo general oscuro */
+/* ---------- Variables ---------- */
+:root {
+  --bg: #0f1724;
   --card: #111827;
   --muted: #9ca3af;
   --text: #f8fafc;
@@ -14,10 +14,23 @@
   --danger: #ef4444;
   --warning: #f59e0b;
   --glass: rgba(255,255,255,0.03);
+
+  /* Sombras */
+  --shadow-soft: 0 6px 14px rgba(0, 0, 0, 0.25);
+  --shadow-medium: 0 6px 20px rgba(2, 6, 23, 0.5);
+  --shadow-accent: rgba(37, 99, 235, 0.14);
 }
 
 * { box-sizing: border-box; }
-body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; }
+
+body,
+.zonas-page {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
 
 /* Container */
 .zonas-page {
@@ -25,33 +38,42 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   margin: 18px auto;
   padding: 18px;
   background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
-  color: var(--text);
 }
 
-/* ---------- Notificaciones ---------- */
+/* ========== NOTIFICACIONES ========== */
 .notificacion {
   display: flex;
-  gap: 12px;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   padding: 10px 14px;
   border-radius: 8px;
   margin-bottom: 12px;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
   font-weight: 600;
-}
-.notificacion.success { background: linear-gradient(90deg,var(--success), #059669); color: white; }
-.notificacion.error   { background: linear-gradient(90deg,var(--danger), #dc2626); color: white; }
-.notificacion.info    { background: linear-gradient(90deg,var(--warning), #f59e0b); color: black; }
-.cerrar-notificacion {
-  background: transparent;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font-size: 14px;
+  box-shadow: var(--shadow-medium);
 }
 
-/* ---------- Header ---------- */
+.notificacion.success {
+  background: linear-gradient(90deg, var(--success), #059669);
+  color: #fff;
+}
+.notificacion.error {
+  background: linear-gradient(90deg, var(--danger), #dc2626);
+  color: #fff;
+}
+.notificacion.info {
+  background: linear-gradient(90deg, var(--warning), #f59e0b);
+  color: #000;
+}
+
+.cerrar-notificacion {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* ========== HEADER ========== */
 .zonas-header {
   display: flex;
   justify-content: space-between;
@@ -59,39 +81,40 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   gap: 12px;
   margin-bottom: 14px;
 }
+
 .title {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 20px;
   font-weight: 700;
-  color: var(--text);
 }
+
 .btn-volver-icon {
   color: var(--accent);
   cursor: pointer;
   display: inline-flex;
-  align-items: center;
 }
+
 .btn-nuevo {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--accent);
-  color: white;
   padding: 12px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  box-shadow: 0 6px 14px rgba(37,99,235,0.14);
-  transition: transform 0.14s ease, box-shadow 0.14s ease;
   min-height: 44px;
   min-width: 44px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+  transition: transform .14s, box-shadow .14s;
 }
-.btn-nuevo:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(37,99,235,0.18); }
+.btn-nuevo:hover { transform: translateY(-2px); }
 
-/* ---------- Tabs / Actions ---------- */
+/* ========== TABS / ACTIONS ========== */
 .zonas-actions {
   display: flex;
   justify-content: space-between;
@@ -99,117 +122,121 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   gap: 12px;
   margin-bottom: 12px;
 }
-.tabs { display: flex; gap: 8px; align-items: center; }
+
+.tabs { display: flex; gap: 8px; }
 .tab {
+  padding: 6px 10px;
   background: var(--glass);
   color: var(--text);
-  padding: 6px 10px;
-  border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.16s ease, transform 0.12s;
+  transition: background .16s, transform .12s;
 }
 .tab:hover { transform: translateY(-2px); }
-.tab.active { background: linear-gradient(90deg, rgba(37,99,235,0.16), rgba(37,99,235,0.08)); border-color: rgba(37,99,235,0.35); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+.tab.active {
+  background: linear-gradient(90deg, rgba(37,99,235,0.16), rgba(37,99,235,0.08));
+  border-color: rgba(37,99,235,0.35);
+}
 
-.actions-right { display:flex; gap:10px; align-items:center; }
+.actions-right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 .actions-right input {
+  width: 220px;
+  padding: 8px 10px;
+  border-radius: 8px;
   background: var(--card);
   border: 1px solid rgba(255,255,255,0.03);
   color: var(--text);
-  padding: 8px 10px;
-  border-radius: 8px;
-  width: 220px;
-  transition: box-shadow 0.12s;
+  transition: box-shadow .12s;
 }
-.actions-right input:focus { box-shadow: 0 6px 18px rgba(37,99,235,0.12); outline: none; }
+.actions-right input:focus {
+  outline: none;
+  box-shadow: 0 6px 18px rgba(37,99,235,0.12);
+}
 
-/* ---------- Card / Tabla wrap ---------- */
+/* ========== TABLE WRAP ========== */
 .tabla-wrap {
   overflow-x: auto;
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
   padding: 8px;
-  box-shadow: 0 6px 20px rgba(2,6,23,0.5);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+  box-shadow: var(--shadow-medium);
 }
 
+/* ========== TABLE ========== */
 .tabla-zonas {
   width: 100%;
   border-collapse: collapse;
-  min-width: 720px; /* garantiza scroll en pantallas pequeñas */
+  min-width: 720px;
   font-size: 14px;
 }
+
 .tabla-zonas thead th {
-  text-align: left;
   padding: 12px 14px;
   background: rgba(255,255,255,0.02);
-  color: #e6eef6;
   font-weight: 700;
   position: sticky;
   top: 0;
   z-index: 1;
 }
+
 .tabla-zonas tbody td {
   padding: 12px 14px;
   border-bottom: 1px solid rgba(255,255,255,0.03);
-  vertical-align: middle;
-  color: var(--text);
 }
 
-/* Responsive table para móvil */
-@media (max-width: 768px) {
-  .tabla-zonas {
-    font-size: 13px;
-  }
-  .tabla-zonas thead th,
-  .tabla-zonas tbody td {
-    padding: 10px 10px;
-  }
+.tabla-zonas tbody tr {
+  transition: background .14s ease, transform .12s;
+}
+.tabla-zonas tbody tr:hover {
+  background: rgba(255,255,255,0.02);
+  transform: translateY(-2px);
 }
 
-@media (max-width: 480px) {
-  .tabla-zonas {
-    font-size: 12px;
-    min-width: 300px;
-  }
-  .tabla-zonas thead th,
-  .tabla-zonas tbody td {
-    padding: 8px 6px;
-  }
-}
-.tabla-zonas tbody tr { transition: background 0.14s ease, transform 0.12s; }
-.tabla-zonas tbody tr:hover { background: rgba(255,255,255,0.02); transform: translateY(-2px); }
-
-/* Estado badges */
+/* Badges */
 .estado {
   display: inline-block;
   padding: 6px 10px;
   border-radius: 999px;
-  font-weight: 700;
   font-size: 13px;
-  text-align: center;
+  font-weight: 700;
 }
-.estado.Activa { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.12); }
-.estado.Inactiva { background: rgba(239,68,68,0.08); color: #ef4444; border: 1px solid rgba(239,68,68,0.06); }
+.estado.Activa {
+  background: rgba(16,185,129,0.12);
+  color: #10b981;
+}
+.estado.Inactiva {
+  background: rgba(239,68,68,0.08);
+  color: var(--danger);
+}
 
-/* Icon buttons in table */
+/* Icon buttons */
 .icon-btn {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  cursor: pointer;
   padding: 10px 12px;
+  background: none;
+  border: none;
   border-radius: 6px;
-  transition: background 0.12s, color 0.12s, transform 0.08s;
+  cursor: pointer;
   min-height: 44px;
   min-width: 44px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  transition: background .12s, transform .08s;
 }
-.icon-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.02); }
-.icon-btn.delete:hover { background: rgba(239,68,68,0.12); color: #fff; }
+.icon-btn:hover {
+  background: rgba(255,255,255,0.02);
+  transform: translateY(-2px);
+}
+.icon-btn.delete:hover {
+  background: rgba(239,68,68,0.12);
+  color: #fff;
+}
 
 /* Sin datos */
 .sin-datos {
@@ -219,14 +246,14 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   font-style: italic;
 }
 
-/* ---------- Paginación ---------- */
+/* ========== PAGINACIÓN ========== */
 .paginacion {
   display: flex;
-  align-items: center;
   gap: 12px;
   justify-content: center;
   margin-top: 12px;
 }
+
 .paginacion button {
   padding: 12px 14px;
   border-radius: 8px;
@@ -236,39 +263,54 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   cursor: pointer;
   min-height: 44px;
   min-width: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-.paginacion button:disabled { opacity: 0.35; cursor: not-allowed; }
+.paginacion button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 
-/* ---------- Modal ---------- */
+/* ========== MODAL ========== */
 .modal-overlay {
   position: fixed;
   inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(rgba(2,6,23,0.6), rgba(2,6,23,0.6));
+  background: rgba(2,6,23,0.6);
   z-index: 999;
 }
+
 .modal {
   width: 420px;
   max-width: calc(100% - 36px);
+  padding: 18px;
   background: var(--card);
   border-radius: 12px;
-  padding: 18px;
   box-shadow: 0 18px 40px rgba(2,6,23,0.8);
-  transform: translateY(-8px);
-  animation: modalIn 220ms cubic-bezier(.2,.9,.25,1) forwards;
+  animation: modalIn .22s cubic-bezier(.2,.9,.25,1) forwards;
 }
+
 @keyframes modalIn {
-  from { opacity: 0; transform: translateY(-18px) scale(0.98); }
+  from { opacity: 0; transform: translateY(-18px) scale(.98); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; }
-.close-btn { background: transparent; border: none; color: var(--muted); cursor:pointer; font-size: 18px; }
-.modal-form input, .modal-form select {
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.close-btn {
+  background: none;
+  color: var(--muted);
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* Modal form */
+.modal-form input,
+.modal-form select {
   width: 100%;
   padding: 10px 12px;
   margin-bottom: 10px;
@@ -276,43 +318,57 @@ body, .zonas-page { margin: 0; padding: 0; font-family: "Poppins", system-ui, -a
   border: 1px solid rgba(255,255,255,0.04);
   background: rgba(255,255,255,0.01);
   color: var(--text);
-  outline: none;
 }
-.modal-form input:focus, .modal-form select:focus { box-shadow: 0 8px 24px rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.28); }
+.modal-form input:focus,
+.modal-form select:focus {
+  border-color: rgba(37,99,235,0.28);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.08);
+}
 
-/* Modal buttons */
 .modal-form button {
   width: 100%;
   padding: 14px 20px;
   border-radius: 8px;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border: none;
   background: var(--accent);
   color: white;
   font-weight: 700;
   cursor: pointer;
-  margin-top: 6px;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition: transform .12s, box-shadow .12s;
 }
-.modal-form button:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(37,99,235,0.12); }
+.modal-form button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(37,99,235,0.12);
+}
 
-/* ---------- Small screens / responsive ---------- */
+/* ========== RESPONSIVE ========== */
 @media (max-width: 900px) {
   .actions-right input { width: 160px; }
   .tabla-zonas { min-width: 640px; }
   .modal { width: 360px; }
 }
+
 @media (max-width: 640px) {
-  .zonas-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .zonas-actions { flex-direction: column; align-items: stretch; gap: 10px; }
-  .actions-right { width: 100%; display:flex; gap:8px; }
-  .actions-right input { flex: 1; width: 100%; }
-  .tabla-zonas { min-width: 520px; font-size: 13px; }
-  .modal { width: calc(100% - 28px); padding: 14px; }
+  .zonas-header,
+  .zonas-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .actions-right {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .actions-right input {
+    flex: 1;
+    width: 100%;
+  }
+
+  .tabla-zonas { min-width: 520px; }
 }
+
 @media (max-width: 420px) {
   .tabla-zonas { min-width: 420px; }
   .title { font-size: 18px; }

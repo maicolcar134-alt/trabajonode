@@ -6,11 +6,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 function SeguridadAdmin() {
   const navigate = useNavigate();
 
-  // 🧠 Estado simulado de usuario y carrito
   const [user, setUser] = useState(true);
   const [cart, setCart] = useState([]);
 
-  // 🔒 Cierre de sesión
   const handleLogout = () => {
     console.log("Cerrar sesión");
     alert("Sesión cerrada correctamente");
@@ -18,7 +16,6 @@ function SeguridadAdmin() {
     navigate("/dashboard");
   };
 
-  // 📄 Función para generar y descargar PDF
   const descargarGuia = () => {
     const contenido = `
     📘 GUÍA DE SEGURIDAD PIROTÉCNICA
@@ -66,7 +63,7 @@ function SeguridadAdmin() {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "Guia_de_Seguridad_Pirotecnica.txt"; // Puedes usar .pdf si quieres usar jsPDF
+    link.download = "Guia_de_Seguridad_Pirotecnica.txt";
     link.click();
 
     URL.revokeObjectURL(url);
@@ -74,7 +71,20 @@ function SeguridadAdmin() {
 
   return (
     <div className="seguridad-container">
+
       <header className="header">
+
+        {/* EJEMPLO para cuando quieras agregar imágenes:
+        
+        <img 
+          src={banner}
+          loading="lazy"
+          alt="Banner de seguridad"
+          className="banner-img"
+        />
+        
+        */}
+
         <h1 className="titulo-principal">Guía de Seguridad Pirotécnica</h1>
         <p className="subtitulo">
           Información esencial para el manejo responsable y seguro de productos
@@ -82,7 +92,6 @@ function SeguridadAdmin() {
         </p>
       </header>
 
-      {/* ⚠️ ADVERTENCIA */}
       <section className="bloque advertencia">
         <h2>⚠️ Advertencia Legal</h2>
         <p>
@@ -91,7 +100,6 @@ function SeguridadAdmin() {
         </p>
       </section>
 
-      {/* 🧯 INFORMACIÓN VITAL */}
       <section className="bloque vital">
         <h2>🧯 Información Vital</h2>
         <ul>
@@ -101,16 +109,12 @@ function SeguridadAdmin() {
         </ul>
       </section>
 
-      {/* 🚀 PASOS */}
       <section className="bloque pasos">
         <h2>🚀 Antes, Durante y Después del Uso</h2>
         <div className="pasos-grid">
           <div className="paso">
             <h3>Antes</h3>
-            <p>
-              Verifica el estado del producto y asegúrate de tener una zona
-              despejada.
-            </p>
+            <p>Verifica el estado del producto y asegúrate de tener una zona despejada.</p>
           </div>
           <div className="paso">
             <h3>Durante</h3>
@@ -123,7 +127,6 @@ function SeguridadAdmin() {
         </div>
       </section>
 
-      {/* 🚫 PROHIBICIONES */}
       <section className="bloque prohibiciones">
         <h2>🚫 Prohibiciones Éticas</h2>
         <ul>
@@ -133,16 +136,15 @@ function SeguridadAdmin() {
         </ul>
       </section>
 
-      {/* 🚨 EMERGENCIA */}
       <section className="bloque emergencia">
         <h2>🚨 Protocolos de Emergencia</h2>
         <p>En caso de accidente, busca ayuda médica inmediata.</p>
+
         <button onClick={descargarGuia} className="btn-protocolo">
           📄 Descargar Guía de Emergencia
         </button>
       </section>
 
-      {/* ❓ FAQ */}
       <section className="bloque faq">
         <h2>❓ Preguntas Frecuentes</h2>
         <details>
