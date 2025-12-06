@@ -17,6 +17,21 @@ import "./Admin.css";
 const Admin = () => {
   const navigate = useNavigate();
   const [isAuthorized, setIsAuthorized] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    // Inicializar estado del sidebar según ancho de pantalla
+    const initial = window.innerWidth > 1024;
+    setSidebarOpen(initial);
+
+    const handleResize = () => {
+      if (window.innerWidth > 1024) setSidebarOpen(true);
+      // not forcing close on resize to small to avoid UX jump, keep current state
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const verificarAcceso = async () => {
@@ -109,7 +124,7 @@ const Admin = () => {
 
   return (
     <div className="admin-container">
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="logo-section">
           <div className="logo-icon">🔥</div>
           <div>
@@ -124,6 +139,10 @@ const Admin = () => {
               key={item.name}
               to={item.path}
               end
+              onClick={() => {
+                // Al navegar en pantallas pequeñas, cerrar sidebar
+                if (window.innerWidth <= 1024) setSidebarOpen(false);
+              }}
               className={({ isActive }) =>
                 `menu-item ${isActive ? "active" : ""}`
               }
@@ -152,7 +171,25 @@ const Admin = () => {
       </aside>
 
       <main className="admin-content">
-        <Outlet />
+        {/* Topbar / Toggle visible en pantallas pequeñas */}
+        <div className="topbar">
+          <button
+            className="toggle-btn"
+            onClick={() => setSidebarOpen((s) => !s)}
+            aria-label="Abrir menú"
+          >
+            ☰ Menú
+          </button>
+        </div>
+
+        {/* Overlay cuando sidebar está abierto en móvil */}
+        {sidebarOpen && window.innerWidth <= 1024 && (
+          <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+        )}
+
+        <div className="admin-outlet">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

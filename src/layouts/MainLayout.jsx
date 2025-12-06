@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import DashboardNavbar from "../pages/components/Navbar";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 function MainLayout() {
   const [user] = useAuthState(auth);
+  const [rol, setRol] = useState(undefined);
   const [carrito, setCarrito] = useState([]);
 
   // Cargar carrito al iniciar
@@ -24,6 +26,38 @@ function MainLayout() {
     return () => clearInterval(interval);
   }, []);
 
+  // Obtener rol del usuario desde Firestore
+  useEffect(() => {
+    let mounted = true;
+    const fetchRol = async () => {
+      try {
+        if (!user) {
+          if (mounted) setRol(null);
+          return;
+        }
+        const userDocRef = doc(db, "usuarios", user.uid);
+        const userSnap = await getDoc(userDocRef);
+        if (userSnap.exists() && mounted) {
+          const data = userSnap.data();
+          // Buscar 'Rol' con mayúscula (como está en Firestore) o 'rol' con minúscula
+          const userRol = data?.Rol || data?.rol || null;
+          setRol(userRol);
+        } else if (mounted) {
+          setRol(null);
+        }
+      } catch (e) {
+        console.error("Error obteniendo rol de usuario:", e);
+        if (mounted) setRol(null);
+      }
+    };
+
+    fetchRol();
+
+    return () => {
+      mounted = false;
+    };
+  }, [user]);
+
   const handleLogout = async () => {
     await auth.signOut();
   };
@@ -33,6 +67,7 @@ function MainLayout() {
       <DashboardNavbar
         user={user}
         userPhoto={user?.photoURL}
+        rol={rol}
         carrito={carrito}
         handleLogout={handleLogout}
       />
