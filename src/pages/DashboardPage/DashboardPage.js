@@ -178,34 +178,35 @@ function DashboardPage() {
       {/* HERO */}
       <main className="main-content" style={{ margin: 0, padding: 0 }}>
         <section
-          className="relative flex items-center justify-start bg-cover bg-center"
+          className="relative flex items-center justify-start overflow-hidden"
           style={{
-            height: "70vh",
-            width: "100vw",
-            marginLeft: "calc(-50vw + 50%)",
-            position: "relative",
-            overflow: "hidden",
+            height: "70vh",          // altura fija → sin reflows
+            width: "100%",           // evita el ancho 100vw (genera scroll y CLS)
+            position: "relative"
           }}
         >
-          {/* Imagen LCP REAL */}
+          {/* Imagen LCP con espacio reservado */}
           <img
-            src="../../assets/hero.webp"          // <--- coloca aquí tu imagen optimizada
+            src="/assets/hero.webp"
             alt="Pirotecnia PyroShop"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 object-cover"
             loading="eager"
             fetchpriority="high"
-            style={{ zIndex: 1 }}
+            width="1920"               // RESERVA espacio = sin CLS
+            height="1080"
+            style={{
+              width: "100%",
+              height: "100%",
+              zIndex: 1
+            }}
           />
 
+          {/* Overlay */}
           <div className="absolute inset-0 bg-black/50" style={{ zIndex: 2 }}></div>
 
-          {/* Contenido */}
+          {/* Contenido MÁS LIGERO (sin min-h-screen, sin margin-top dinámico) */}
           <div
-            className="relative flex justify-start items-start min-h-screen"
-            style={{ zIndex: 3 }}
-          >
-                  <div
-            className="relative z-10 flex flex-col text-left"
+            className="relative flex flex-col justify-center items-start px-[4vw]"
             style={{
               paddingLeft: "4vw",
               maxWidth: "800px",
@@ -241,8 +242,7 @@ function DashboardPage() {
               </button>
             </div>
 
-            <div className="contenedor"></div>
-            <div className="contenedor">
+            <div className="contenedor mt-6">
               <div>
                 <div className="numero">500+</div>
                 <div className="etiqueta">Productos</div>
@@ -259,8 +259,8 @@ function DashboardPage() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
       </main>
 
       {/* DESTACADOS */}
@@ -321,120 +321,6 @@ function DashboardPage() {
                     <p className="fw-bold text-warning mb-1">
                       💰 ${Number(p.precio).toLocaleString()}
                     </p>
-
-                    <p
-                      className="text-light mb-3"
-                      style={{ fontSize: "0.9rem", opacity: 0.8 }}
-                    >
-                      📦 Stock:{" "}
-                      <span className="fw-bold">
-                        {p.cantidad ?? p.stock ?? 0}
-                      </span>
-                    </p>
-
-                    <button
-                      className="btn btn-warning w-100"
-                      onClick={() => agregarAlCarrito(p)}
-                    >
-                      Añadir al carrito 🛒
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* CATEGORÍAS (Fijas) */}
-      <section
-        className="catalogo-completo px-5 py-20"
-        style={{ background: "#0d0d0d", color: "#fff" }}
-      >
-        <h2
-          className="text-3xl fw-bold mb-5 pb-2 border-bottom border-warning"
-          style={{ borderColor: "#f97316" }}
-        >
-          Categorías
-        </h2>
-
-        <div className="d-flex gap-3 mb-4 justify-content-center">
-          <button
-            className={`btn ${filtroCategoria === "" ? "btn-warning" : "btn-outline-warning"
-              }`}
-            onClick={() => setFiltroCategoria("")}
-          >
-            Todos
-          </button>
-
-          {categoriasDisponibles.map((c) => (
-            <button
-              key={c}
-              className={`btn ${filtroCategoria === c ? "btn-warning" : "btn-outline-warning"
-                }`}
-              onClick={() => setFiltroCategoria(c)}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-
-        {productosFiltrados.length === 0 ? (
-          <p className="text-center text-muted">
-            No hay productos en esta categoría.
-          </p>
-        ) : (
-          <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            {productosFiltrados.map((p) => (
-              <div key={p.id} className="col">
-                <div className="card h-100 bg-dark text-light border-0 shadow-lg">
-                  {p.imagenUrl ? (
-                    <img
-                      src={p.imagenUrl}
-                      className="card-img-top"
-                      style={{ height: "220px", objectFit: "cover" }}
-                      alt={p.nombre}
-                      onError={(e) => {
-                        e.currentTarget.onerror = null;
-                        e.currentTarget.src = "/Logo.png";
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className="d-flex align-items-center justify-content-center bg-secondary"
-                      style={{ height: "220px" }}
-                    >
-                      Sin imagen
-                    </div>
-                  )}
-
-                  <div className="card-body text-center">
-                    <h5 className="fw-bold text-uppercase">{p.nombre}</h5>
-
-                    {p.oferta ? (
-                      <>
-                        <p className="fw-bold text-danger mb-1">
-                          🔥 Oferta {p.ofertaValor ?? "—"}% OFF
-                        </p>
-                        <p className="fw-bold text-success mb-1">
-                          💰 $
-                          {(
-                            (Number(p.precio) || 0) *
-                            (1 - (p.ofertaValor || 0) / 100)
-                          ).toLocaleString()}
-                        </p>
-                        <p
-                          className="text-muted"
-                          style={{ fontSize: "0.8rem" }}
-                        >
-                          Antes: ${Number(p.precio || 0).toLocaleString()}
-                        </p>
-                      </>
-                    ) : (
-                      <p className="fw-bold text-success mb-1">
-                        💰 ${Number(p.precio || 0).toLocaleString()}
-                      </p>
-                    )}
 
                     <p
                       className="text-light mb-3"
