@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
+import { getResponsiveImageProps } from "../../utils/responsiveImageHelper";
 import "./CategoriasAdmin.css";
 
 import { useNavigate } from "react-router-dom";
@@ -132,8 +133,7 @@ export default function CategoriasAdmin() {
                       <div className="producto-imagen-wrapper">
                         {p.imagenUrl ? (
                           <img
-                            src={p.imagenUrl}
-                            alt={p.nombre}
+                            {...getResponsiveImageProps(p.imagenUrl, "productCard", p.nombre)}
                             className="producto-imagen"
                           />
                         ) : (

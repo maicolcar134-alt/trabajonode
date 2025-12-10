@@ -367,10 +367,19 @@ npm install react-scripts
 	├── firebase.json                             # Configuración del hosting
 	├── package.json                              # Dependencias y scripts del proyecto
 	├── package-lock.json                         # Versionado exacto de dependencias
-	└── README.md    
-
-
-	                             # Documentación principal del repositorio
+	├── docs/                                     # 📚 Documentación del sistema (ver docs/README.md)
+	│   ├── Interfaces_and_IO.md                  # Especificación de interfaces y I/O del sistema
+	│   └── README.md                             # Índice de documentación
+	└── README.md                                 # Documentación principal del repositorio
 
 ```
+
+---
+
+## 📚 Documentación
+
+Para consultar la documentación del sistema, incluyendo especificación de interfaces y entradas/salidas, dirígete a:
+
+👉 **[docs/README.md](./docs/README.md)**
+
 ---
