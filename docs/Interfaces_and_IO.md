@@ -29,7 +29,7 @@
 - **Errores:** Estructura uniforme: `{ code: string, message: string, details?: any }` para mostrar en UI.
 
 ### Admin / Operaciones
-- **Backups:** No automatizado (documentado en README). Requerimiento: exportar/importar configuración en JSON.
+- **Backups:** ✅ Automático cada domingo 1:00 AM UTC (últimos 52 backups = 1 año). Colecciones: `categorias`, `zonas`, `eventos`, `ofertas`. Ver `BackupAdmin.jsx` y `backupService.js`
 - **Auditoría:** Escritura de eventos en `auditoria` con: actor, acción, timestamp, meta.
 
 ### Seguridad y Privacidad
@@ -154,9 +154,13 @@ Nota: cuando menciono colecciones uso los nombres observados en el repo: `usuari
 **Salidas:** bloqueos temporales, registro en `rateLimits` collection
 
 ### Export / Import de Configuración (Admin)
-**Entradas:** petición export (acción manual)
+**Entradas:** petición export/restore (automático o manual desde UI)
 
-**Salidas:** JSON/CSV descargable con `categorias`, `zonas`, `config-admin`. Actualmente manual (README)
+**Salidas:** 
+- Automático: JSON guardado en Cloud Storage (`backups/admin-config/backup-*.json`)
+- Manual: Descarga de backup o restauración selectiva de colecciones
+
+**Disponible en:** `src/pages/Admin/BackupAdmin.jsx` + `src/utils/backupService.js`
 
 ### Interacciones de Real-time (onSnapshot)
 **Entradas:** suscripción desde cliente (consulta Firestore)
@@ -191,7 +195,8 @@ Nota: cuando menciono colecciones uso los nombres observados en el repo: `usuari
 ## Outputs Operacionales (logs, reportes, auditoría)
 
 - **Auditoría (`auditoria`):** cada operación crítica produce un registro `{ actorUid, action, resourceId, details, timestamp }`
-- **Backups:** si se realizan manualmente, salida esperada: `backup-config-YYYYMMDD.json` con dumps de colecciones administrativas
+- **Backups automáticos:** cada domingo 1:00 AM UTC se exporta JSON a Cloud Storage con metadata. Formato: `backups/admin-config/backup-YYYY-MM-DDTHH-MM-SS.json`
+- **Backups:** si se restauran, salida esperada: `{ success, restauradas: N, errores: [] }`
 - **Notificaciones / Emails:** si existieran, salida: envío de email con estado y `messageId` del proveedor
 
 ---
@@ -201,8 +206,10 @@ Nota: cuando menciono colecciones uso los nombres observados en el repo: `usuari
 - ✅ Añadir validaciones redundantes en reglas Firestore además de validación cliente
 - ✅ Registrar transacciones críticas (por ejemplo decremento de stock) con transacciones Firestore o Cloud Functions para evitar race conditions
 - ✅ No almacenar datos de pago sensibles; usar proveedor externo y tokens
+- ✅ **Backup automático:** Se ejecuta cada domingo 1:00 AM UTC. Acceso desde `src/pages/Admin/BackupAdmin.jsx`
 - ✅ Mantener `docs/` actualizado cuando cambien interfaces o flujos de datos
 - ✅ Documentar nuevas colecciones Firestore y su schema en `docs/` para facilitar onboarding
+- ✅ Configurar Storage Rules para restringir acceso a backups solo a admins
 
 ---
 

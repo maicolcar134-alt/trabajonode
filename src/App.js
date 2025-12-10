@@ -48,6 +48,7 @@ import EventosAdminAgregar from "./pages/EventosPage/EventosAdmin";
 import Pedidos from "./pages/Pedidos/Pedidos";
 import Auditoria from "./pages/Auditoria/Auditoria";
 import ZonasEnvioPro from "./pages/ZonasEnvio/ZonasEnvio";
+import BackupAdmin from "./pages/Admin/BackupAdmin";
 
 
 function App() {
@@ -163,6 +164,7 @@ function App() {
           <Route path="auditoria" element={<Auditoria />} />
           <Route path="zonas" element={<ZonasEnvioPro />} />
           <Route path="galeria" element={<GaleriaFotos/>}/>
+          <Route path="backups" element={<BackupAdmin />} />
        
         </Route>
 

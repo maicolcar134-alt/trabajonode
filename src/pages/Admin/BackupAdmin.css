@@ -1,0 +1,280 @@
+/* Estilos para Gestión de Backups */
+
+.backup-admin-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.backup-admin-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+  border-bottom: 3px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.backup-info {
+  background: #e7f3ff;
+  border-left: 4px solid #007bff;
+  padding: 15px;
+  margin-bottom: 25px;
+  border-radius: 4px;
+}
+
+.backup-info p {
+  margin: 8px 0;
+  color: #333;
+}
+
+.backup-info .btn {
+  margin-top: 10px;
+}
+
+/* Lista de Backups */
+.backup-list {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.backup-list h3 {
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.backup-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.backup-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  margin-bottom: 8px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f9f9f9;
+}
+
+.backup-list li:hover {
+  background: #f0f0f0;
+  border-color: #007bff;
+  box-shadow: 0 2px 6px rgba(0, 123, 255, 0.2);
+}
+
+.backup-list li.active {
+  background: #007bff;
+  color: white;
+  border-color: #0056b3;
+  font-weight: bold;
+}
+
+.backup-name {
+  flex: 1;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.backup-date {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.backup-list li.active .backup-date {
+  color: #e7f3ff;
+}
+
+.backup-size {
+  flex: 0.5;
+  text-align: right;
+  font-size: 0.85em;
+  color: #999;
+  margin-left: 10px;
+}
+
+.backup-list li.active .backup-size {
+  color: #e7f3ff;
+}
+
+.empty {
+  text-align: center;
+  color: #999;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* Detalles del Backup */
+.backup-details {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.backup-details h3 {
+  margin-top: 0;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.backup-details h4 {
+  color: #555;
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+/* Estadísticas */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  background: #f9f9f9;
+  border-left: 3px solid #28a745;
+  border-radius: 4px;
+}
+
+.stat-item strong {
+  color: #333;
+}
+
+.stat-item span {
+  color: #007bff;
+  font-weight: bold;
+}
+
+/* Tabla de colecciones */
+.collections-breakdown {
+  margin: 20px 0;
+}
+
+.collections-breakdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.collections-breakdown th {
+  background: #f0f0f0;
+  padding: 10px;
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+  font-weight: bold;
+  color: #333;
+}
+
+.collections-breakdown td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.collections-breakdown tr:hover {
+  background: #f9f9f9;
+}
+
+/* Botones de Acciones */
+.backup-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #0056b3;
+  box-shadow: 0 2px 6px rgba(0, 86, 179, 0.3);
+}
+
+.btn-info {
+  background: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+  background: #138496;
+  box-shadow: 0 2px 6px rgba(19, 132, 150, 0.3);
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #c82333;
+  box-shadow: 0 2px 6px rgba(200, 35, 51, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .backup-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .backup-date,
+  .backup-size {
+    text-align: left;
+    margin-left: 0;
+  }
+
+  .backup-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .collections-breakdown table {
+    font-size: 0.9em;
+  }
+
+  .collections-breakdown th,
+  .collections-breakdown td {
+    padding: 8px;
+  }
+}
