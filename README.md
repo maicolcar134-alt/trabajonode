@@ -393,7 +393,6 @@ npm install react-scripts
 ## Version del proyecto
 
 ```
-"name": "experimentoreact",
   "version": "0.1.0"
 
 ```
