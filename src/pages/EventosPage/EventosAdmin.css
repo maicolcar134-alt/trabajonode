@@ -4,6 +4,7 @@
 .eventos-admin-container {
     padding: 30px;
     color: #fff;
+    contain: layout paint; /* mejora render */
 }
 
 /* =========================================
@@ -15,7 +16,8 @@
     text-align: center;
     margin-bottom: 25px;
     color: #00e1ff;
-    text-shadow: 0px 0px 8px rgba(0, 238, 255, 0.8);
+    text-shadow: 0 0 8px rgba(0, 238, 255, 0.8);
+    will-change: transform;
 }
 
 /* =========================================
@@ -28,7 +30,7 @@
     font-weight: bold;
     padding: 10px 22px;
     border-radius: 8px;
-    transition: 0.2s;
+    transition: background-color 0.2s ease;
     margin-bottom: 18px;
 }
 
@@ -41,9 +43,9 @@
    TABLA
 ========================================= */
 .card-tabla {
-    background: rgba(15, 15, 15, 0.8);
-    backdrop-filter: blur(4px);
+    background: rgba(15, 15, 15, 0.75); /* menos opaco = mejor rendimiento */
     border-radius: 10px;
+    backdrop-filter: blur(3px); /* blur reducido: mejora GPU */
 }
 
 .tabla-eventos th {
@@ -68,27 +70,24 @@
     border-radius: 10px;
     object-fit: cover;
     border: 2px solid #00eaff;
-    box-shadow: 0px 0px 6px rgba(0, 229, 255, 0.5);
+    box-shadow: 0 0 6px rgba(0, 229, 255, 0.5);
+    content-visibility: auto; /* 🚀 optimiza carga fuera de viewport */
+    will-change: transform;
 }
 
 /* =========================================
    ESTADOS
 ========================================= */
-.estado-confirmado {
+.estado-confirmado,
+.estado-pendiente {
     padding: 5px 10px;
-    background-color: #00ff9d;
     color: #000;
     font-weight: bold;
     border-radius: 6px;
 }
 
-.estado-pendiente {
-    padding: 5px 10px;
-    background-color: #ffcc00;
-    color: #000;
-    font-weight: bold;
-    border-radius: 6px;
-}
+.estado-confirmado { background-color: #00ff9d; }
+.estado-pendiente { background-color: #ffcc00; }
 
 /* =========================================
    MODALES
@@ -115,14 +114,13 @@
     color: #fff;
     border: 1px solid #444;
     border-radius: 8px;
+    transition: border-color 0.15s ease;
 }
 
 .form-control:focus,
 .form-select:focus {
-    background: #111;
-    color: #fff;
     border-color: #00eaff;
-    box-shadow: 0px 0px 8px rgba(0, 229, 255, 0.5);
+    box-shadow: 0 0 6px rgba(0, 229, 255, 0.4); /* sombra menos costosa */
 }
 
 /* =========================================
@@ -134,21 +132,15 @@
     border-radius: 12px;
     object-fit: cover;
     border: 2px solid #00eaff;
-    box-shadow: 0px 0px 10px rgba(0, 229, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    content-visibility: auto;
 }
 
 /* =========================================
    BOTONES
 ========================================= */
-button.btn-warning {
-    font-weight: bold;
-    color: #000;
-}
-
-button.btn-danger {
-    font-weight: bold;
-}
-
+button.btn-warning,
+button.btn-danger,
 button.btn-primary {
     font-weight: bold;
 }

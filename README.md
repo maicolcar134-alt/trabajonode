@@ -194,183 +194,216 @@ npm install react-scripts
 ```plaintext
 
 	/
-	├── .firebase/                                # Configuración interna generada por Firebase
-	│   ├── logs/
-	│   │   └── vsce-debug.log                    # Registro interno de Firebase
-	│   └── hosting.YnVpbGQ.cache                 # Cache del despliegue de hosting
-	│
-	├── .github/
-	│   └── workflows/
-	│       └── firebase-hosting-pull-request.yml # CI para previews en Firebase Hosting
-	│
-	├── .vscode/
-	│   └── launch.json                           # Configuración del entorno VSCode
-	│
-	├── public/                                   # Archivos estáticos accesibles públicamente
-	│   ├── favicon.ico                           # Ícono principal del sitio
-	│   ├── index.html                            # Plantilla HTML principal
-	│   ├── Logo.png                              # Logo del proyecto
-	│   ├── manifest.json                         # Configuración para PWA
-	│   ├── robots.txt                            # Configuración de rastreo para bots
-	│
-	├── src/                                      # Código fuente del proyecto
-	│   ├── assets/                               # Recursos estáticos (imágenes, iconos, etc.)
-	│   │
-	│   ├── layouts/
-	│   │   └── MainLayout.jsx                    # Layout general de la aplicación
-	│   │
-	│   ├── pages/                                # Vistas completas del sistema
-	│   │   ├── Admin/
-	│   │   │   ├── Admin.js                      # Panel de administración
-	│   │   │   └── Admin.css                     # Estilos del panel de administración
-	│   │   │
-	│   │   ├── Auditoria/
-	│   │   │   ├── Auditoria.jsx                 # Página para registro de auditoría
-	│   │   │   ├── Auditoria.js                  # Lógica de auditoría
-	│   │   │   └── Auditoria.css                 # Estilos auditoría
-	│   │   │
-	│   │   ├── AuxiliaresPage/
-	│   │   │   ├── AuxiliaresPage.js             # Página de auxiliares
-	│   │   │   └── AuxiliaresPage.css            # Estilos de auxiliares
-	│   │   │
-	│   │   ├── CarritoPage/
-	│   │   │   ├── Carrito.js                    # Carrito de compras
-	│   │   │   └── Carrito.css                   # Estilos del carrito
-	│   │   │
-	│   │   ├── CategoriasAdmin/
-	│   │   │   ├── CategoriasAdmin.js            # Categorías para administradores
-	│   │   │   └── CategoriasAdmin.css           # Estilos
-	│   │   │
-	│   │   ├── CheckoutPage/
-	│   │   │   ├── Checkout.js                   # Página de pago
-	│   │   │   └── Checkout.css                  # Estilos de checkout
-	│   │   │
-	│   │   ├── components/                       # Componentes reutilizables
-	│   │   │   ├── Footer/
-	│   │   │   │   ├── Footer.js                 # Pie de página
-	│   │   │   │   └── Footer.css                # Estilos del footer
-	│   │   │   ├── GaleriaArmas.js               # Galería de productos
-	│   │   │   ├── Navbar.js                     # Barra de navegación
-	│   │   │   ├── Navbar.css                    # Estilos navbar
-	│   │   │   ├── NotFoundPage.js               # Página 404
-	│   │   │   ├── ProtectedRoute.js             # Protección de rutas
-	│   │   │   └── Spinner.js                    # Animación de carga
-	│   │   │
-	│   │   ├── DashboardAdmin/
-	│   │   │   ├── DashboardAdmin.js             # Dashboard de administración
-	│   │   │   └── DashboardAdmin.css
-	│   │   │
-	│   │   ├── DashboardPage/
-	│   │   │   ├── DashboardPage.js              # Dashboard del usuario
-	│   │   │   └── DashboardPage.css
-	│   │   │
-	│   │   ├── Eventos/
-	│   │   │   ├── Eventos.js                    # Página de eventos
-	│   │   │   └── Eventos.css
-	│   │   │
-	│   │   ├── Events/
-	│   │   │   ├── Events.js                     # Otra vista de eventos
-	│   │   │   └── Events.css
-	│   │   │
-	│   │   ├── ForgotPage/
-	│   │   │   └── ForgotPage.jsx                # Recuperación de contraseña
-	│   │   │
-	│   │   ├── ForgotPasswordPage/
-	│   │   │   ├── ForgotPasswordPage.js         # Vista de recuperación
-	│   │   │   └── ForgotPasswordPage.css
-	│   │   │
-	│   │   ├── Gracias/
-	│   │   │   ├── Gracias.js                    # Página de agradecimiento
-	│   │   │   └── Gracias.css
-	│   │   │
-	│   │   ├── HelpCenter/
-	│   │   │   ├── HelpCenter.js                 # Centro de ayuda
-	│   │   │   └── HelpCenter.css
-	│   │   │
-	│   │   ├── Inventario/
-	│   │   │   ├── Inventario.js                 # Control de inventario
-	│   │   │   └── Inventario.css
-	│   │   │
-	│   │   ├── loginPage/
-	│   │   │   ├── LoginPage.js                  # Login principal
-	│   │   │   ├── LoginPage.jsx
-	│   │   │   └── LoginPage.css
-	│   │   │
-	│   │   ├── NormativaRegulacion/
-	│   │   │   ├── NormativaRegulacion.js        # Normas de regulación
-	│   │   │   └── NormativaRegulacion.css
-	│   │   │
-	│   │   ├── OfertasPirotecnia/
-	│   │   │   ├── OfertasPirotecnia.js          # Ofertas
-	│   │   │   └── OfertasPirotecnia.css
-	│   │   │
-	│   │   ├── Pedidos/
-	│   │   │   ├── Pedidos.js                    # Gestión de pedidos
-	│   │   │   └── Pedidos.css
-	│   │   │
-	│   │   ├── playground/                       # Área de práctica de hooks
-	│   │   │   ├── UseState/
-	│   │   │   │   ├── loginpages.css
-	│   │   │   │   └── UseState.jsx              # Ejercicio de useState
-	│   │   │   ├── HooksGral.jsx                 # Pruebas generales de hooks
-	│   │   │   ├── loginpages.jsx
-	│   │   │   ├── readme.md
-	│   │   │   ├── UseEffectPlay.js              # Práctica de useEffect
-	│   │   │   ├── UseRefPlay.js                 # Práctica de useRef
-	│   │   │   └── UseStatePlay.js               # Práctica de estado
-	│   │   │
-	│   │   ├── PoliticaPrivacidad/
-	│   │   │   ├── PoliticaPrivacidad.js
-	│   │   │   └── PoliticaPrivacidad.css
-	│   │   │
-	│   │   ├── PoliticasVenta/
-	│   │   │   ├── PoliticasVenta.js
-	│   │   │   └── PoliticasVenta.css
-	│   │   │
-	│   │   ├── RegisterPage/
-	│   │   │   ├── RegisterPage.js               # Registro de usuario
-	│   │   │   └── RegisterPage.css
-	│   │   │
-	│   │   ├── ResetPasswordPage/
-	│   │   │   ├── ResetPasswordPage.js
-	│   │   │   └── ResetPasswordPage.css
-	│   │   │
-	│   │   ├── Seguridad/
-	│   │   │   ├── SeguridadAdmin.js             # Seguridad del sistema
-	│   │   │   └── SeguridadAdmin.css
-	│   │   │
-	│   │   ├── Terminos Y Condiciones/
-	│   │   │   ├── terminoscondiciones.js
-	│   │   │   └── terminoscondiciones.css
-	│   │   │
-	│   │   ├── ZonasEnvio/
-	│   │   │   ├── ZonasEnvio.js                 # Zonas disponibles para envíos
-	│   │   │   └── ZonasEnvio.css
-	│   │   │
-	│   │   └── README.md                         # Documentación interna
-	│
-	│   ├── utils/
-	│   │   ├── alerts.js                         # Sistema de alertas con SweetAlert
-	│   │   └── auditoriaService.js               # Servicio para auditorías
-	│
-	│   ├── App.css                               # Estilos globales
-	│   ├── App.js                                # Componente raíz
-	│   ├── App.test.js                           # Pruebas unitarias
-	│   ├── firebaseConfig.js                     # Configuración de Firebase
-	│   ├── index.css                             # Estilos globales del index
-	│   ├── index.js                              # Punto de entrada
-	│   ├── reportWebVitals.js                    # Métricas de rendimiento
-	│   └── setupTests.js                         # Configuración para pruebas
-	│
-	├── .firebaserc                               # Proyecto y targets de Firebase
-	├── .gitignore                                # Archivos y carpetas ignoradas (incluye node_modules)
-	├── firebase.json                             # Configuración del hosting
-	├── package.json                              # Dependencias y scripts del proyecto
-	├── package-lock.json                         # Versionado exacto de dependencias
-	└── README.md    
+├── .firebase/                               # Carpeta generada automáticamente por Firebase
+│   └── hosting.YnVpbGQ.cache                # Cache de despliegues de Firebase Hosting
+
+├── .github/
+│   └── workflows/
+│       └── firebase-hosting-pull-request.yml # Workflow que genera previews de Hosting
+
+├── .vscode/
+│   └── launch.json                           # Configuración del depurador en VSCode
+
+├── functions/                                # Cloud Functions para backend (Node.js)
+│   ├── .gitignore                            # Ignora node_modules en funciones
+│   ├── index.js                              # Punto de entrada de funciones
+│   ├── package.json                          # Dependencias de Cloud Functions
+│   ├── rateLimitController.js                # Middleware controlador de rate-limiting
+│   └── README.md                             # Documentación del módulo functions
+
+├── public/                                   # Archivos estáticos servidos por Firebase Hosting
+│   ├── favicon.ico                           # Ícono del sitio
+│   ├── index.html                            # Documento principal HTML
+│   ├── Logo.png                              # Logo oficial
+│   ├── manifest.json                         # Configuración PWA
+│   └── robots.txt                            # Configuración para bots de búsqueda
+
+├── src/
+│   ├── assets/                               # Imágenes, íconos y gráficos del proyecto
+│
+│   ├── hooks/
+│   │   └── useIsMobile.js                    # Hook custom para detectar tamaño de pantalla
+│
+│   ├── layouts/
+│   │   └── MainLayout.jsx                    # Layout base para toda la app
+│
+│   ├── pages/                                # Todas las vistas del proyecto
+│   │   ├── Admin/                            # Panel de administración
+│   │   │   ├── Admin.css
+│   │   │   └── Admin.js
+│   │
+│   │   ├── Auditoria/                        # Registro y vista de auditorías
+│   │   │   ├── Auditoria.css
+│   │   │   ├── Auditoria.js
+│   │   │   └── Auditoria.jsx
+│   │
+│   │   ├── AuxiliaresPage/                   # Gestión de auxiliares
+│   │   │   ├── AuxiliaresPage.css
+│   │   │   └── AuxiliaresPage.js
+│   │
+│   │   ├── CarritoPage/                      # Carrito de compras
+│   │   │   ├── Carrito.css
+│   │   │   └── Carrito.js
+│   │
+│   │   ├── CategoriasAdmin/                  # CRUD de categorías
+│   │   │   ├── CategoriasAdmin.css
+│   │   │   └── CategoriasAdmin.js
+│   │
+│   │   ├── CheckoutPage/                     # Proceso de pago
+│   │   │   ├── Checkout.css
+│   │   │   └── Checkout.js
+│   │
+│   │   ├── components/                       # Componentes reutilizables
+│   │   │   ├── Footer/                       # Pie de página
+│   │   │   │   ├── Footer.css
+│   │   │   │   └── Footer.js
+│   │   │   ├── cloudinary.jsx                # Componente para carga/gestión de imágenes
+│   │   │   ├── Navbar.css                    # Estilos del navbar
+│   │   │   ├── Navbar.js                     # Barra de navegación
+│   │   │   ├── NotFoundPage.js               # Página 404
+│   │   │   ├── ProtectedRoute.js             # Protege rutas basadas en autenticación
+│   │   │   └── Spinner.js                    # Indicador de carga
+│   │
+│   │   ├── DashboardAdmin/                   # Dashboard para admins
+│   │   │   ├── DashboardAdmin.css
+│   │   │   └── DashboardAdmin.js
+│   │
+│   │   ├── DashboardPage/                    # Dashboard del usuario final
+│   │   │   ├── DashboardPage.css
+│   │   │   └── DashboardPage.js
+│   │
+│   │   ├── EventosPage/                      # Gestión de eventos (admin)
+│   │   │   ├── EventosAdmin.css
+│   │   │   └── EventosAdmin.js
+│   │
+│   │   ├── EventsPage/                       # Vista de eventos públicos
+│   │   │   ├── Events.css
+│   │   │   └── Events.js
+│   │
+│   │   ├── ForgotPage/                       # Recuperación de cuenta
+│   │   │   └── ForgotPage.jsx
+│   │
+│   │   ├── ForgotPasswordPage/               # Página para restaurar contraseña
+│   │   │   ├── ForgotPasswordPage.css
+│   │   │   └── ForgotPasswordPage.js
+│   │
+│   │   ├── Gracias/                          # Pantalla de agradecimiento tras comprar
+│   │   │   ├── Gracias.css
+│   │   │   └── Gracias.js
+│   │
+│   │   ├── HelpCenter/                       # Centro de ayuda
+│   │   │   ├── HelpCenter.css
+│   │   │   └── HelpCenter.js
+│   │
+│   │   ├── Inventario/                       # Administración del stock
+│   │   │   ├── Inventario.css
+│   │   │   └── Inventario.js
+│   │
+│   │   ├── loginPage/                        # Página de login
+│   │   │   ├── LoginPage.css
+│   │   │   ├── LoginPage.js
+│   │   │   └── LoginPage.jsx
+│   │
+│   │   ├── NormativaRegulacion/              # Sección de normativa legal
+│   │   │   ├── NormativaRegulacion.css
+│   │   │   └── NormativaRegulacion.js
+│   │
+│   │   ├── OfertasPirotecnia/                # Promociones y ofertas
+│   │   │   ├── OfertasPirotecnia.css
+│   │   │   └── OfertasPirotecnia.js
+│   │
+│   │   ├── Pedidos/                          # Gestión de pedidos
+│   │   │   ├── Pedidos.css
+│   │   │   └── Pedidos.js
+│   │
+│   │   ├── playground/                       # Área de pruebas y aprendizaje
+│   │   │   ├── UseState/                     # Pruebas de useState
+│   │   │   │   ├── loginpages.css
+│   │   │   │   └── UseState.jsx
+│   │   │   ├── HooksGral.jsx                 # Ejercicios con hooks generales
+│   │   │   ├── loginpages.jsx                # Ejemplo de login de prueba
+│   │   │   ├── UseEffectPlay.js              # Pruebas de useEffect
+│   │   │   ├── UseRefPlay.js                 # Pruebas de useRef
+│   │   │   └── UseStatePlay.js               # Estado general
+│   │
+│   │   ├── PoliticaPrivacidad/               # Política de privacidad
+│   │   │   ├── PoliticaPrivacidad.css
+│   │   │   └── PoliticaPrivacidad.js
+│   │
+│   │   ├── PoliticasVenta/                   # Políticas de venta
+│   │   │   ├── PoliticasVenta.css
+│   │   │   └── PoliticasVenta.js
+│   │
+│   │   ├── RegisterPage/                     # Registro de usuarios
+│   │   │   ├── RegisterPage.css
+│   │   │   └── RegisterPage.js
+│   │
+│   │   ├── ResetPasswordPage/                # Reinicio de contraseña
+│   │   │   ├── ResetPasswordPage.css
+│   │   │   └── ResetPasswordPage.js
+│   │
+│   │   ├── Seguridad/                        # Configuración de seguridad
+│   │   │   ├── SeguridadAdmin.css
+│   │   │   └── SeguridadAdmin.js
+│   │
+│   │   ├── Terminos Y Condiciones/           # Términos del servicio
+│   │   │   ├── terminoscondiciones.css
+│   │   │   └── terminoscondiciones.js
+│   │
+│   │   └── ZonasEnvio/                       # Configuración de zonas de envío
+│   │       ├── ZonasEnvio.css
+│   │       └── ZonasEnvio.js
+│
+│   ├── styles/
+│   │   └── helpers.css                       # Estilos globales de utilidad
+│
+│   ├── utils/                                # Utilidades y funciones de ayuda
+│   │   ├── alerts.js                         # Sistema de alertas (SweetAlert)
+│   │   ├── auditoriaService.js               # Servicio para auditorías
+│   │   ├── normalizarBusqueda.js             # Limpieza/transformación de input de búsqueda
+│   │   ├── retryHelper.js                    # Funciones de reintento ante errores
+│   │   └── validarEmail.js                   # Validación de email
+│
+│   ├── App.css                               # Estilos globales
+│   ├── App.js                                # Componente raíz
+│   ├── App.test.js                           # Pruebas del componente principal
+│   ├── firebaseConfig.js                     # Configuración de Firebase SDK
+│   ├── index.css                             # Estilos base
+│   ├── index.js                              # Punto de entrada React
+│   ├── reportWebVitals.js                    # Métricas de rendimiento
+│   └── setupTests.js                         # Configuración de testing
+
+├── .firebaserc                               # Configuración del proyecto Firebase
+├── .gitignore                                # Archivos ignorados por git
+├── Dockerfile                                # Setup del contenedor Docker
+├── firebase.json                             # Configuración de Hosting / Functions / Rewrites
+├── firestore.rules                           # Reglas de seguridad Firestore
+├── package-lock.json                         # Versiones exactas de dependencias
+├── package.json                              # Dependencias y scripts del proyecto
+├── README.md                                 # Documentación principal
+└── storage.rules                              # Reglas de seguridad del Storage    
 
 
 	                             # Documentación principal del repositorio
 
 ```
 ---
+
+
+## Version del proyecto
+
+```
+"name": "experimentoreact",
+  "version": "0.1.0"
+
+```
+
+## Integrantes
+
+```
+-Duvan Angarita Zuluaga
+-Maicol Carvajalino
+-Yeferson Jaime Rodriguez
+-Camilo Paez
+
+```

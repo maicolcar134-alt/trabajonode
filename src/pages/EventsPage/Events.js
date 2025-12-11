@@ -41,9 +41,9 @@ export default function EventosCliente() {
 
       {/* Evento recomendado */}
       {recomendado && (
-        <div className="p-4 mb-4 rounded shadow-lg bg-light">
+        <div className="p-4 mb-4 rounded shadow-lg recomendado-box">
           <h4 className="fw-bold text-primary">⭐ Evento Recomendado</h4>
-          <p className="text-muted">Basado en la fecha más próxima</p>
+          <p className="text-muted-bi-light">Basado en la fecha más próxima</p>
 
           <div className="card border-0 shadow-sm mt-3">
             <div className="card-body">

@@ -1,70 +1,89 @@
-/* ---- RESET PARA NO ROMPER BOOTSTRAP ---- */
-.navbar-collapse,
-.navbar-collapse.collapse,
-.navbar-collapse.collapsing {
-  display: flex;          /* Flexible en lugar de block */
-  flex-wrap: wrap;        /* Evita overflow a 150%-200% */
-  height: auto;
-  overflow: visible;
+/* =========================================
+   RESET GENERAL (mantiene compatibilidad Bootstrap)
+========================================= */
+.navbar-collapse {
+  display: flex !important;
+  flex-wrap: wrap;
+  height: auto !important;
+  overflow: visible !important;
 }
 
-/* ---- DESKTOP ---- */
+/* Corrige estados intermedios de Bootstrap */
+.navbar-collapse.collapsing {
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* =========================================
+   DESKTOP (>= 992px)
+========================================= */
 @media (min-width: 992px) {
-  .navbar-collapse {
-    display: flex !important;
-    height: auto !important;
-    flex-wrap: wrap;
+  .navbar-nav {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0.75rem;
   }
 }
 
-/* ---- MOBILE / TABLET ---- */
-/* Aplicar reglas para pantallas pequeñas y medianas (hasta tablet grande) */
+/* =========================================
+   MOBILE / TABLET (<= 991px)
+========================================= */
 @media (max-width: 991px) {
-
   .navbar-collapse.collapse {
     display: none !important;
     height: 0 !important;
     overflow: hidden !important;
   }
 
-  .navbar-collapse.collapse.show {
+  .navbar-collapse.show {
     display: block !important;
     height: auto !important;
-    overflow: visible !important;
     background: #0d0d0d;
     padding: 1rem 0;
   }
 
   .navbar-nav {
     flex-direction: column !important;
-    align-items: center !important;
-    gap: 0.75rem;
     width: 100%;
+    gap: 0.75rem;
   }
 
   .nav-link {
-    font-size: 1.05rem;
-    padding: 0.6rem 1rem; /* mejora accesibilidad */
     width: 100%;
     text-align: center;
-  }
-
-  .navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .navbar-toggler {
-    display: block;
+    font-size: 1.05rem;
+    padding: 0.6rem 1rem;
   }
 }
 
-/* ---- TOGGLER ---- */
+/* =========================================
+   NAVBAR BASE
+========================================= */
+.navbar {
+  width: 100%;
+  overflow-x: hidden;
+  background: #000;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+/* Mantiene el logo estable (evita layout shift) */
+.navbar-brand img {
+  height: 40px;
+  width: auto;
+  aspect-ratio: 1 / 1; /* Previene movimiento al cargar */
+  object-fit: contain;
+}
+
+/* =========================================
+   TOGGLER
+========================================= */
 .navbar-toggler {
   border: 2px solid gold !important;
-  padding: 0.75rem 1rem !important; /* área táctil accesible */
-  margin-left: auto;
+  padding: 0.75rem !important;
   min-height: 44px;
   min-width: 44px;
   display: flex;
@@ -72,21 +91,42 @@
   justify-content: center;
 }
 
-/* ---- ACTIVE ITEM ---- */
+/* =========================================
+   ACTIVE LINKS
+========================================= */
 .nav-link.active-item {
   border: 2px solid gold !important;
   border-radius: 6px;
   padding: 0.5rem 1rem !important;
   color: gold !important;
-  min-height: 44px;
+  font-weight: 600;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+/* =========================================
+   USER PHOTO (navbar)
+========================================= */
+.user-photo-nav-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  margin-left: 0.5rem;
 }
 
-/* Previene desbordes en zoom alto */
-.navbar {
-  max-width: 100%;
-  overflow-x: hidden;
+.user-photo-nav {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid gold;
 }
 
+/* =========================================
+   CART BADGE
+========================================= */
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  font-size: 0.7rem;
+  padding: 0.25rem 0.45rem;
+}
