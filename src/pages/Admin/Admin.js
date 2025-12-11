@@ -89,11 +89,7 @@ const Admin = () => {
       path: "/admin/auditoria",
       icon: <FaClipboardList />,
     },
-    {
-      name: "Backups",
-      path: "/admin/backups",
-      icon: <FaDatabase />,
-    },
+   
   ];
 
   const handleVolver = () => {

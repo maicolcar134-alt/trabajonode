@@ -16,7 +16,7 @@ function DashboardPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
-  // Productos vienen de la colección "inventario" (lo que usas en Inventario.js)
+  // Productos vienen de la colección "inventario"
   const [productos, setProductos] = useState([]);
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [carrito, setCarrito] = useState([]);
@@ -37,7 +37,7 @@ function DashboardPage() {
       refCol,
       (snapshot) => {
         const lista = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-        // ordenar opcionalmente por nombre (mantener consistente)
+        // ordenar opcionalmente por nombre
         lista.sort((a, b) => (a.nombre || "").localeCompare(b.nombre || ""));
         setProductos(lista);
       },
@@ -54,7 +54,7 @@ function DashboardPage() {
     return () => unsub();
   }, []);
 
-  // Productos destacados (también en tiempo real)
+  // Productos destacados (en tiempo real)
   const [destacados, setDestacados] = useState([]);
   useEffect(() => {
     try {
@@ -72,13 +72,56 @@ function DashboardPage() {
     }
   }, []);
 
-  // Añadir producto al carrito (sin duplicados -> suma cantidad)
+  // === FUNCIÓN MODIFICADA CON LÍMITES DE STOCK ===
   const agregarAlCarrito = (producto) => {
+    const stockDisponible = producto.cantidad ?? producto.stock ?? 0;
+
+    // Si no hay stock
+    if (stockDisponible <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Sin stock",
+        text: `${producto.nombre} está agotado.`,
+        background: "#1e1e1e",
+        color: "#fff",
+        confirmButtonColor: "#f97316",
+      });
+      return;
+    }
+
     const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
     const productoExistente = carritoActual.find(
       (item) => item.id === producto.id
     );
+    const cantidadEnCarrito = productoExistente ? productoExistente.cantidad : 0;
 
+    // Si ya tiene el máximo en el carrito
+    if (cantidadEnCarrito >= stockDisponible) {
+      Swal.fire({
+        icon: "info",
+        title: "Límite alcanzado",
+        text: `Solo hay ${stockDisponible} unidad(es) disponible(s) de ${producto.nombre}. Ya las tienes en el carrito.`,
+        background: "#1e1e1e",
+        color: "#fff",
+        confirmButtonColor: "#f97316",
+      });
+      return;
+    }
+
+    // Si agregar uno más superaría el stock
+    if (cantidadEnCarrito + 1 > stockDisponible) {
+      Swal.fire({
+        icon: "info",
+        title: "Límite de stock",
+        text: `Solo puedes agregar ${stockDisponible - cantidadEnCarrito} unidad(es) más de ${producto.nombre}.`,
+        background: "#1e1e1e",
+        color: "#fff",
+        confirmButtonColor: "#f97316",
+      });
+      return;
+    }
+
+    // Todo OK: agregar al carrito
     let nuevoCarrito;
     if (productoExistente) {
       nuevoCarrito = carritoActual.map((item) =>
@@ -105,7 +148,7 @@ function DashboardPage() {
     });
   };
 
-  // Filtrado por categoría usando las categorías fijas
+  // Filtrado por categoría
   const productosFiltrados = filtroCategoria
     ? productos.filter((p) => p.categoria === filtroCategoria)
     : productos;
@@ -196,9 +239,9 @@ function DashboardPage() {
             <div
               className="relative z-10 flex flex-col text-left"
               style={{
-                paddingLeft: "4vw", // margen desde la izquierda
-                maxWidth: "800px", // ancho del bloque
-                marginTop: "20vh", // empuja el bloque más abajo
+                paddingLeft: "4vw",
+                maxWidth: "800px",
+                marginTop: "20vh",
               }}
             >
               <div className="inline-flex items-center gap-2 bg-orange-500/20 text-orange-400 px-4 py-2 rounded-full mb-6 w-fit">
