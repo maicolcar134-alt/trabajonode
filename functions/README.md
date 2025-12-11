@@ -1,6 +1,9 @@
-# Cloud Functions - PyroShop Cleanup & Rate Limiting
+# Cloud Functions - PyroShop Cleanup, Backup & Rate Limiting
 
-Funciones programadas para limpieza automática de datos expirados en Firestore y control de rate limiting.
+Funciones programadas para:
+- ✅ Limpieza automática de datos expirados en Firestore
+- ✅ **Backup automático de configuración administrativa**
+- ✅ Control de rate limiting
 
 ## Funciones Disponibles
 
@@ -23,18 +26,26 @@ Funciones programadas para limpieza automática de datos expirados en Firestore 
 - **Schedula:** Cada 6 horas
 - **Estado:** Deshabilitado (requiere configuración adicional)
 
-### 4. `updateRateLimitCounter` (Trigger)
+### 4. `backupAdminConfig` ⭐ **NUEVO**
+- **Propósito:** Exporta colecciones administrativas a Cloud Storage automáticamente
+- **Schedula:** Cada domingo a las 1:00 AM UTC (ajustable)
+- **Colecciones respaldadas:** `categorias`, `zonas`, `eventos`, `ofertas`
+- **Retención:** Últimos 52 backups (1 año completo)
+- **Formato:** JSON con timestamp y metadata
+- **Almacenamiento:** `backups/admin-config/backup-YYYY-MM-DD...json`
+
+### 5. `updateRateLimitCounter` (Trigger)
 - **Propósito:** Actualiza contador de rate limit en cada operación Firestore
 - **Disparador:** `onWrite` en cualquier colección protegida
 - **Colección:** `rateLimits`
 - **Límite:** 100 requests por minuto por usuario
 
-### 5. `cleanupExpiredRateLimits`
+### 6. `cleanupExpiredRateLimits`
 - **Propósito:** Elimina contadores de rate limit inactivos (> 7 días sin requests)
 - **Schedula:** Cada domingo a las 4 AM UTC
 - **Colección:** `rateLimits`
 
-### 6. `resetRateLimit` (HTTP Callable)
+### 7. `resetRateLimit` (HTTP Callable)
 - **Propósito:** Resetea manualmente el contador de rate limit de un usuario (admin only)
 - **Tipo:** Cloud Function callable
 - **Parámetros:** `{ userId: "uid" }`
@@ -123,6 +134,113 @@ const resetRateLimit = httpsCallable(functions, 'resetRateLimit');
 await resetRateLimit({ userId: 'xyz123' });
 ```
 
+## 💾 Backup Automático - Configuración
+
+### Cómo funciona
+
+La función `backupAdminConfig` se ejecuta **cada domingo a las 1:00 AM UTC** y:
+
+1. **Exporta colecciones administrativas** a Cloud Storage (JSON)
+   - `categorias`, `zonas`, `eventos`, `ofertas`
+2. **Almacena en:** `gs://proyecto/backups/admin-config/backup-YYYY-MM-DDTHH-MM-SS.json`
+3. **Retiene:** Los últimos 52 backups (1 año completo de histórico)
+4. **Limpia automáticamente:** Backups más antiguos se eliminan
+
+### Estructura del backup
+
+```json
+{
+  "timestamp": "2025-12-09T01:00:00.000Z",
+  "version": "1.0",
+  "collections": {
+    "categorias": [
+      { "id": "cat1", "nombre": "Categoría 1", "descripcion": "...", ... },
+      ...
+    ],
+    "zonas": [ ... ],
+    "eventos": [ ... ],
+    "ofertas": [ ... ]
+  }
+}
+```
+
+### Listar backups disponibles (desde frontend)
+
+```javascript
+import { listBackups } from './src/utils/backupService';
+
+const backups = await listBackups();
+console.log(backups);
+// [
+//   { name: "backup-2025-12-09...", path: "...", timeCreated: "...", size: ... },
+//   ...
+// ]
+```
+
+### Descargar un backup
+
+```javascript
+import { downloadBackup, downloadBackupAsFile } from './src/utils/backupService';
+
+// Opción 1: Obtener como objeto JSON
+const backup = await downloadBackup('backups/admin-config/backup-...');
+
+// Opción 2: Descargar como archivo
+await downloadBackupAsFile(backup, 'backup-2025-12-09.json');
+```
+
+### Restaurar un backup (CUIDADO: Reemplaza datos)
+
+```javascript
+import { downloadBackup, restoreBackup } from './src/utils/backupService';
+
+const backup = await downloadBackup('backups/admin-config/backup-...');
+
+// Restaurar solo colecciones específicas (por seguridad)
+const resultado = await restoreBackup(backup, [
+  'categorias',  // Restaurar solo esto
+  'zonas'
+]);
+
+console.log(resultado);
+// { success: true, restauradas: 42, errores: [] }
+```
+
+### Ver estadísticas del backup
+
+```javascript
+import { getBackupStats } from './src/utils/backupService';
+
+const stats = getBackupStats(backup);
+console.log(stats);
+// {
+//   timestamp: "2025-12-09T01:00:00.000Z",
+//   totalDocumentos: 152,
+//   colecciones: {
+//     categorias: 12,
+//     zonas: 8,
+//     eventos: 24,
+//     ofertas: 108
+//   }
+// }
+```
+
+### Cambiar horario del backup
+
+Edita `functions/index.js` línea con `backupAdminConfig`:
+
+```javascript
+// Cambiar de "0 1 * * 0" (domingo 1 AM) a otro horario
+.pubsub.schedule("0 3 * * 0") // Domingo 3 AM
+```
+
+Luego desplega:
+```bash
+firebase deploy --only functions
+```
+
+---
+
 ## Configuración
 
 ### Cambiar horarios
@@ -209,10 +327,11 @@ curl http://localhost:5001/fuegos-pirotecnicos/us-central1/cleanupAuditoria
 
 ## Notas importantes
 
-1. **Backup:** Antes del primer despliegue, realiza un backup manual de `auditoria` y `pedidos`.
+1. **Backup automático:** ✅ Se ejecuta cada domingo a las 1:00 AM UTC. Mantiene 52 backups (1 año). Ver sección [Backup Automático](#-backup-automático---configuración).
 2. **Soft delete:** Para auditoría, considera usar un campo `deleted: true` en lugar de eliminar (mejor para compliance).
 3. **Retención legal:** Verifica si necesitas guardar logs más tiempo por regulaciones locales.
 4. **Testing:** Prueba en colecciones de prueba primero.
+5. **Permisos Storage:** Asegúrate de que las reglas de Security Rules de Storage permitan lectura/escritura de backups solo para admin.
 
 ## Referencias
 

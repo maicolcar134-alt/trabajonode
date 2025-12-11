@@ -3,6 +3,7 @@ import { signOut } from "firebase/auth";
 import { auth, db } from "../../firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { getResponsiveImageProps } from "../../utils/responsiveImageHelper";
 import "./DashboardPage.css";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
@@ -276,10 +277,9 @@ function DashboardPage() {
                 <div className="card h-100 bg-dark text-light border-0 shadow-lg">
                   {p.imagenUrl ? (
                     <img
-                      src={p.imagenUrl}
+                      {...getResponsiveImageProps(p.imagenUrl, "featured", p.nombre)}
                       className="card-img-top"
                       style={{ height: "220px", objectFit: "cover" }}
-                      alt={p.nombre}
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = "/Logo.png";

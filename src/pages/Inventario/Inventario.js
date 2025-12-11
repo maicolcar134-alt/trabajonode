@@ -9,7 +9,17 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
+
 import { db } from "../../firebaseConfig"; // Solo necesitas db ahora
+
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+import { getResponsiveImageProps } from "../../utils/responsiveImageHelper";
+
 import Swal from "sweetalert2";
 import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./Inventario.css";
@@ -483,8 +493,7 @@ export default function Inventario() {
 
           <div className="preview-container">
             <img
-              src={imagenVista || imagenDefault}
-              alt="Vista previa"
+              {...getResponsiveImageProps(imagenVista || imagenDefault, "featured", "Vista previa")}
               className="preview-image"
             />
           </div>
@@ -513,8 +522,7 @@ export default function Inventario() {
               <tr key={p.id} className={p.oferta ? "fila-oferta" : ""}>
                 <td>
                   <img
-                    src={p.imagenUrl || imagenDefault}
-                    alt={p.nombre || p.id}
+                    {...getResponsiveImageProps(p.imagenUrl || imagenDefault, "thumbnail", p.nombre || p.id)}
                     className="product-image"
                   />
                 </td>

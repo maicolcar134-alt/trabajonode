@@ -13,6 +13,7 @@ import { db } from "../../firebaseConfig"; // Ajusta la ruta según tu proyecto
 
 import { useNavigate } from "react-router-dom";
 import userDefault from "../../assets/Explosión de color y energía.png";
+import { getResponsiveImageProps } from "../../utils/responsiveImageHelper";
 import Swal from "sweetalert2";
 import "./OfertasPirotecnia.css";
 
@@ -334,8 +335,7 @@ export default function OfertasPirotecnia() {
                 <article key={p.id} className="product-card">
                   <div className="card-media">
                     <img
-                      src={imagen || ""}
-                      alt={nombre}
+                      {...getResponsiveImageProps(imagen, "productCard", nombre)}
                       onError={(e) => (e.currentTarget.src = userPhoto)}
                     />
                     <div className="badge-left">Oferta</div>

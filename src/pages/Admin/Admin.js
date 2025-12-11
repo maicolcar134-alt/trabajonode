@@ -7,6 +7,7 @@ import {
   FaTruck,
   FaStore,
   FaSignOutAlt,
+  FaDatabase,
 } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { auth, db } from "../../firebaseConfig";
@@ -87,6 +88,11 @@ const Admin = () => {
       name: "Auditoría / Logs",
       path: "/admin/auditoria",
       icon: <FaClipboardList />,
+    },
+    {
+      name: "Backups",
+      path: "/admin/backups",
+      icon: <FaDatabase />,
     },
   ];
 

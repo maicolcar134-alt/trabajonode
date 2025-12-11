@@ -134,6 +134,123 @@ exports.cleanupSesiones = functions
     }
   });
 
+/**
+ * BACKUP AUTOMÁTICO - Configuración administrativa
+ * Exporta colecciones administrativas a Cloud Storage
+ * Se ejecuta cada domingo a las 1:00 AM UTC
+ * Mantiene los últimos 52 backups (1 año)
+ */
+exports.backupAdminConfig = functions
+  .region("us-central1")
+  .pubsub.schedule("0 1 * * 0") // Cada domingo a las 1 AM UTC
+  .timeZone("UTC")
+  .onRun(async (context) => {
+    console.log("💾 Iniciando backup de configuración administrativa...");
+
+    try {
+      const bucket = admin.storage().bucket();
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const backupPath = `backups/admin-config/backup-${timestamp}.json`;
+
+      // Colecciones administrativas a respaldar
+      const coleccionesAdministrativas = [
+        "categorias",
+        "zonas",
+        "eventos",
+        "ofertas",
+      ];
+
+      const backup = {
+        timestamp: new Date().toISOString(),
+        version: "1.0",
+        collections: {},
+      };
+
+      // Exportar cada colección
+      for (const coleccion of coleccionesAdministrativas) {
+        try {
+          const snapshot = await db.collection(coleccion).get();
+          backup.collections[coleccion] = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          console.log(
+            `✅ ${coleccion}: ${snapshot.docs.length} documentos guardados`
+          );
+        } catch (err) {
+          console.warn(`⚠️ Colección '${coleccion}' no encontrada o no accesible`);
+          backup.collections[coleccion] = [];
+        }
+      }
+
+      // Guardar backup en Storage
+      const file = bucket.file(backupPath);
+      await file.save(JSON.stringify(backup, null, 2), {
+        metadata: {
+          contentType: "application/json",
+          cacheControl: "no-cache",
+          metadata: {
+            description: "Backup de configuración administrativa",
+            createdAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      console.log(`✅ Backup guardado en: ${backupPath}`);
+
+      // Limpiar backups antiguos (mantener último 52 = 1 año)
+      await cleanupOldBackups(bucket);
+
+      return {
+        success: true,
+        backupPath,
+        collections: Object.keys(backup.collections).length,
+      };
+    } catch (error) {
+      console.error("❌ Error en backup de configuración:", error);
+      return { success: false, error: error.message };
+    }
+  });
+
+/**
+ * Limpia backups más antiguos de 52 semanas (mantiene 1 año de histórico)
+ */
+async function cleanupOldBackups(bucket) {
+  try {
+    const [files] = await bucket.getFiles({
+      prefix: "backups/admin-config/backup-",
+    });
+
+    if (files.length > 52) {
+      // Ordenar por fecha (más antiguos primero)
+      files.sort((a, b) => {
+        const dateA = new Date(a.metadata.timeCreated);
+        const dateB = new Date(b.metadata.timeCreated);
+        return dateA - dateB;
+      });
+
+      // Eliminar los más antiguos, mantener 52
+      const filesToDelete = files.slice(0, files.length - 52);
+
+      for (const file of filesToDelete) {
+        await file.delete();
+        console.log(`🗑️ Backup antiguo eliminado: ${file.name}`);
+      }
+
+      console.log(
+        `✅ Limpieza completada: ${filesToDelete.length} backups antiguos eliminados`
+      );
+    } else {
+      console.log(
+        `✅ No hay backups antiguos para limpiar (total: ${files.length}/52)`
+      );
+    }
+  } catch (error) {
+    console.warn("⚠️ Error al limpiar backups antiguos:", error.message);
+    // No fallar la función principal por esto
+  }
+}
+
 // =====================================================
 // EXPORTAR FUNCIONES DE RATE LIMIT
 // =====================================================
