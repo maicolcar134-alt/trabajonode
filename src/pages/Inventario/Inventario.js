@@ -9,58 +9,58 @@ import {
   onSnapshot,
   serverTimestamp,
 } from "firebase/firestore";
-import { db, storage } from "../../firebaseConfig";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
+import { db } from "../../firebaseConfig"; // Solo necesitas db ahora
 import Swal from "sweetalert2";
-import Compressor from "compressorjs";
 import { buscarConNormalizacion } from "../../utils/normalizarBusqueda";
 import "./Inventario.css";
 
-/* ===========================
-   SUBIR IMAGEN A FIREBASE STORAGE
-   =========================== */
-const subirImagenFirebase = async (file) => {
+
+// ====================== CONFIGURACIÓN DE CLOUDINARY ======================
+const CLOUDINARY_CLOUD_NAME = "dukdktdze";          // ← REEMPLAZA CON TU CLOUD NAME
+const CLOUDINARY_UPLOAD_PRESET = "inventario-unsigned";    // ← REEMPLAZA CON TU PRESET UNSIGNED
+
+// ====================== SUBIR IMAGEN A CLOUDINARY ======================
+const subirImagenCloudinary = async (file) => {
   try {
-    // Comprimir antes de subir
-    const compressed = await new Promise((res, rej) => {
-      new Compressor(file, {
-        quality: 0.7,
-        maxWidth: 1200,
-        maxHeight: 1200,
-        success: res,
-        error: rej,
-      });
-    });
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    // formData.append("folder", "inventario"); // Opcional
 
-    // Crear referencia con timestamp y nombre original
-    const timestamp = Date.now();
-    const nombreArchivo = `${timestamp}_${file.name}`;
-    const storageRef = ref(storage, `inventario/${nombreArchivo}`);
+    console.log("📤 Subiendo a Cloudinary...");
 
-    console.log(`📤 Subiendo imagen a Firebase: inventario/${nombreArchivo}`);
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
-    // Subir archivo comprimido
-    const snapshot = await uploadBytes(storageRef, compressed);
-    console.log("✅ Archivo subido a:", snapshot.ref.fullPath);
+    const data = await response.json(); // Siempre parsea la respuesta
 
-    // Obtener URL de descarga
-    const downloadURL = await getDownloadURL(snapshot.ref);
-    console.log("✅ URL de descarga:", downloadURL);
+    if (!response.ok) {
+      console.error("❌ Error de Cloudinary:", data); // Aquí verás el mensaje exacto
+      throw new Error(data.error?.message || "Error desconocido");
+    }
 
+    console.log("✅ Subida exitosa:", data.secure_url);
     return {
-      secure_url: downloadURL,
-      public_id: snapshot.ref.fullPath, // Guardar la ruta para poder eliminar después
-      nombre_archivo: nombreArchivo,
+      secure_url: data.secure_url,
+      public_id: data.public_id,
     };
   } catch (error) {
-    console.error("❌ Error subiendo imagen a Firebase:", error);
+    console.error("❌ Error subiendo a Cloudinary:", error);
     return null;
   }
+};
+
+// ====================== ELIMINAR IMAGEN DE CLOUDINARY (opcional) ======================
+// Requiere backend seguro (API secret). Por ahora solo avisa.
+const eliminarImagenCloudinary = async (publicId) => {
+  if (!publicId) return;
+  console.warn("🗑️ Eliminación de imagen en Cloudinary no implementada (requiere backend). public_id:", publicId);
+  // En el futuro: llamar a un endpoint seguro del backend
 };
 
 const imagenDefault = "";
@@ -108,9 +108,7 @@ export default function Inventario() {
     return () => unsub();
   }, []);
 
-  // =====================================================
-  // Autocomplete búsqueda de SKU (debounce 200ms)
-  // =====================================================
+  // Autocomplete búsqueda
   useEffect(() => {
     const timer = setTimeout(() => {
       if (busquedaSKU.trim() === "") {
@@ -134,16 +132,12 @@ export default function Inventario() {
     return () => clearTimeout(timer);
   }, [busquedaSKU, productos]);
 
-  // Seleccionar producto desde sugerencias
   const seleccionarDelBuscador = (producto) => {
     editarProducto(producto);
     setBusquedaSKU(producto.id);
     setMostraSugerencias(false);
   };
 
-  // =====================================================
-  // Limpiar form
-  // =====================================================
   const limpiar = () => {
     setNombre("");
     setPrecio("");
@@ -193,14 +187,14 @@ export default function Inventario() {
       let publicId = publicIdImage;
       let imagenFinal = imagenDefault;
 
-      // Si hay un archivo nuevo, subir a Firebase Storage
+      // Subir nueva imagen si hay archivo
       if (fileImage) {
-        const subida = await subirImagenFirebase(fileImage);
+        const subida = await subirImagenCloudinary(fileImage);
         if (!subida || !subida.secure_url) {
           setCargando(false);
           return Swal.fire(
             "Error al subir imagen",
-            "No se pudo subir la imagen a Firebase. Verifica tu conexión.",
+            "No se pudo subir la imagen a Cloudinary. Verifica tu conexión o credenciales.",
             "error"
           );
         }
@@ -208,28 +202,20 @@ export default function Inventario() {
         imagenFinal = subida.secure_url;
         publicId = subida.public_id || "";
 
-        // Si estamos editando y hay una imagen anterior, eliminarla de Firebase
-        if (modoEditar && imagenUrl && publicIdImage) {
-          try {
-            const oldRef = ref(storage, publicIdImage);
-            await deleteObject(oldRef);
-            console.log("🗑️ Imagen anterior eliminada de Firebase");
-          } catch (err) {
-            console.warn("⚠️ No se pudo eliminar imagen anterior:", err);
-          }
+        // Intentar eliminar imagen anterior (solo si tienes backend implementado)
+        if (modoEditar && publicIdImage) {
+          await eliminarImagenCloudinary(publicIdImage);
         }
       } else if (modoEditar && imagenUrl) {
-        // En edición, si no hay nuevo archivo, mantener la imagen anterior
         imagenFinal = imagenUrl;
+        publicId = publicIdImage;
       }
 
-      // Garantizar que imagenFinal nunca sea string vacío
       if (!imagenFinal || imagenFinal.trim() === "") {
         imagenFinal = imagenDefault;
       }
 
       if (!modoEditar) {
-        // Crear documento usando la URL definitiva (si la hay)
         const refCol = collection(db, "inventario");
         const nuevo = await addDoc(refCol, {
           nombre,
@@ -247,7 +233,6 @@ export default function Inventario() {
         });
         idFinal = nuevo.id;
       } else {
-        // Edición: actualizar campos principales
         await updateDoc(doc(db, "inventario", idFinal), {
           nombre,
           precio: Number(precio),
@@ -256,10 +241,6 @@ export default function Inventario() {
           cantidad: Number(cantidad),
           destacado,
           oferta,
-        });
-
-        // Siempre actualizar la imagen (bien sea nueva o la anterior)
-        await updateDoc(doc(db, "inventario", idFinal), {
           imagenUrl: imagenFinal,
           publicId: publicId || "",
         });
@@ -273,13 +254,12 @@ export default function Inventario() {
       );
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "No se pudo guardar", "error");
+      Swal.fire("Error", "No se pudo guardar el producto", "error");
     }
 
     setCargando(false);
   };
 
-  /* Editar */
   const editarProducto = (p) => {
     setModoEditar(true);
     setIdEdit(p.id);
@@ -291,11 +271,10 @@ export default function Inventario() {
     setDestacado(Boolean(p.destacado));
     setOferta(Boolean(p.oferta));
     setImagenVista(p.imagenUrl || imagenDefault);
-    setImagenUrl(p.imagenUrl || ""); // Guardar URL anterior para usar en edición
+    setImagenUrl(p.imagenUrl || "");
     setPublicIdImage(p.publicId || "");
   };
 
-  /* Eliminar */
   const eliminarProducto = async (id) => {
     const confirm = await Swal.fire({
       title: "¿Eliminar?",
@@ -307,46 +286,31 @@ export default function Inventario() {
 
     if (!confirm.isConfirmed) return;
 
-    // Primero obtener el doc para eliminar la imagen si existe
     try {
       const productoDoc = productos.find((p) => p.id === id);
       if (productoDoc?.publicId) {
-        try {
-          const oldRef = ref(storage, productoDoc.publicId);
-          await deleteObject(oldRef);
-          console.log("🗑️ Imagen eliminada de Firebase al borrar producto");
-        } catch (err) {
-          console.warn(
-            "⚠️ No se pudo eliminar imagen al borrar producto:",
-            err
-          );
-        }
+        await eliminarImagenCloudinary(productoDoc.publicId);
       }
     } catch (err) {
-      console.warn("⚠️ Error buscando doc antes de eliminar imagen:", err);
+      console.warn("⚠️ Error intentando eliminar imagen:", err);
     }
 
     await deleteDoc(doc(db, "inventario", id));
     Swal.fire("Eliminado", "Producto eliminado", "success");
   };
 
-  /* Cambiar destacado */
   const cambioDestacado = async (id, val) => {
     await updateDoc(doc(db, "inventario", id), {
       destacado: !val,
     });
   };
 
-  /* Activar/desactivar oferta (toggle) */
   const cambioOferta = async (id, val) => {
     await updateDoc(doc(db, "inventario", id), {
       oferta: !val,
     });
   };
 
-  /* =====================================
-     🚀 EDITAR OFERTA — con SweetAlert
-     ===================================== */
   const editarOferta = async (p) => {
     const { value: porcentaje } = await Swal.fire({
       title: "Editar Oferta",
@@ -358,24 +322,16 @@ export default function Inventario() {
       confirmButtonText: "Guardar",
     });
 
-    // Si canceló o no digitó nada
     if (porcentaje === undefined || porcentaje === null || porcentaje === "")
       return;
 
-    // Validar número
     const porcNum = Number(porcentaje);
     if (Number.isNaN(porcNum) || porcNum <= 0) {
-      return Swal.fire(
-        "Valor inválido",
-        "Ingresa un porcentaje válido.",
-        "warning"
-      );
+      return Swal.fire("Valor inválido", "Ingresa un porcentaje válido.", "warning");
     }
 
     const precioOriginal = Number(p.precio) || 0;
-    const precioFinal = Math.round(
-      precioOriginal - (precioOriginal * porcNum) / 100
-    );
+    const precioFinal = Math.round(precioOriginal - (precioOriginal * porcNum) / 100);
 
     try {
       await updateDoc(doc(db, "inventario", p.id), {
@@ -383,7 +339,6 @@ export default function Inventario() {
         precioOferta: precioFinal,
         oferta: true,
       });
-
       Swal.fire("Actualizado", "Oferta modificada", "success");
     } catch (err) {
       console.error(err);
@@ -398,30 +353,22 @@ export default function Inventario() {
     return true;
   });
 
-  // Cálculo de paginación
-  const totalPaginas = Math.max(
-    1,
-    Math.ceil(productosFiltrados.length / itemsPorPagina)
-  );
+  const totalPaginas = Math.max(1, Math.ceil(productosFiltrados.length / itemsPorPagina));
   const productosPaginados = productosFiltrados.slice(
     (paginaActual - 1) * itemsPorPagina,
     paginaActual * itemsPorPagina
   );
 
-  // Resetear página si se filtra
   const handleCambioFiltro = (nuevoFiltro) => {
     setFiltro(nuevoFiltro);
     setPaginaActual(1);
   };
 
-  // =====================================================
-  // RENDER
-  // =====================================================
   return (
     <div className="inventario-container">
       <h2 className="inventario-title">📦 Inventario</h2>
 
-      {/* BÚSQUEDA AUTOCOMPLETE SKU */}
+      {/* BÚSQUEDA AUTOCOMPLETE */}
       <div className="busqueda-sku-container">
         <label>🔍 Buscar SKU / Producto</label>
         <div className="busqueda-sku-wrapper">
@@ -462,13 +409,11 @@ export default function Inventario() {
             </div>
           )}
 
-          {mostraSugerencias &&
-            busquedaSKU &&
-            resultadosBusqueda.length === 0 && (
-              <div className="busqueda-sku-no-resultados">
-                No se encontraron productos
-              </div>
-            )}
+          {mostraSugerencias && busquedaSKU && resultadosBusqueda.length === 0 && (
+            <div className="busqueda-sku-no-resultados">
+              No se encontraron productos
+            </div>
+          )}
         </div>
       </div>
 
@@ -495,28 +440,17 @@ export default function Inventario() {
 
           <div className="form-group">
             <label>Precio</label>
-            <input
-              type="number"
-              value={precio}
-              onChange={(e) => setPrecio(e.target.value)}
-            />
+            <input type="number" value={precio} onChange={(e) => setPrecio(e.target.value)} />
           </div>
 
           <div className="form-group">
             <label>Cantidad</label>
-            <input
-              type="number"
-              value={cantidad}
-              onChange={(e) => setCantidad(e.target.value)}
-            />
+            <input type="number" value={cantidad} onChange={(e) => setCantidad(e.target.value)} />
           </div>
 
           <div className="form-group">
             <label>Categoría</label>
-            <select
-              value={categoria}
-              onChange={(e) => setCategoria(e.target.value)}
-            >
+            <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
               <option value="">Seleccione categoría</option>
               {categoriasData.map((c) => (
                 <option key={c.nombre} value={c.nombre}>
@@ -528,23 +462,12 @@ export default function Inventario() {
 
           <div className="form-group">
             <label>Descripción</label>
-            <textarea
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-            />
+            <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
           </div>
 
           <div className="form-group botones-formulario">
-            <button
-              className="btn btn-action"
-              onClick={guardarProducto}
-              disabled={cargando}
-            >
-              {cargando
-                ? "Procesando..."
-                : modoEditar
-                ? "Actualizar"
-                : "Agregar"}
+            <button className="btn btn-action" onClick={guardarProducto} disabled={cargando}>
+              {cargando ? "Procesando..." : modoEditar ? "Actualizar" : "Agregar"}
             </button>
             <button className="btn btn-cancel" onClick={limpiar}>
               Limpiar
@@ -601,24 +524,14 @@ export default function Inventario() {
                 <td>{p.cantidad}</td>
                 <td>{p.destacado ? "⭐" : "—"}</td>
 
-                {/* COLUMNA OFERTA - MODIFICADA */}
                 <td>
                   {p.oferta ? (
                     <>
-                      <strong className="precio-oferta">
-                        ${p.precioOferta}
-                      </strong>
+                      <strong className="precio-oferta">${p.precioOferta}</strong>
                       <br />
-                      <small className="etiqueta-oferta">
-                        {p.porcentajeOferta}% OFF
-                      </small>
-
-                      {/* BOTÓN NUEVO */}
+                      <small className="etiqueta-oferta">{p.porcentajeOferta}% OFF</small>
                       <br />
-                      <button
-                        className="btn btn-action small-btn"
-                        onClick={() => editarOferta(p)}
-                      >
+                      <button className="btn btn-action small-btn" onClick={() => editarOferta(p)}>
                         ✏️ Editar Oferta
                       </button>
                     </>
@@ -628,31 +541,19 @@ export default function Inventario() {
                 </td>
 
                 <td className="acciones">
-                  <button
-                    className="table-btn btn-edit"
-                    onClick={() => editarProducto(p)}
-                  >
+                  <button className="table-btn btn-edit" onClick={() => editarProducto(p)}>
                     ✏️
                   </button>
 
-                  <button
-                    className="table-btn btn-delete"
-                    onClick={() => eliminarProducto(p.id)}
-                  >
+                  <button className="table-btn btn-delete" onClick={() => eliminarProducto(p.id)}>
                     🗑️
                   </button>
 
-                  <button
-                    className="table-btn btn-star"
-                    onClick={() => cambioDestacado(p.id, p.destacado)}
-                  >
+                  <button className="table-btn btn-star" onClick={() => cambioDestacado(p.id, p.destacado)}>
                     {p.destacado ? "⭐" : "☆"}
                   </button>
 
-                  <button
-                    className="table-btn btn-offer"
-                    onClick={() => cambioOferta(p.id, p.oferta)}
-                  >
+                  <button className="table-btn btn-offer" onClick={() => cambioOferta(p.id, p.oferta)}>
                     {p.oferta ? "Quitar" : "Oferta"}
                   </button>
                 </td>
@@ -674,15 +575,12 @@ export default function Inventario() {
           </button>
 
           <span className="info-pagina">
-            Página {paginaActual} de {totalPaginas} ({productosFiltrados.length}{" "}
-            items)
+            Página {paginaActual} de {totalPaginas} ({productosFiltrados.length} items)
           </span>
 
           <button
             className="btn btn-pagination"
-            onClick={() =>
-              setPaginaActual(Math.min(totalPaginas, paginaActual + 1))
-            }
+            onClick={() => setPaginaActual(Math.min(totalPaginas, paginaActual + 1))}
             disabled={paginaActual === totalPaginas}
           >
             Siguiente →
@@ -692,4 +590,3 @@ export default function Inventario() {
     </div>
   );
 }
-        

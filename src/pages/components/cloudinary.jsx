@@ -2,10 +2,10 @@ import { useState, useRef } from "react";
 import Compressor from "compressorjs";
 
 // 🔥 CONFIG CLOUDINARY
-const CLOUD_NAME = "const CLOUD_NAME = Raíz";
-const UPLOAD_PRESET = "react-test";
-const API_KEY = "435252382541262"; // ← Reemplaza con tu API Key real
-const FOLDER = "inventario"; // ← Carpeta personalizada
+const CLOUD_NAME = "dukdktdze";
+const UPLOAD_PRESET = "Raíz";
+const API_KEY = "435252382541262";
+const FOLDER = "Inventario";
 
 export default function ImageUploader({ onImageUpload, currentImage }) {
   const [uploading, setUploading] = useState(false);
