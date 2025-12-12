@@ -1,0 +1,514 @@
+@startuml PyroShop_Diagrama_Clases
+!define ABSTRACTCOLOR #E1F5E1
+!define CLASSCOLOR #E3F2FD
+!define DATACOLOR #FFF3E0
+!define COMPONENTCOLOR #F3E5F5
+
+title Diagrama de Clases - PyroShop (Tienda de Pirotecnia)
+note top : Estructura de componentes React + Modelos de datos Firebase
+
+' ============ MODELOS DE DATOS FIREBASE ============
+package "📊 Modelos Firestore" #DATACOLOR {
+    class Usuario {
+        --Atributos--
+        id: string (uid)
+        email: string
+        nombre: string
+        apellido: string
+        telefono: string
+        rol: enum[cliente, admin, vendedor]
+        direccion: string
+        ciudad: string
+        estado: enum[activo, inactivo]
+        fechaRegistro: timestamp
+        ultimaActividad: timestamp
+    }
+
+    class Producto {
+        --Atributos--
+        id: string
+        nombre: string
+        descripcion: string
+        precio: decimal
+        precioOferta: decimal
+        cantidad: integer
+        categoria: string
+        imagenUrl: string
+        estado: enum[disponible, descontinuado]
+        destacado: boolean
+        etiquetas: array[string]
+        fechaCreacion: timestamp
+    }
+
+    class Categoria {
+        --Atributos--
+        id: string
+        nombre: string
+        descripcion: string
+        imagen: string
+        estado: enum[activo, inactivo]
+    }
+
+    class Pedido {
+        --Atributos--
+        id: string
+        usuarioId: string (FK → Usuario)
+        fecha: timestamp
+        estado: enum[pendiente, procesando, enviado, entregado, cancelado]
+        total: decimal
+        subtotal: decimal
+        impuestos: decimal
+        envio: decimal
+        direccionEnvio: string
+        metodoPago: string
+        items: array[LineaPedido]
+    }
+
+    class LineaPedido {
+        --Atributos--
+        productoId: string (FK → Producto)
+        nombre: string
+        precio: decimal
+        cantidad: integer
+        subtotal: decimal
+    }
+
+    class Carrito {
+        --Atributos--
+        usuarioId: string (FK → Usuario)
+        items: array[LineaCarrito]
+        total: decimal
+        ultimaActualizacion: timestamp
+    }
+
+    class LineaCarrito {
+        --Atributos--
+        productoId: string (FK → Producto)
+        cantidad: integer
+        precioUnitario: decimal
+    }
+
+    class Auditoria {
+        --Atributos--
+        id: string
+        usuario: string
+        accion: string
+        resultado: string
+        fecha: timestamp
+        ip: string
+    }
+
+    class ZonaEnvio {
+        --Atributos--
+        id: string
+        nombre: string
+        costo: decimal
+        tiempoEntrega: integer (dias)
+        estado: enum[activo, inactivo]
+    }
+
+    class Evento {
+        --Atributos--
+        id: string
+        nombre: string
+        fecha: date
+        hora: time
+        tipo: string
+        estado: enum[confirmado, pendiente, cancelado]
+        descripcion: string
+        productosAsociados: array[string]
+    }
+
+    class Oferta {
+        --Atributos--
+        id: string
+        nombre: string
+        descripcion: string
+        descuento: decimal
+        porcentajeDescuento: decimal
+        fechaInicio: date
+        fechaFin: date
+        productosAsociados: array[string]
+        estado: enum[activo, inactivo]
+    }
+
+    class RateLimit {
+        --Atributos--
+        userId: string (FK → Usuario)
+        count: integer
+        lastReset: timestamp
+        updatedAt: timestamp
+    }
+
+    class Backup {
+        --Atributos--
+        timestamp: timestamp
+        version: string
+        colecciones: map[string, array]
+        ruta: string (Cloud Storage)
+    }
+}
+
+' Relaciones de BD
+Pedido --> Usuario : "usuarioId"
+Pedido --> LineaPedido : "contiene"
+LineaPedido --> Producto : "referencía"
+Carrito --> Usuario : "usuarioId"
+Carrito --> LineaCarrito : "contiene"
+LineaCarrito --> Producto : "referencía"
+Evento --> Producto : "asocia"
+Oferta --> Producto : "aplica"
+RateLimit --> Usuario : "controla"
+
+' ============ COMPONENTES REACT ============
+package "⚛️ Componentes React" #COMPONENTCOLOR {
+
+    interface IComponente {
+        {abstract} render()
+        {abstract} handleChange()
+        {abstract} handleSubmit()
+    }
+
+    ' Layout & Navigation
+    class MainLayout {
+        --Props--
+        children: ReactNode
+        --Métodos--
+        render()
+    }
+
+    class Navbar {
+        --State--
+        user: Usuario | null
+        cartItems: number
+        --Props--
+        onLogout()
+        onNavigate()
+        --Métodos--
+        renderNavLinks()
+        renderUserMenu()
+    }
+
+    class Footer {
+        --Props--
+        --Métodos--
+        renderLinks()
+        renderSocial()
+    }
+
+    ' Páginas Públicas
+    class LoginPage {
+        --State--
+        email: string
+        password: string
+        loading: boolean
+        error: string
+        --Métodos--
+        handleLogin()
+        handleRegisterLink()
+    }
+
+    class RegisterPage {
+        --State--
+        formData: object
+        loading: boolean
+        error: string
+        --Métodos--
+        handleRegister()
+        validateForm()
+        handleLoginLink()
+    }
+
+    class ForgotPasswordPage {
+        --State--
+        email: string
+        --Métodos--
+        handleRecovery()
+    }
+
+    class ResetPasswordPage {
+        --State--
+        newPassword: string
+        confirmPassword: string
+        --Métodos--
+        handleReset()
+    }
+
+    ' Páginas Cliente
+    class DashboardPage {
+        --State--
+        productos: array[Producto]
+        destacados: array[Producto]
+        loading: boolean
+        --Métodos--
+        cargarProductos()
+        filtrarDestacados()
+        handleNavigateToCatalogo()
+    }
+
+    class CategoriasAdmin {
+        --State--
+        categorias: array[Categoria]
+        filtros: object
+        --Métodos--
+        cargarCategorias()
+        agregarCategoria()
+        editarCategoria()
+        eliminarCategoria()
+    }
+
+    class Inventario {
+        --State--
+        productos: array[Producto]
+        paginaActual: number
+        filtros: object
+        --Métodos--
+        cargarProductos()
+        agregarProducto()
+        editarProducto()
+        eliminarProducto()
+        subirImagen()
+        paginar()
+    }
+
+    class Carrito {
+        --State--
+        items: array[LineaCarrito]
+        total: decimal
+        --Métodos--
+        agregarAlCarrito()
+        quitarDelCarrito()
+        modificarCantidad()
+        calcularTotal()
+    }
+
+    class Checkout {
+        --State--
+        datosEnvio: object
+        metodoPago: string
+        total: decimal
+        --Métodos--
+        validarDatos()
+        procesarPago()
+        crearPedido()
+    }
+
+    class Pedidos {
+        --State--
+        pedidos: array[Pedido]
+        --Métodos--
+        cargarPedidos()
+        cambiarEstadoPedido()
+        descargarFactura()
+    }
+
+    ' Páginas Admin
+    class Admin {
+        --State--
+        usuario: Usuario
+        menu: array[string]
+        --Métodos--
+        renderMenu()
+        navegarA()
+    }
+
+    class DashboardAdmin {
+        --State--
+        ventasHoy: decimal
+        ventasMes: decimal
+        pedidosPendientes: integer
+        --Métodos--
+        cargarMetricas()
+        renderGraficos()
+    }
+
+    class BackupAdmin {
+        --State--
+        backups: array[Backup]
+        --Métodos--
+        listarBackups()
+        descargarBackup()
+        restaurarBackup()
+    }
+
+    class Auditoria {
+        --State--
+        logs: array[Auditoria]
+        filtros: object
+        --Métodos--
+        cargarLogs()
+        filtrarLogs()
+        exportarLogs()
+    }
+
+    ' Páginas Informativos
+    class PoliticaPrivacidad {
+        --Métodos--
+        renderContenido()
+    }
+
+    class TerminosCondiciones {
+        --Métodos--
+        renderContenido()
+    }
+
+    class NormativaRegulacion {
+        --Métodos--
+        renderContenido()
+    }
+
+    class HelpCenter {
+        --State--
+        faqs: array[object]
+        --Métodos--
+        buscarFAQ()
+        enviarConsulta()
+    }
+
+    ' Componentes Reutilizables
+    class ProtectedRoute {
+        --Props--
+        element: ReactElement
+        requiredRole: string
+        --Métodos--
+        validateUser()
+        renderElement()
+    }
+
+    class Spinner {
+        --Props--
+        message: string
+        --Métodos--
+        showLoading()
+    }
+
+    class NotFoundPage {
+        --Métodos--
+        renderNotFound()
+    }
+
+    class EventsPage {
+        --State--
+        eventos: array[Evento]
+        filtros: object
+        --Métodos--
+        cargarEventos()
+        filtrarEventos()
+        confirmarAsistencia()
+    }
+
+    class GaleriaFotos {
+        --State--
+        imagenes: array[string]
+        --Props--
+        producto: Producto
+        --Métodos--
+        cargarImagenes()
+        mostrarImagenGrande()
+    }
+
+    class OfertasPirotecnia {
+        --State--
+        ofertas: array[Oferta]
+        --Métodos--
+        cargarOfertas()
+        aplicarOferta()
+    }
+
+    class Gracias {
+        --Props--
+        pedidoId: string
+        --Métodos--
+        mostrarConfirmacion()
+    }
+}
+
+' Relaciones entre componentes
+IComponente <|-- LoginPage
+IComponente <|-- RegisterPage
+IComponente <|-- DashboardPage
+IComponente <|-- Inventario
+IComponente <|-- Carrito
+IComponente <|-- Checkout
+
+MainLayout --> Navbar : "usa"
+MainLayout --> Footer : "usa"
+DashboardPage --> Producto : "muestra"
+Inventario --> Producto : "gestiona"
+Carrito --> LineaCarrito : "contiene"
+Checkout --> Carrito : "procesa"
+Pedidos --> Pedido : "muestra"
+ProtectedRoute --> LoginPage : "redirige si no auth"
+Admin --> DashboardAdmin : "accede"
+Admin --> BackupAdmin : "accede"
+Admin --> Auditoria : "accede"
+EventsPage --> Evento : "muestra"
+OfertasPirotecnia --> Oferta : "muestra"
+
+' ============ SERVICIOS ============
+package "🔧 Servicios" #COMPONENTCOLOR {
+    class auditoriaService {
+        {static} registrarLog(accion, resultado, ip)
+        {static} obtenerLogs(usuarioId)
+    }
+
+    class backupService {
+        {static} listarBackups()
+        {static} descargarBackup(backupId)
+        {static} restaurarBackup(backupId)
+        {static} getBackupStats()
+    }
+
+    class responsiveImageHelper {
+        {static} generateSrcSet(url, tipo, nombre)
+        {static} getResponsiveImageProps(url, tipo, nombre)
+        {static} addCloudinaryParams(url, ancho, alto)
+    }
+
+    class retryHelper {
+        {static} retryAsyncSmartly(fn, intentos, delay)
+    }
+}
+
+' Relaciones de servicios
+LoginPage --> auditoriaService : "usa"
+Inventario --> responsiveImageHelper : "usa"
+DashboardPage --> responsiveImageHelper : "usa"
+BackupAdmin --> backupService : "usa"
+
+' ============ CLOUD FUNCTIONS ============
+package "☁️ Cloud Functions" #COMPONENTCOLOR {
+    class cleanupAuditoria {
+        {static} onSchedule() : scheduled (diario 2 AM UTC)
+        {static} eliminarLogsAntiguos(dias)
+    }
+
+    class cleanupPedidosCancelados {
+        {static} onSchedule() : scheduled (lunes 3 AM UTC)
+        {static} eliminarPedidos(estado, dias)
+    }
+
+    class cleanupSesiones {
+        {static} onSchedule() : scheduled (cada 6 horas)
+        {static} eliminarSesionesExpiradas(dias)
+    }
+
+    class backupAdminConfig {
+        {static} onSchedule() : scheduled (domingos 1 AM UTC)
+        {static} crearBackup(colecciones)
+        {static} limpiarBackupsAntiguos(dias)
+    }
+
+    class updateRateLimitCounter {
+        {static} onWrite(change, context) : trigger Firestore
+        {static} incrementarContador(userId)
+        {static} resetearContador(userId)
+    }
+}
+
+cleanupAuditoria --> Auditoria : "limpia"
+cleanupPedidosCancelados --> Pedido : "limpia"
+backupAdminConfig --> Backup : "crea"
+updateRateLimitCounter --> RateLimit : "actualiza"
+
+@enduml

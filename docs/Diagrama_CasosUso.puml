@@ -1,0 +1,156 @@
+@startuml PyroShop_Diagrama_CasosUso
+!define SYSTEMCOLOR #E3F2FD
+!define USERCOLOR #C8E6C9
+!define ADMINCOLOR #FFE0B2
+
+title Diagrama de Casos de Uso - PyroShop (Tienda de Pirotecnia)
+note top : Flujos de interacción de usuarios (clientes y administradores)
+
+' Actores
+actor "Cliente" as cliente #USERCOLOR
+actor "Admin/Vendedor" as admin #ADMINCOLOR
+actor "Sistema" as sistema #SYSTEMCOLOR
+actor "Firestore DB" as db
+actor "Cloud Functions" as functions
+actor "Cloudinary" as cloudinary
+
+' ============ CASOS DE USO CLIENTE ============
+package "🛍️ Cliente" #USERCOLOR {
+    usecase (Registrarse) as UC_Registrarse
+    usecase (Iniciar Sesión) as UC_Login
+    usecase (Recuperar Contraseña) as UC_RecuperarPass
+    usecase (Ver Catálogo) as UC_VerCatalogo
+    usecase (Ver Detalles Producto) as UC_VerDetalles
+    usecase (Agregar al Carrito) as UC_AgregarCarrito
+    usecase (Gestionar Carrito) as UC_GestionarCarrito
+    usecase (Procesar Pago) as UC_Checkout
+    usecase (Confirmar Pedido) as UC_ConfirmarPedido
+    usecase (Ver Pedidos) as UC_VerPedidos
+    usecase (Rastrear Pedido) as UC_RastrearPedido
+    usecase (Descargar Factura) as UC_DescargarFactura
+    usecase (Ver Promociones) as UC_VerOfertas
+    usecase (Registrarse en Eventos) as UC_RegistrarEvento
+    usecase (Contactar Soporte) as UC_ContactarSoporte
+    usecase (Cerrar Sesión) as UC_Logout
+}
+
+' ============ CASOS DE USO ADMINISTRADOR ============
+package "⚙️ Administrador" #ADMINCOLOR {
+    usecase (Ver Dashboard Admin) as UC_DashboardAdmin
+    usecase (Gestionar Productos) as UC_GestionarProductos
+    usecase (Agregar Producto) as UC_AgregarProducto
+    usecase (Editar Producto) as UC_EditarProducto
+    usecase (Eliminar Producto) as UC_EliminarProducto
+    usecase (Subir Imágenes) as UC_SubirImagenes
+    usecase (Gestionar Categorías) as UC_GestionarCategorias
+    usecase (Gestionar Pedidos Admin) as UC_GestionarPedidos
+    usecase (Cambiar Estado Pedido) as UC_CambiarEstadoPedido
+    usecase (Gestionar Zonas Envío) as UC_GestionarZonas
+    usecase (Ver Auditoría) as UC_VerAuditoria
+    usecase (Descargar Backups) as UC_DescargarBackups
+    usecase (Restaurar Config) as UC_RestaurarConfig
+    usecase (Gestionar Usuarios) as UC_GestionarUsuarios
+}
+
+' ============ CASOS DE USO SISTEMA ============
+package "🔄 Sistema (Automático)" #SYSTEMCOLOR {
+    usecase (Validar Integridad Datos) as UC_ValidarIntegridad
+    usecase (Registrar Auditoría) as UC_RegistrarAuditoria
+    usecase (Rate Limiting) as UC_RateLimiting
+    usecase (Backup Automático) as UC_BackupAutomatico
+    usecase (Limpieza Datos Antiguos) as UC_LimpiarDatos
+    usecase (Notificación Pedidos) as UC_NotificacionPedidos
+    usecase (Optimizar Imágenes) as UC_OptimizarImagenes
+}
+
+' ============ RELACIONES CLIENTE ============
+cliente --> UC_Registrarse
+cliente --> UC_Login
+cliente --> UC_RecuperarPass
+cliente --> UC_VerCatalogo
+cliente --> UC_VerDetalles
+cliente --> UC_AgregarCarrito
+cliente --> UC_GestionarCarrito
+cliente --> UC_Checkout
+cliente --> UC_ConfirmarPedido
+cliente --> UC_VerPedidos
+cliente --> UC_RastrearPedido
+cliente --> UC_DescargarFactura
+cliente --> UC_VerOfertas
+cliente --> UC_RegistrarEvento
+cliente --> UC_ContactarSoporte
+cliente --> UC_Logout
+
+' Dependencias Cliente
+UC_Login .> UC_VerCatalogo : precede
+UC_AgregarCarrito .> UC_GestionarCarrito : precede
+UC_GestionarCarrito .> UC_Checkout : precede
+UC_Checkout .> UC_ConfirmarPedido : precede
+UC_VerDetalles .> UC_AgregarCarrito : include
+UC_Registrarse .> UC_ValidarIntegridad : include
+
+' ============ RELACIONES ADMIN ============
+admin --> UC_DashboardAdmin
+admin --> UC_GestionarProductos
+admin --> UC_GestionarCategorias
+admin --> UC_GestionarPedidos
+admin --> UC_GestionarZonas
+admin --> UC_VerAuditoria
+admin --> UC_DescargarBackups
+admin --> UC_RestaurarConfig
+admin --> UC_GestionarUsuarios
+
+' Dependencias Admin
+UC_GestionarProductos .> UC_AgregarProducto : include
+UC_GestionarProductos .> UC_EditarProducto : include
+UC_GestionarProductos .> UC_EliminarProducto : include
+UC_AgregarProducto .> UC_SubirImagenes : include
+UC_EditarProducto .> UC_SubirImagenes : include
+UC_GestionarPedidos .> UC_CambiarEstadoPedido : include
+
+' ============ RELACIONES SISTEMA ============
+sistema --> UC_ValidarIntegridad
+sistema --> UC_RegistrarAuditoria
+sistema --> UC_RateLimiting
+sistema --> UC_BackupAutomatico
+sistema --> UC_LimpiarDatos
+sistema --> UC_NotificacionPedidos
+sistema --> UC_OptimizarImagenes
+
+' Trigger de eventos
+UC_Login ..> UC_RegistrarAuditoria : trigger
+UC_AgregarProducto ..> UC_RegistrarAuditoria : trigger
+UC_CambiarEstadoPedido ..> UC_RegistrarAuditoria : trigger
+UC_Checkout ..> UC_ValidarIntegridad : trigger
+UC_AgregarCarrito ..> UC_RateLimiting : trigger
+UC_VerPedidos ..> UC_NotificacionPedidos : trigger
+UC_SubirImagenes ..> UC_OptimizarImagenes : trigger
+
+' ============ RELACIONES A BD Y SERVICIOS EXTERNOS ============
+UC_Registrarse ..> db : guarda datos
+UC_ConfirmarPedido ..> db : persiste pedido
+UC_RegistrarAuditoria ..> db : escribe log
+UC_BackupAutomatico ..> db : lee datos
+UC_GestionarProductos ..> db : actualiza catálogo
+UC_SubirImagenes ..> cloudinary : API upload
+UC_OptimizarImagenes ..> cloudinary : transforma
+UC_RateLimiting ..> functions : ejecuta
+UC_BackupAutomatico ..> functions : ejecuta
+UC_LimpiarDatos ..> functions : ejecuta
+
+note bottom of cliente
+  Actores primarios
+  Clientes registrados y anónimos
+end note
+
+note bottom of admin
+  Administradores del sistema
+  Gestión de catálogo, pedidos y backups
+end note
+
+note bottom of functions
+  Cloud Functions Firebase
+  Tareas automáticas y programadas
+end note
+
+@enduml
